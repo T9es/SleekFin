@@ -1,0 +1,17 @@
+{
+  "category": "General",
+  "changelog": "Initial Jellyfin 12 plugin skeleton.",
+  "description": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
+  "guid": "da36c4ef-1d10-4169-8a68-26b194d5301a",
+  "name": "SleekFin",
+  "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
+  "owner": "varunaditya-plus",
+  "targetAbi": "12.0.0.0",
+  "timestamp": "2026-09-10T20:07:42.0000000Z",
+  "version": "0.1.0.0",
+  "status": "Active",
+  "autoUpdate": true,
+  "assemblies": [
+    "Jellyfin.Plugin.SleekFin.dll"
+  ]
+}
