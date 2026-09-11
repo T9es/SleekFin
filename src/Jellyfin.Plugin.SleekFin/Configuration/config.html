@@ -60,6 +60,10 @@
             margin-top: 1.25em;
         }
 
+        #sleekFinConfigurationPage .sleekfin-card + .sleekfin-section-title {
+            margin-top: 2.5em;
+        }
+
         #sleekFinConfigurationPage .sleekfin-card {
             border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
             padding: 1em;
@@ -127,6 +131,46 @@
             display: flex;
             flex-shrink: 0;
             gap: 0.65em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-field {
+            margin-bottom: 1.5em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-field:last-child {
+            margin-bottom: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-source-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 0.85em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-source-row {
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            gap: 10px;
+            padding: 10px 12px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-source-row label {
+            align-items: center;
+            display: flex;
+            flex: 1;
+            gap: 10px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-source-move {
+            background: transparent;
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            color: #fff;
+            cursor: pointer;
+            height: 30px;
+            padding: 0;
+            width: 30px;
         }
 
         #sleekFinConfigurationPage .sleekfin-toggle {
@@ -236,6 +280,47 @@
                     </div>
                 </div>
 
+                <h2 class="sleekfin-section-title">Hero</h2>
+                <div class="sleekfin-card">
+                    <div class="sleekfin-toggle-row">
+                        <div class="sleekfin-toggle-copy">
+                            <label class="sleekfin-toggle-label" for="sleekFinHeroEnabled">Enable hero</label>
+                            <p class="sleekfin-field-description">
+                                Adds a full-width hero carousel to the main Jellyfin home tab above media rows.
+                            </p>
+                        </div>
+                        <div class="sleekfin-toggle-actions">
+                            <label class="sleekfin-toggle">
+                                <input id="sleekFinHeroEnabled" type="checkbox" checked />
+                                <span class="sleekfin-toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-toggle-row">
+                        <div class="sleekfin-toggle-copy">
+                            <label class="sleekfin-toggle-label" for="sleekFinHeroRandomized">Randomize hero content</label>
+                            <p class="sleekfin-field-description">
+                                Randomly selects items from the content sources you've selected to be shown.
+                            </p>
+                        </div>
+                        <div class="sleekfin-toggle-actions">
+                            <label class="sleekfin-toggle">
+                                <input id="sleekFinHeroRandomized" type="checkbox" />
+                                <span class="sleekfin-toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-field">
+                        <span class="sleekfin-toggle-label">Content sources</span>
+                        <p class="sleekfin-field-description">
+                            Choose which Jellyfin content appears. The first enabled source has the highest priority.
+                        </p>
+                        <div id="sleekFinHeroSources" class="sleekfin-source-list"></div>
+                    </div>
+                </div>
+
                 <button type="submit" class="sleekfin-save-button">Save</button>
             </form>
         </div>
@@ -249,9 +334,20 @@
             var page = document.getElementById('sleekFinConfigurationPage');
             var form = document.getElementById('sleekFinConfigurationForm');
             var enabledInput = document.getElementById('sleekFinEnabled');
+            var heroEnabledInput = document.getElementById('sleekFinHeroEnabled');
+            var randomizedInput = document.getElementById('sleekFinHeroRandomized');
+            var sources = document.getElementById('sleekFinHeroSources');
             var dependencyStatus = document.getElementById('sleekFinDependencyStatus');
+            var sourceLabels = {
+                ContinueWatching: 'Continue watching',
+                NextUp: 'Next up',
+                LatestMovies: 'Latest movies',
+                LatestShows: 'Latest shows',
+                Favorites: 'Favorites'
+            };
+            var defaultSourceOrder = Object.keys(sourceLabels);
 
-            if (!page || !form || !enabledInput || !dependencyStatus || page.dataset.sleekfinBound === 'true') {
+            if (!page || !form || !enabledInput || !heroEnabledInput || !randomizedInput || !sources || !dependencyStatus || page.dataset.sleekfinBound === 'true') {
                 return;
             }
 
@@ -290,6 +386,63 @@
                 });
             }
 
+            function moveSource(row, direction) {
+                var sibling = direction < 0 ? row.previousElementSibling : row.nextElementSibling;
+                if (!sibling) {
+                    return;
+                }
+
+                sources.insertBefore(direction < 0 ? row : sibling, direction < 0 ? sibling : row);
+            }
+
+            function renderSources(savedOrder) {
+                var ordered = savedOrder.split(',').filter(function (id, index, values) {
+                    return sourceLabels[id] && values.indexOf(id) === index;
+                });
+                defaultSourceOrder.forEach(function (id) {
+                    if (ordered.indexOf(id) === -1) {
+                        ordered.push(id);
+                    }
+                });
+                sources.textContent = '';
+                ordered.forEach(function (id) {
+                    var row = document.createElement('div');
+                    var label = document.createElement('label');
+                    var checkbox = document.createElement('input');
+                    var text = document.createElement('span');
+                    var up = document.createElement('button');
+                    var down = document.createElement('button');
+
+                    row.className = 'sleekfin-source-row';
+                    row.dataset.source = id;
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = savedOrder.split(',').indexOf(id) !== -1;
+                    text.textContent = sourceLabels[id];
+                    label.appendChild(checkbox);
+                    label.appendChild(text);
+                    up.type = down.type = 'button';
+                    up.className = down.className = 'sleekfin-source-move';
+                    up.textContent = '↑';
+                    down.textContent = '↓';
+                    up.setAttribute('aria-label', 'Move ' + sourceLabels[id] + ' up');
+                    down.setAttribute('aria-label', 'Move ' + sourceLabels[id] + ' down');
+                    up.addEventListener('click', function () { moveSource(row, -1); });
+                    down.addEventListener('click', function () { moveSource(row, 1); });
+                    row.appendChild(label);
+                    row.appendChild(up);
+                    row.appendChild(down);
+                    sources.appendChild(row);
+                });
+            }
+
+            function selectedSources() {
+                return Array.prototype.filter.call(sources.children, function (row) {
+                    return row.querySelector('input').checked;
+                }).map(function (row) {
+                    return row.dataset.source;
+                });
+            }
+
             function loadConfiguration() {
                 Dashboard.showLoadingMsg();
                 updateDependencyStatus();
@@ -297,6 +450,9 @@
                 return ApiClient.getPluginConfiguration(PLUGIN_ID)
                     .then(function (configuration) {
                         enabledInput.checked = configuration.HeaderEnabled !== false;
+                        heroEnabledInput.checked = configuration.HeroEnabled !== false;
+                        randomizedInput.checked = configuration.HeroRandomized === true;
+                        renderSources(configuration.HeroContentOrder || defaultSourceOrder.join(','));
                     })
                     .catch(function () {
                         Dashboard.alert('SleekFin could not load its configuration.');
@@ -308,11 +464,19 @@
 
             function saveConfiguration(event) {
                 event.preventDefault();
+                var contentOrder = selectedSources();
+                if (heroEnabledInput.checked && !contentOrder.length) {
+                    Dashboard.alert('Select at least one hero content source.');
+                    return;
+                }
                 Dashboard.showLoadingMsg();
 
                 ApiClient.getPluginConfiguration(PLUGIN_ID)
                     .then(function (configuration) {
                         configuration.HeaderEnabled = enabledInput.checked;
+                        configuration.HeroEnabled = heroEnabledInput.checked;
+                        configuration.HeroRandomized = randomizedInput.checked;
+                        configuration.HeroContentOrder = contentOrder.join(',');
                         return ApiClient.updatePluginConfiguration(PLUGIN_ID, configuration);
                     })
                     .then(function (result) {

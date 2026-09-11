@@ -10,7 +10,7 @@
     "versions": [
       {
         "version": "0.1.2.0",
-        "changelog": "fixed versioning",
+        "changelog": "Update active controls logic for better navigation. This is the first published release due to the branch being \"master\" instead of \"main\" for some reason.",
         "targetAbi": "12.0.0.0",
         "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/0.1.2.0/Jellyfin.Plugin.SleekFin_12.0.0.zip",
         "checksum": "5B8AA7D4118F86BA72CF1A3E1601A2A2",
@@ -18,12 +18,21 @@
         "dependencies": []
       },
       {
-        "version": "0.2.2.0",
-        "changelog": "Update active controls logic for better navigation",
+        "version": "0.1.1.0",
+        "changelog": "Updated header logic to use href of links instead of specific paths, so SeerrFin/JE links work",
         "targetAbi": "12.0.0.0",
-        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/0.2.2.0/Jellyfin.Plugin.SleekFin_12.0.0.zip",
-        "checksum": "66C14F973A29584C16E4836BCC93C29A",
-        "timestamp": "2026-09-11T16:37:31.0000000Z",
+        "sourceUrl": "",
+        "checksum": "",
+        "timestamp": "",
+        "dependencies": []
+      },
+      {
+        "version": "0.1.0.0",
+        "changelog": "Added a custom header bar putting the server logo on the left and all tabs and the rest in a navbar on the right",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "",
+        "checksum": "",
+        "timestamp": "",
         "dependencies": []
       }
     ]

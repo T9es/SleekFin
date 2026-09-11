@@ -32,6 +32,20 @@ public sealed class SleekFinAssetsController : ControllerBase
         return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Header.sleekfin-header.js", "text/javascript; charset=utf-8");
     }
 
+    [HttpGet("sleekfin-hero.css")]
+    [AllowAnonymous]
+    public ActionResult GetHeroStyles()
+    {
+        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Hero.sleekfin-hero.css", "text/css; charset=utf-8");
+    }
+
+    [HttpGet("sleekfin-hero.js")]
+    [AllowAnonymous]
+    public ActionResult GetHeroScript()
+    {
+        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Hero.sleekfin-hero.js", "text/javascript; charset=utf-8");
+    }
+
     [HttpGet("fonts/{fontFileName}")]
     [AllowAnonymous]
     public ActionResult GetFont(string fontFileName)

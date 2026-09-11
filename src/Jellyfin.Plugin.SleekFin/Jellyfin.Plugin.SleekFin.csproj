@@ -29,6 +29,8 @@
         <EmbeddedResource Include="Configuration\config.html" />
         <EmbeddedResource Include="Inject\Header\sleekfin-header.css" />
         <EmbeddedResource Include="Inject\Header\sleekfin-header.js" />
+        <EmbeddedResource Include="Inject\Hero\sleekfin-hero.css" />
+        <EmbeddedResource Include="Inject\Hero\sleekfin-hero.js" />
         <EmbeddedResource Include="Inject\Fonts\*.woff2" />
     </ItemGroup>
 

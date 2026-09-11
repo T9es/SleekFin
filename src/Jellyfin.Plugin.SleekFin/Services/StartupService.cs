@@ -65,7 +65,7 @@ public sealed class StartupService : IScheduledTask
             };
 
             registerTransformation.Invoke(null, [registration]);
-            _logger.LogInformation("SleekFin registered its Jellyfin Web header transformation.");
+            _logger.LogInformation("SleekFin registered its Jellyfin Web transformation.");
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
