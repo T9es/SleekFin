@@ -103,44 +103,14 @@
         }
     }
 
-    function routeKey(value) {
-        var hashIndex = value.indexOf('#');
-        var route = hashIndex >= 0 ? value.slice(hashIndex + 1) : value;
-        var queryIndex = route.indexOf('?');
-        var path = (queryIndex >= 0 ? route.slice(0, queryIndex) : route).replace(/^\/+|\/+$/g, '');
-        var query = new URLSearchParams(queryIndex >= 0 ? route.slice(queryIndex + 1) : '');
-
-        if ((!path || path === 'home') && query.get('tab') === '1') {
-            return 'favorites';
-        }
-
-        if (!path || path === 'home') {
-            return 'home';
-        }
-
-        if (path === 'movies') {
-            return 'movies';
-        }
-
-        if (path === 'tv') {
-            return 'shows';
-        }
-
-        if (path === 'search') {
-            return 'search';
-        }
-
-        return path;
-    }
-
     function updateActiveLinks(mount) {
-        var currentKey = routeKey(global.location.hash || '#/');
         var links = mount.header.querySelectorAll('[data-sleekfin-header-link]');
 
         Array.prototype.forEach.call(links, function (link) {
+            var href = link.getAttribute('href') || '';
             link.setAttribute(
                 'data-sleekfin-current',
-                routeKey(link.getAttribute('href') || '') === currentKey ? 'true' : 'false'
+                href && global.location.href.indexOf(href) !== -1 ? 'true' : 'false'
             );
         });
     }
