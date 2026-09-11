@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <Version>0.2.2.0</Version>
+        <Version>0.1.2.0</Version>
         <RootNamespace>Jellyfin.Plugin.SleekFin</RootNamespace>
     </PropertyGroup>
 
