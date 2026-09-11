@@ -1,14 +1,14 @@
 {
   "category": "General",
-  "changelog": "fixed versioning",
+  "changelog": "Added full-width hero section at the top of home page with customizable content sources, fixed manifest",
   "description": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "guid": "da36c4ef-1d10-4169-8a68-26b194d5301a",
   "name": "SleekFin",
   "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "owner": "varunaditya-plus",
   "targetAbi": "12.0.0.0",
-  "timestamp": "2026-09-11T16:43:47.0000000Z",
-  "version": "0.1.2.0",
+  "timestamp": "2026-09-11T18:06:13.0000000Z",
+  "version": "0.2.0.0",
   "status": "Active",
   "autoUpdate": true,
   "assemblies": [
