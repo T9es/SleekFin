@@ -103,14 +103,26 @@
         }
     }
 
-    function updateActiveLinks(mount) {
-        var links = mount.header.querySelectorAll('[data-sleekfin-header-link]');
+    function updateActiveControls(mount) {
+        var links = mount.header.querySelectorAll('[data-sleekfin-header-segment] a[href]:not([data-sleekfin-header-brand])');
 
         Array.prototype.forEach.call(links, function (link) {
             var href = link.getAttribute('href') || '';
-            link.setAttribute(
+            mark(
+                mount,
+                link,
                 'data-sleekfin-current',
                 href && global.location.href.indexOf(href) !== -1 ? 'true' : 'false'
+            );
+        });
+
+        Array.prototype.forEach.call(mount.header.querySelectorAll('button[id*="-link-"]'), function (button) {
+            var tab = document.getElementById(button.id.replace('-link-', '-btn-'));
+            mark(
+                mount,
+                button,
+                'data-sleekfin-current',
+                tab && tab.classList.contains('emby-tab-button-active') ? 'true' : 'false'
             );
         });
     }
@@ -346,7 +358,7 @@
 
         document.documentElement.classList.add(ROOT_CLASS);
         removeFallbackBrand();
-        updateActiveLinks(mount);
+        updateActiveControls(mount);
         updateScrolledState(mount);
         scheduleModernMeasurement(mount);
 
@@ -506,7 +518,7 @@
         } else {
             updateScrolledState(state.mount);
             if (state.mount.kind === 'modern') {
-                updateActiveLinks(state.mount);
+                updateActiveControls(state.mount);
                 scheduleModernMeasurement(state.mount);
             }
         }
