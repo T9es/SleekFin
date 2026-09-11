@@ -6,9 +6,10 @@ These instructions apply to the entire repository. Treat `references/` as read-o
 
 1. Implement exactly what the user requested. Do not add adjacent features, broad cleanup, dependency upgrades, redesigns, or formatting sweeps.
 2. Keep SleekFin specific to Jellyfin 12.0, .NET 10, and the Jellyfin Web `v12.0` contract unless the user explicitly requests a compatibility change.
-3. Inspect the relevant source, history, and surrounding conventions before editing. Do not infer behavior from filenames or issue labels alone.
-4. Preserve unrelated user changes. Never overwrite, discard, stage, or commit work that is outside the current task.
-5. Distinguish implemented, build-verified, manually tested, and live Jellyfin-verified outcomes. Never present one as another.
+3. Keep production code concise. Do not add abstractions, helpers, state, compatibility branches, dependencies, support files, or tests unless they are necessary for the requested behavior.
+4. Inspect the relevant source, history, and surrounding conventions before editing. Do not infer behavior from filenames or issue labels alone.
+5. Preserve unrelated user changes. Never overwrite, discard, stage, or commit work that is outside the current task.
+6. Distinguish implemented, build-verified, manually tested, and live Jellyfin-verified outcomes. Never present one as another.
 
 ## Reference baseline
 
@@ -191,7 +192,7 @@ Run the smallest relevant checks while developing, then run the full applicable 
 | API or security behavior | Verify authorization, validation, cancellation, status codes, safe errors, and absence of secrets in responses/logs. |
 | User-facing injected UI | Test affected Modern, desktop/mobile legacy, TV, navigation/remount, loading, empty, error, and keyboard paths as applicable. |
 
-- Add focused automated tests for new deterministic logic such as normalizers, parsers, transformations, permissions, and cache rules.
+- Do not add test files or test projects unless the user explicitly requests them. Prefer existing checks and temporary local harnesses that are not committed.
 - There is no assumption that an automated suite already exists. Report what actually ran.
 - For browser integration, the meaningful live sequence is: build, install into Jellyfin 12, install/enable File Transformation, restart Jellyfin, hard-refresh the client, inspect console/network output, and exercise the affected lifecycle path.
 - Record the Jellyfin version, plugin version, browser/client, relevant theme/plugins, steps, and outcome for live testing.

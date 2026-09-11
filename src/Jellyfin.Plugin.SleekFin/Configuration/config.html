@@ -1,0 +1,333 @@
+<div data-role="page" id="sleekFinConfigurationPage" class="page type-interior pluginConfigurationPage fullWidthContent">
+    <style>
+        #sleekFinConfigurationPage {
+            padding: 2em 1em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-page-banner {
+            align-items: center;
+            background: #fff;
+            box-sizing: border-box;
+            color: #000;
+            display: flex;
+            font-size: 1.5em;
+            font-weight: 500;
+            justify-content: space-between;
+            line-height: 1.3;
+            padding: 0.5em 1em;
+            text-align: center;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-page-banner a {
+            color: #000;
+        }
+
+        #sleekFinConfigurationPage .content-primary {
+            margin: 0 auto;
+            padding-left: 5em !important;
+            padding-right: 5em !important;
+        }
+
+        #sleekFinConfigurationPage form,
+        #sleekFinConfigurationPage .readOnlyContent {
+            max-width: none !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-container,
+        #sleekFinConfigurationForm {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #sleekFinConfigurationForm {
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-section-title {
+            font-size: 1.35em;
+            font-weight: 400;
+            line-height: 1.3;
+            margin: 0 0 1em;
+            text-align: center;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-section + .sleekfin-section {
+            margin-top: 2.5em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-page-banner + .sleekfin-section {
+            margin-top: 1.25em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-card {
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            padding: 1em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-dependency {
+            align-items: center;
+            display: flex;
+            font-size: 1.05em;
+            gap: 10px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-dependency:last-child {
+            margin-bottom: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-dependency-icon {
+            text-align: center;
+            width: 1.2em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-dependency.is-ok {
+            color: #4caf50;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-dependency.is-missing {
+            color: #ff5252;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-row {
+            align-items: start;
+            display: flex;
+            gap: 1.5em;
+            justify-content: space-between;
+            margin-bottom: 1.25em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-row:last-child {
+            margin-bottom: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-copy {
+            flex: 1;
+            min-width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-label {
+            color: #fff;
+            display: block;
+            font-size: 1.05em;
+            line-height: 1.4;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-field-description {
+            color: #6a6a6a;
+            font-size: 0.92em;
+            line-height: 1.55;
+            margin: 0.55em 0 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-actions {
+            align-items: center;
+            display: flex;
+            flex-shrink: 0;
+            gap: 0.65em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle {
+            display: inline-block;
+            flex-shrink: 0;
+            height: 26px;
+            position: relative;
+            width: 48px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle input {
+            height: 0;
+            opacity: 0;
+            width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-slider {
+            background: rgba(255, 255, 255, 0.18);
+            cursor: pointer;
+            inset: 0;
+            position: absolute;
+            transition: background 0.2s ease;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle-slider:before {
+            background: #fff;
+            bottom: 3px;
+            content: "";
+            height: 20px;
+            left: 3px;
+            position: absolute;
+            transition: transform 0.2s ease;
+            width: 20px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle input:checked + .sleekfin-toggle-slider {
+            background: var(--accent, #00a4dc);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle input:checked + .sleekfin-toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-toggle input:focus-visible + .sleekfin-toggle-slider {
+            outline: 2px solid var(--accent, #00a4dc);
+            outline-offset: 2px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-save-button {
+            background: var(--accent, #00a4dc);
+            border: none;
+            border-radius: 0;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            margin-top: 64px;
+            padding: 12px;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-save-button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            #sleekFinConfigurationPage .content-primary {
+                padding-left: 0.5em !important;
+                padding-right: 0.5em !important;
+            }
+        }
+    </style>
+
+    <div class="content-primary">
+        <div class="sleekfin-container">
+            <div class="sleekfin-page-banner">
+                <span>SleekFin</span>
+                <a href="https://github.com/varunaditya/sleekfin" target="_blank" rel="noopener noreferrer">Help</a>
+            </div>
+
+            <div class="sleekfin-section">
+                <h2 class="sleekfin-section-title">Dependencies</h2>
+                <div class="sleekfin-card">
+                    <div id="sleekFinDependencyStatus" class="sleekfin-dependency is-missing" role="status" aria-live="polite">
+                        <span class="sleekfin-dependency-icon">✕</span>
+                        <span>File transformation</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="sleekFinConfigurationForm" class="sleekfin-section">
+                <h2 class="sleekfin-section-title">Header</h2>
+                <div class="sleekfin-card">
+                    <div class="sleekfin-toggle-row">
+                        <div class="sleekfin-toggle-copy">
+                            <label class="sleekfin-toggle-label" for="sleekFinEnabled">Enable SleekFin header</label>
+                            <p class="sleekfin-field-description">
+                                Adds a custom skin over Jellyfin's header bar with navigation, search, etc.
+                            </p>
+                        </div>
+                        <div class="sleekfin-toggle-actions">
+                            <label class="sleekfin-toggle">
+                                <input id="sleekFinEnabled" type="checkbox" checked />
+                                <span class="sleekfin-toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="sleekfin-save-button">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var PLUGIN_ID = 'da36c4ef-1d10-4169-8a68-26b194d5301a';
+            var page = document.getElementById('sleekFinConfigurationPage');
+            var form = document.getElementById('sleekFinConfigurationForm');
+            var enabledInput = document.getElementById('sleekFinEnabled');
+            var dependencyStatus = document.getElementById('sleekFinDependencyStatus');
+
+            if (!page || !form || !enabledInput || !dependencyStatus || page.dataset.sleekfinBound === 'true') {
+                return;
+            }
+
+            page.dataset.sleekfinBound = 'true';
+
+            function setDependencyStatus(isInstalled) {
+                dependencyStatus.classList.toggle('is-ok', isInstalled);
+                dependencyStatus.classList.toggle('is-missing', !isInstalled);
+
+                var icon = dependencyStatus.querySelector('.sleekfin-dependency-icon');
+                if (icon) {
+                    icon.textContent = isInstalled ? '✓' : '✕';
+                }
+            }
+
+            function updateDependencyStatus() {
+                return ApiClient.ajax({
+                    type: 'GET',
+                    url: ApiClient.getUrl('/Plugins'),
+                    dataType: 'json'
+                }).then(function (plugins) {
+                    var installed = false;
+                    var i;
+
+                    for (i = 0; i < plugins.length; i++) {
+                        var name = String(plugins[i].Name || '').toLowerCase();
+                        if (name === 'file transformation' && plugins[i].Status === 'Active') {
+                            installed = true;
+                            break;
+                        }
+                    }
+
+                    setDependencyStatus(installed);
+                }).catch(function () {
+                    setDependencyStatus(false);
+                });
+            }
+
+            function loadConfiguration() {
+                Dashboard.showLoadingMsg();
+                updateDependencyStatus();
+
+                return ApiClient.getPluginConfiguration(PLUGIN_ID)
+                    .then(function (configuration) {
+                        enabledInput.checked = configuration.HeaderEnabled !== false;
+                    })
+                    .catch(function () {
+                        Dashboard.alert('SleekFin could not load its configuration.');
+                    })
+                    .finally(function () {
+                        Dashboard.hideLoadingMsg();
+                    });
+            }
+
+            function saveConfiguration(event) {
+                event.preventDefault();
+                Dashboard.showLoadingMsg();
+
+                ApiClient.getPluginConfiguration(PLUGIN_ID)
+                    .then(function (configuration) {
+                        configuration.HeaderEnabled = enabledInput.checked;
+                        return ApiClient.updatePluginConfiguration(PLUGIN_ID, configuration);
+                    })
+                    .then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    })
+                    .catch(function () {
+                        Dashboard.alert('SleekFin could not save its configuration.');
+                    })
+                    .finally(function () {
+                        Dashboard.hideLoadingMsg();
+                    });
+            }
+
+            page.addEventListener('pageshow', loadConfiguration);
+            form.addEventListener('submit', saveConfiguration);
+        }());
+    </script>
+</div>
