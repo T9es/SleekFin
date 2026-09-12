@@ -1,4 +1,4 @@
-<div align="center"> (edit later)
+<div align="center">
 
 <div alt style="text-align: center; transform: scale(.25);">
 	<picture>
@@ -51,18 +51,18 @@ https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
 ### Configuration
 After installation, you can now configure how the extension looks by going to **Dashboard → SleekFin**, and editing anything you want. This plugin is made to be as customizable as possible, so you should be able to tweak anything to your liking. If not, there's always CSS.
 
-<!-- ## Screenshots
+## Screenshots
 <table>
   <tr>
-    <td><img width="1720" height="720" alt="Movie tab" src="https://github.com/user-attachments/assets/94fcae0d-9027-4e96-a6fc-d2c8fd1734c5" /></td>
-    <td><img width="1720" height="720" alt="Content modal" src="https://github.com/user-attachments/assets/9b347369-79dd-4f6a-8abb-ba70f83040c3" /></td>
+    <td><img width="1720" height="720" alt="Home screen" src="https://github.com/user-attachments/assets/db8e2443-35f1-47d0-a734-c36cd41fd587" /></td>
+    <td><img width="1720" height="720" alt="Movie page" src="https://github.com/user-attachments/assets/c4fb2cef-969e-47f2-93cd-2db019179ddc" /></td>
+
   </tr>
   <tr>
-    <td><img width="1720" height="720" alt="Request tab" src="https://github.com/user-attachments/assets/c247919c-a22d-4852-afe5-70f03ee8f8d1" /></td>
-    <td><img width="1720" height="720" alt="Letterboxd import tab" src="https://github.com/user-attachments/assets/4eae17eb-ebbc-4b6c-a28f-241088d00936" /></td>
+    <td><img width="1720" height="720" alt="Series page" src="https://github.com/user-attachments/assets/28a00655-4b2a-46ef-99a0-6d8b8e111b22" /></td>
+    <!-- <td><img width="1720" height="720" alt="Configuration page" src="" /></td> -->
   </tr>
 </table>
-... -->
 
 ## Downloads
 
@@ -91,6 +91,7 @@ If you have any suggestions or features you want to be implemented in this plugi
 See [CONTRIBUTING.md](CONTRIBUTING.md) for testing expectations, commit format, versioning, and PR guidelines.
 
 ## Credits
+- [Preact](https://preactjs.com/) by the Preact authors, licensed under MIT.
 - [Inter](https://rsms.me/inter/) by Rasmus Andersson and the Inter Project Authors, under the SIL Open Font License 1.1.
 - Interface icons adapted from [Lucide](https://lucide.dev/), licensed under ISC.
 - Uses [File Transformation](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation) by IAmParadox27.

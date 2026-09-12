@@ -1,0 +1,188 @@
+html.sleekfin-header-mounted [data-sleekfin-header-toolbar] {
+    align-items: center !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    gap: 0 !important;
+    height: var(--sleekfin-header-height) !important;
+    min-height: var(--sleekfin-header-height) !important;
+    overflow: visible !important;
+    padding: 0 var(--sleekfin-page-gutter) !important;
+    pointer-events: auto;
+    position: relative;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-toolbar]::after {
+    -webkit-backdrop-filter: var(--sleekfin-glass-filter);
+    backdrop-filter: var(--sleekfin-glass-filter);
+    background: var(--sleekfin-header-glass-background);
+    border: var(--sleekfin-glass-border);
+    border-radius: 12px;
+    box-shadow: var(--sleekfin-glass-shadow);
+    box-sizing: border-box;
+    content: "";
+    height: 40px;
+    left: var(--sleekfin-header-pill-left, auto);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: var(--sleekfin-header-pill-top);
+    transition: opacity 120ms ease;
+    width: var(--sleekfin-header-pill-width, 0);
+    z-index: 0;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-toolbar][data-sleekfin-header-measured="true"]::after {
+    opacity: 1;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-segment] {
+    align-items: center !important;
+    align-self: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    min-width: 0 !important;
+    position: relative;
+    z-index: 1;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-first-cluster="true"] {
+    margin-inline-start: auto !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-nav] {
+    gap: 2px !important;
+    padding: 4px 0 4px 4px !important;
+    position: static !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-actions] {
+    gap: 0 !important;
+    padding: 4px 0 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-actions]::before {
+    background: rgba(255, 255, 255, 0.12);
+    content: "";
+    flex: 0 0 1px;
+    height: 16px;
+    margin: 8px 6px;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-actions] #je-native-tabs-separator {
+    background: rgba(255, 255, 255, 0.12) !important;
+    flex: 0 0 1px !important;
+    height: 16px !important;
+    margin: 8px 6px !important;
+    width: 1px !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-actions] #je-native-tabs-group button,
+html.sleekfin-header-mounted [data-sleekfin-header-actions] #randomItemButtonContainer,
+html.sleekfin-header-mounted [data-sleekfin-header-actions] #randomItemButton {
+    height: 32px !important;
+    margin: 0 !important;
+    min-height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    width: 32px !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-profile] {
+    padding: 4px 4px 4px 0 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-link] {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    display: inline-flex !important;
+    font: 500 13px/1 var(--sleekfin-font-family) !important;
+    gap: 6px !important;
+    height: 32px !important;
+    letter-spacing: 0 !important;
+    margin: 0 !important;
+    min-height: 32px !important;
+    min-width: 0 !important;
+    padding: 0 12px !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease !important;
+    white-space: nowrap;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-link]:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #fff !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-link][data-sleekfin-current="true"],
+html.sleekfin-header-mounted [data-sleekfin-header-segment] button[data-sleekfin-current="true"],
+html.sleekfin-header-mounted [data-sleekfin-header-segment] a:not([data-sleekfin-header-link]):not([data-sleekfin-header-brand])[data-sleekfin-current="true"] {
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.14) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-link]::after,
+html.sleekfin-header-mounted [data-sleekfin-header-link]::before {
+    border: 0 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-segment] button,
+html.sleekfin-header-mounted [data-sleekfin-header-segment] a:not([data-sleekfin-header-link]):not([data-sleekfin-header-brand]) {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    display: inline-flex !important;
+    height: 32px !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    min-height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    transition: background-color 180ms ease, color 180ms ease !important;
+    width: 32px !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-segment] button:hover,
+html.sleekfin-header-mounted [data-sleekfin-header-segment] a:not([data-sleekfin-header-link]):not([data-sleekfin-header-brand]):hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+    color: #fff !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-segment] svg {
+    font-size: 16px !important;
+    height: 16px !important;
+    width: 16px !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-link] svg {
+    font-size: 14px !important;
+    height: 14px !important;
+    width: 14px !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-profile] img {
+    border-radius: 50% !important;
+    height: 20px !important;
+    width: 20px !important;
+}
+
+@media (max-width: 899px) {
+    html.sleekfin-header-mounted [data-sleekfin-header-nav] {
+        display: none !important;
+    }
+}

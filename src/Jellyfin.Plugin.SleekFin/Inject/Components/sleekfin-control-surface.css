@@ -1,0 +1,17 @@
+.sleekfin-control-3d {
+    -webkit-backdrop-filter: var(--sleekfin-glass-filter);
+    backdrop-filter: var(--sleekfin-glass-filter);
+    background: linear-gradient(rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.01)), rgba(22, 22, 24, 0.82) !important;
+    border: var(--sleekfin-glass-border) !important;
+    box-sizing: border-box;
+    box-shadow: var(--sleekfin-glass-shadow);
+    transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+@media (hover: hover) {
+    .sleekfin-control-3d:is(button, a):hover {
+        background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)), rgba(36, 36, 40, 0.9) !important;
+        border-color: rgba(255, 255, 255, 0.16) !important;
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.14), 0 8px 18px -6px rgba(0, 0, 0, 0.55);
+    }
+}

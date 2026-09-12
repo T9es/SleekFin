@@ -1,0 +1,80 @@
+html.sleekfin-header-mounted {
+    --sleekfin-header-glass-background: linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.012) 100%), rgba(22, 22, 24, 0.82);
+    --sleekfin-header-height: 80px;
+    --sleekfin-header-pill-top: 20px;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header] {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #fff;
+    font-family: var(--sleekfin-font-family);
+    height: var(--sleekfin-header-height) !important;
+    inset: 0 0 auto !important;
+    overflow: visible !important;
+    pointer-events: none;
+    position: fixed !important;
+    transition: none !important;
+    width: 100% !important;
+    z-index: 1200 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header]::before {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.48) 43%, transparent 100%);
+    content: "";
+    height: 96px;
+    inset: 0 0 auto;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 250ms ease;
+    z-index: -1;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header][data-sleekfin-scrolled="true"]::before {
+    opacity: 1;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-menu] {
+    align-items: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+    display: flex;
+    height: 32px !important;
+    justify-content: center !important;
+    left: var(--sleekfin-page-gutter) !important;
+    margin: 0 !important;
+    min-height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    pointer-events: auto;
+    position: fixed !important;
+    top: 24px !important;
+    width: 32px !important;
+    z-index: 1202;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-menu]:hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-menu] svg,
+html.sleekfin-header-mounted [data-sleekfin-header-menu] .material-icons {
+    font-size: 20px !important;
+    height: 20px !important;
+    width: 20px !important;
+}
+
+@media (max-width: 899px) {
+    html.sleekfin-header-mounted {
+        --sleekfin-header-height: 68px;
+        --sleekfin-header-pill-top: 14px;
+    }
+
+    html.sleekfin-header-mounted [data-sleekfin-header-menu] {
+        top: 18px !important;
+    }
+}

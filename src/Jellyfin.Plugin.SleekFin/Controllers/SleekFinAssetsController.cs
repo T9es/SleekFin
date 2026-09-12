@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Jellyfin.Plugin.SleekFin.Helpers;
 
 namespace Jellyfin.Plugin.SleekFin.Controllers;
 
@@ -7,23 +8,6 @@ namespace Jellyfin.Plugin.SleekFin.Controllers;
 [Route("SleekFin")]
 public sealed class SleekFinAssetsController : ControllerBase
 {
-    private static readonly IReadOnlyDictionary<string, string> AssetFolders = new Dictionary<string, string>(StringComparer.Ordinal)
-    {
-        ["sleekfin-theme.css"] = "Theme",
-        ["sleekfin-theme.js"] = "Theme",
-        ["sleekfin-icons.js"] = "Components",
-        ["sleekfin-components.css"] = "Components",
-        ["sleekfin-components.js"] = "Components",
-        ["sleekfin-header.css"] = "Header",
-        ["sleekfin-header.js"] = "Header",
-        ["sleekfin-hero.css"] = "Hero",
-        ["sleekfin-hero.js"] = "Hero",
-        ["sleekfin-media.css"] = "Media",
-        ["sleekfin-media.js"] = "Media",
-        ["sleekfin-details.css"] = "Details",
-        ["sleekfin-details.js"] = "Details"
-    };
-
     private static readonly HashSet<string> FontFileNames = new(StringComparer.Ordinal)
     {
         "inter-cyrillic-ext.woff2",
@@ -39,15 +23,12 @@ public sealed class SleekFinAssetsController : ControllerBase
     [AllowAnonymous]
     public ActionResult GetAsset(string assetFileName)
     {
-        if (!AssetFolders.TryGetValue(assetFileName, out string? folder))
+        if (!FrontendAssets.ByFileName.TryGetValue(assetFileName, out FrontendAssets.Asset? asset))
         {
             return NotFound();
         }
 
-        string contentType = assetFileName.EndsWith(".css", StringComparison.Ordinal)
-            ? "text/css; charset=utf-8"
-            : "text/javascript; charset=utf-8";
-        return EmbeddedFile($"Jellyfin.Plugin.SleekFin.Inject.{folder}.{assetFileName}", contentType);
+        return EmbeddedFile(asset.ResourceName, asset.ContentType);
     }
 
     [HttpGet("fonts/{fontFileName}")]

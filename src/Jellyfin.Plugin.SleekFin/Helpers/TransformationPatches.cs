@@ -1,9 +1,19 @@
+using System.Text.RegularExpressions;
+using Jellyfin.Plugin.SleekFin.Configuration;
 using Jellyfin.Plugin.SleekFin.Model;
 
 namespace Jellyfin.Plugin.SleekFin.Helpers;
 
 public static class TransformationPatches
 {
+    private static readonly Regex InjectedStyles = new(
+        "<link\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>",
+        RegexOptions.CultureInvariant);
+
+    private static readonly Regex InjectedScripts = new(
+        "<script\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>\\s*</script>",
+        RegexOptions.CultureInvariant);
+
     public static string IndexHtml(PatchRequestPayload payload)
     {
         string contents = payload.Contents ?? string.Empty;
@@ -19,41 +29,33 @@ public static class TransformationPatches
         string buildId = assembly.ManifestModule.ModuleVersionId.ToString("N");
         string cacheQuery = $"?v={version}&b={buildId}";
 
-        contents = InjectAssets(contents, "theme", cacheQuery);
-        contents = InjectAssets(contents, "icons", cacheQuery, false);
-        contents = InjectAssets(contents, "components", cacheQuery);
+        contents = InjectedStyles.Replace(contents, string.Empty);
+        contents = InjectedScripts.Replace(contents, string.Empty);
 
-        if (SleekFinPlugin.Instance.Configuration.HeaderEnabled)
+        PluginConfiguration configuration = SleekFinPlugin.Instance.Configuration;
+        foreach (FrontendAssets.Asset asset in FrontendAssets.Ordered)
         {
-            contents = InjectAssets(contents, "header", cacheQuery);
-        }
+            if (!ShouldInject(asset, configuration))
+            {
+                continue;
+            }
 
-        if (SleekFinPlugin.Instance.Configuration.HeroEnabled)
-        {
-            contents = InjectAssets(contents, "hero", cacheQuery);
+            string url = $"../SleekFin/{asset.FileName}{cacheQuery}";
+            string element = asset.IsStyle ? $"<link rel=\"stylesheet\" href=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\" />" : $"<script defer src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>";
+            string closingTag = asset.IsStyle ? "</head>" : "</body>";
+            contents = contents.Replace(closingTag, $"{element}{closingTag}", StringComparison.Ordinal);
         }
-
-        contents = InjectAssets(contents, "media", cacheQuery);
-        contents = InjectAssets(contents, "details", cacheQuery);
 
         return contents;
     }
 
-    private static string InjectAssets(string contents, string feature, string cacheQuery, bool includeStyles = true)
+    private static bool ShouldInject(FrontendAssets.Asset asset, PluginConfiguration configuration)
     {
-        string marker = $"data-sleekfin-{feature}-asset";
-        if (includeStyles && !contents.Contains($"{marker}=\"style\"", StringComparison.Ordinal))
+        return asset.RequiredFeature switch
         {
-            string stylesheet = $"<link rel=\"stylesheet\" href=\"../SleekFin/sleekfin-{feature}.css{cacheQuery}\" {marker}=\"style\" />";
-            contents = contents.Replace("</head>", $"{stylesheet}</head>", StringComparison.Ordinal);
-        }
-
-        if (!contents.Contains($"{marker}=\"script\"", StringComparison.Ordinal))
-        {
-            string script = $"<script defer src=\"../SleekFin/sleekfin-{feature}.js{cacheQuery}\" {marker}=\"script\"></script>";
-            contents = contents.Replace("</body>", $"{script}</body>", StringComparison.Ordinal);
-        }
-
-        return contents;
+            FrontendAssets.Feature.Header => configuration.HeaderEnabled,
+            FrontendAssets.Feature.Hero => configuration.HeroEnabled,
+            _ => true
+        };
     }
 }

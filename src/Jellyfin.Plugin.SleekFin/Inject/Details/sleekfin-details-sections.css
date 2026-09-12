@@ -1,0 +1,90 @@
+html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .detailPageSecondaryContainer {
+    box-sizing: border-box;
+    padding: 0 0 72px var(--sleekfin-page-gutter) !important;
+}
+
+html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .detailPageSecondaryContainer > .detailVerticalSection:not(#castCollapsible):not(#similarCollapsible) {
+    display: none !important;
+}
+
+html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] #castCollapsible {
+    margin: 36px 0 0 !important;
+}
+
+html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] #similarCollapsible {
+    margin: 56px 0 0 !important;
+}
+
+.sleekfin-details-original-heading {
+    display: none !important;
+}
+
+html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] :is(#castCollapsible, #similarCollapsible) > .sleekfin-section-heading {
+    margin-bottom: 20px;
+}
+
+html.sleekfin-details-mounted #castCollapsible > [is="emby-scroller"] {
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+html.sleekfin-details-mounted #castCollapsible #castContent {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 0 var(--sleekfin-page-gutter) 4px 0 !important;
+    scrollbar-width: none;
+    transform: none !important;
+}
+
+html.sleekfin-details-mounted #castCollapsible #castContent::-webkit-scrollbar {
+    display: none;
+}
+
+html.sleekfin-details-mounted #castCollapsible .card {
+    flex: 0 0 148px;
+    width: 148px !important;
+}
+
+html.sleekfin-details-mounted :is(#castCollapsible, #similarCollapsible) .cardBox {
+    margin: 0 !important;
+}
+
+html.sleekfin-details-mounted #castCollapsible .cardPadder {
+    padding-bottom: 133.333% !important;
+}
+
+html.sleekfin-details-mounted :is(#castCollapsible, #similarCollapsible) :is(.cardContent, .cardImageContainer, .blurhash-canvas),
+html.sleekfin-details-mounted #castCollapsible .cardOverlayContainer {
+    border-radius: 9px;
+}
+
+html.sleekfin-details-mounted #castCollapsible .cardOverlayContainer {
+    background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.64));
+}
+
+html.sleekfin-details-mounted #castCollapsible .cardText {
+    color: var(--sleekfin-text);
+    font: 500 13px/18px var(--sleekfin-font-family);
+    padding: 6px 0 0;
+    text-align: start !important;
+}
+
+html.sleekfin-details-mounted #castCollapsible .cardText-secondary {
+    color: var(--sleekfin-muted);
+    font-size: 12px;
+    font-weight: 400;
+    padding-top: 1px;
+}
+
+html.sleekfin-details-mounted #castCollapsible .cardText a {
+    color: inherit;
+    text-decoration: none;
+}
+
+@media (max-width: 767px) {
+    html.sleekfin-details-mounted #castCollapsible .card {
+        flex-basis: 132px;
+        width: 132px !important;
+    }
+}

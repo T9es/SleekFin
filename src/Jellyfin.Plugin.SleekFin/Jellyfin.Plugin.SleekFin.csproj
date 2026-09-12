@@ -8,6 +8,7 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Version>1.0.0.0</Version>
         <RootNamespace>Jellyfin.Plugin.SleekFin</RootNamespace>
+        <FrontendRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/../..'))</FrontendRoot>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,21 +28,27 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Configuration\config.html" />
-        <EmbeddedResource Include="Inject\Theme\sleekfin-theme.css" />
-        <EmbeddedResource Include="Inject\Theme\sleekfin-theme.js" />
-        <EmbeddedResource Include="Inject\Components\sleekfin-icons.js" />
-        <EmbeddedResource Include="Inject\Components\sleekfin-components.css" />
-        <EmbeddedResource Include="Inject\Components\sleekfin-components.js" />
-        <EmbeddedResource Include="Inject\Header\sleekfin-header.css" />
-        <EmbeddedResource Include="Inject\Header\sleekfin-header.js" />
-        <EmbeddedResource Include="Inject\Hero\sleekfin-hero.css" />
-        <EmbeddedResource Include="Inject\Hero\sleekfin-hero.js" />
-        <EmbeddedResource Include="Inject\Media\sleekfin-media.css" />
-        <EmbeddedResource Include="Inject\Media\sleekfin-media.js" />
-        <EmbeddedResource Include="Inject\Details\sleekfin-details.css" />
-        <EmbeddedResource Include="Inject\Details\sleekfin-details.js" />
+        <EmbeddedResource Include="Inject\**\*.css" />
+        <EmbeddedResource Include="Inject\**\*.js" Exclude="Inject\Build\*.js" />
         <EmbeddedResource Include="Inject\Fonts\*.woff2" />
     </ItemGroup>
+
+    <Target Name="InstallFrontendDependencies"
+            Inputs="$(FrontendRoot)/package.json;$(FrontendRoot)/package-lock.json"
+            Outputs="$(FrontendRoot)/node_modules/.package-lock.json"
+            Condition="'$(DesignTimeBuild)' != 'true'">
+        <Exec WorkingDirectory="$(FrontendRoot)" Command="npm ci" />
+    </Target>
+
+    <Target Name="BuildFrontend"
+            BeforeTargets="PrepareForBuild"
+            DependsOnTargets="InstallFrontendDependencies"
+            Condition="'$(DesignTimeBuild)' != 'true'">
+        <Exec WorkingDirectory="$(FrontendRoot)" Command="npm run build" />
+        <ItemGroup>
+            <EmbeddedResource Include="Inject\Build\*.js" />
+        </ItemGroup>
+    </Target>
 
     <ItemGroup>
         <None Include="..\..\meta.json" Link="meta.json" CopyToOutputDirectory="Always" />

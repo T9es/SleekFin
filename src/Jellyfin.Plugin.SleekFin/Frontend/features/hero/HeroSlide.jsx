@@ -1,0 +1,40 @@
+import { Button, Facts, h, item, useState } from '../../shared/runtime.js';
+
+export function HeroSlide({ entry, active }) {
+  const [logoFailed, setLogoFailed] = useState(false);
+  const displayItem = entry.display;
+  const logoUrl = item.imageUrl(displayItem, 'Logo');
+  const backdropUrl = item.imageUrl(displayItem, 'Backdrop');
+  const rating = Number(displayItem.CommunityRating || 0);
+  const facts = [];
+
+  if (rating > 0) {
+    facts.push({ className: 'sleekfin-hero-score', icon: 'star', text: rating.toFixed(1) });
+  }
+  facts.push({ text: item.year(displayItem) });
+  facts.push({ text: item.typeLabel(displayItem.Type) });
+  (displayItem.Genres || []).slice(0, 2).forEach((genre) => facts.push({ text: genre }));
+
+  return (
+    <section class="sleekfin-hero-slide" data-active={active ? 'true' : 'false'}>
+      {backdropUrl && <img class="sleekfin-hero-backdrop" src={backdropUrl} />}
+      <div class="sleekfin-hero-vignette" />
+      <div class="sleekfin-hero-seam" />
+      <div class="sleekfin-hero-content">
+        <div class="sleekfin-hero-stack">
+          <div class="sleekfin-hero-title-box">
+            {logoUrl && !logoFailed ? <img class="sleekfin-hero-title-logo" src={logoUrl} onError={() => setLogoFailed(true)} /> : <span class="sleekfin-hero-title">{displayItem.Name || ''}</span>}
+          </div>
+          <div class="sleekfin-hero-facts">
+            <Facts values={facts} />
+          </div>
+          {displayItem.Overview && <p class="sleekfin-hero-description">{displayItem.Overview}</p>}
+          <div class="sleekfin-hero-actions">
+            <Button {...item.actionAttributes(entry.play, 'play')} variant="primary" icon="play" label="Play" />
+            <Button {...item.actionAttributes(displayItem, 'link')} variant="control" icon="info" label="More info" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

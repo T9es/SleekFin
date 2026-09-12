@@ -12,6 +12,7 @@ dist/
 .cursor/
 _ReSharper*/
 BenchmarkDotNet.Artifacts/
+**/Inject/Build/
 
 node_modules/
 

@@ -1,0 +1,40 @@
+.sleekfin-details-stack > .mainDetailButtons {
+    align-items: center;
+    display: flex !important;
+    gap: 12px;
+    margin: 18px 0 0 !important;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > * {
+    display: none !important;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > :is(.btnPlay, .btnReplay, .btnDownload, .btnUserRating):not(.hide) {
+    display: inline-flex !important;
+    margin: 0 !important;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > :is(.btnPlay, .btnReplay).sleekfin-details-suppressed-action {
+    display: none !important;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > :is(.btnPlay, .btnReplay):not(.hide) {
+    order: 1;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > .btnUserRating:not(.hide) {
+    order: 2;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > .btnDownload:not(.hide) {
+    order: 3;
+}
+
+.sleekfin-details-stack > .mainDetailButtons .detailButton-content {
+    flex-direction: row !important;
+    height: auto;
+}
+
+.sleekfin-details-stack > .mainDetailButtons .material-icons {
+    display: none !important;
+}
