@@ -13,7 +13,7 @@ These instructions apply to the entire repository. Treat `references/` as read-o
 
 ## Reference baseline
 
-- Use SeerrFin as the structural reference: one solution, one Jellyfin plugin project, embedded vanilla JavaScript and CSS, a small plugin entry point, role-based folders, and version-triggered release automation.
+- Use SeerrFin as the structural reference: one solution, one Jellyfin plugin project, embedded browser assets, a small plugin entry point, role-based folders, and version-triggered release automation.
 - Reuse architectural patterns, not SeerrFin product behavior, names, selectors, API integrations, or legacy compatibility code.
 - Check `references/jellyfin` and the exact `v12.0` state of `references/jellyfin-web` before relying on a Jellyfin API, DOM structure, route, layout behavior, or CSS class.
 - Use the other reference plugins to compare integration patterns, not as authority over Jellyfin 12 source.
@@ -36,7 +36,7 @@ The original request to make an edit is not commit approval. Approval for an ear
 
 ## Repository organization
 
-Keep production code under `src/Jellyfin.Plugin.SleekFin/` and preserve these boundaries:
+Keep plugin production code under `src/Jellyfin.Plugin.SleekFin/`, keep the frontend build entry point at the repository root, and preserve these boundaries:
 
 | Location | Responsibility |
 | --- | --- |
@@ -46,8 +46,10 @@ Keep production code under `src/Jellyfin.Plugin.SleekFin/` and preserve these bo
 | `Services/` | Application behavior, external integrations, stateful work, and background operations. |
 | `Helpers/` | Focused stateless normalization, transformation, and reusable operations. |
 | `Model/` | Request, response, transport, and internal data shapes. |
-| `Inject/` | Browser-only JavaScript and CSS, split by cohesive feature responsibility. |
+| `Frontend/` | Authored Preact/JSX components, feature logic, runtime code, and shared browser utilities. |
+| `Inject/` | Hand-authored component and feature CSS, static browser assets, and generated bundles under `Build/`. |
 | `Properties/AssemblyInfo.cs` | Assembly identity and version. |
+| `build.js` | The repository-level frontend build entry point. |
 | `meta.json` | Installed plugin metadata. |
 | `manifest.json` | Plugin repository/catalog metadata. |
 | `.github/workflows/release.yml` | Version-triggered packaging and release automation. |
@@ -57,7 +59,10 @@ Keep production code under `src/Jellyfin.Plugin.SleekFin/` and preserve these bo
 - Keep controllers thin. Split a controller or service when it starts handling separate resources, integrations, or workflows.
 - When dependency injection becomes necessary, use `PluginServiceRegistrator` as the single registration point. Do not create or retain an empty registrator.
 - A new injected asset is incomplete until it is embedded in the project file, served by a controller, injected in the correct order, and verified in the built assembly.
-- Update the README only when user-visible behavior, prerequisites, installation, configuration, compatibility, or troubleshooting changes.
+- Keep `build.js` at the repository root. Keep `Inject/Build/` gitignored and generate it through the frontend, .NET, and release builds; never edit or commit generated bundles directly.
+- Split the authored frontend by cohesive components and features with matching, narrowly scoped `sleekfin-*.css` assets. Do not collapse distinct responsibilities back into monolithic JavaScript or CSS files.
+- Do not give frontend modules independent version constants or markers. Use the plugin release version only where a version is actually required.
+- Update the README only when user-visible behavior, prerequisites, installation, configuration, compatibility, or troubleshooting changes. When its feature set changes, keep the Features section comprehensive. Credit libraries, bundled dependencies, assets, designs, or upstream code that SleekFin uses, adapts, or must attribute; do not add speculative or unrelated credits.
 
 ## C# conventions
 
@@ -129,9 +134,13 @@ Keep production code under `src/Jellyfin.Plugin.SleekFin/` and preserve these bo
 
 ## Injected JavaScript and CSS
 
-- Keep the frontend dependency-free vanilla JavaScript and CSS unless the user explicitly approves a toolchain change.
-- Use strict mode and an IIFE or one guarded `window.SleekFin` namespace. Do not leak helpers or mutable state into unrelated globals.
+- Keep the approved Preact/JSX authoring layer and compile it to isolated browser bundles. Do not add another framework, build layer, or frontend dependency without explicit approval.
+- Keep generated bundles in strict-mode IIFEs and expose only one guarded `window.SleekFin` namespace. Do not leak helpers or mutable state into unrelated globals.
 - Use `camelCase` for functions and variables and `UPPER_SNAKE_CASE` for true constants.
+- Keep JSX compact. Put an opening tag and its props on one line when it remains readable, and do not wrap straightforward components in verbose abstractions.
+- Keep straightforward calls, expressions, destructuring, object literals, and short returns on one line when they remain readable; use vertical formatting only when it materially improves clarity.
+- Prefer JSX for component UI. For small non-Preact DOM fragments containing trusted values, prefer one parameterized template literal over long `createElement` and append chains; escape or sanitize untrusted values before interpolation.
+- Represent each SVG icon's markup or path data as one string rather than an array of path fragments.
 - Every module must tolerate duplicate evaluation and repeated Jellyfin SPA mounts.
 - Guard every persistent event listener, observer, timer, and mount operation. Clean them up when their owning feature is removed.
 - Do not assume a single page load or stable DOM. Jellyfin may keep hidden pages mounted, duplicate route containers, or replace React-managed headers after startup.
@@ -139,10 +148,14 @@ Keep production code under `src/Jellyfin.Plugin.SleekFin/` and preserve these bo
 - Debounce or batch MutationObserver work. Observe the narrowest stable ancestor and ignore mutations the plugin caused itself.
 - Protect async rendering with request/session identifiers or equivalent cancellation so stale results cannot update a detached or superseded view.
 - Prefer stable IDs, classes, and `data-*` markers. Keep SleekFin identifiers prefixed with `sleekfin` and custom events under `sleekfin:*`.
-- Prefer DOM APIs and `textContent` for untrusted content. Do not interpolate remote or user-provided values into `innerHTML` without escaping or sanitizing them.
+- Use DOM APIs or `textContent` for untrusted content. Do not interpolate remote or user-provided values into `innerHTML` without escaping or sanitizing them.
 - Do not reach into Jellyfin webpack internals or mutate React-owned nodes unless no supported boundary exists, the user requested the behavior, and the exact Jellyfin 12 implementation was inspected.
 - Scope CSS under `.sleekfin` or `.sleekfin-*`. Avoid generic element rules, global resets, SeerrFin's legacy `bst-*` prefix, and unrelated Jellyfin overrides.
-- Reuse Jellyfin variables where appropriate. Add explicit responsive, keyboard, focus, reduced-motion, and TV behavior when the feature requires them.
+- Reuse Jellyfin variables where appropriate. Add responsive and TV behavior when the feature requires them.
+- Do not add or retain accessibility-only attributes, roles, tab stops, duplicate labels, focus rules, or reduced-motion branches unless the user requests them or the existing Jellyfin contract needs them for behavior. Preserve native semantics and any Jellyfin attributes or selectors that functionality depends on.
+- Remove only proven dead or redundant JavaScript and CSS. Preserve lifecycle guards, stale-request protection, Jellyfin compatibility behavior, CSS specificity, and cascade order even when a shorter implementation is possible.
+- Group CSS selectors or declarations only when they always apply together and the merge preserves specificity and order. Remove proven no-op declarations, orphaned selectors, unused imports or exports, dead branches, and unused props.
+- Keep browser targets intentional and derived from supported Jellyfin clients. Do not change or remove compatibility compilation without verifying the generated bundles against those clients.
 - Avoid `!important` unless overriding Jellyfin requires it; keep it narrowly scoped and explain the compatibility reason when non-obvious.
 
 ## Comments
@@ -183,19 +196,20 @@ Run the smallest relevant checks while developing, then run the full applicable 
 | --- | --- |
 | Any tracked change | Review the complete diff, run `git diff --check` when Git is available, and confirm no unrelated files are included. |
 | C# or project file | `dotnet build SleekFin.sln -c Release` and `dotnet format SleekFin.sln --verify-no-changes --no-restore`. |
-| Injected JavaScript | Run `node --check` on every changed JavaScript file. |
+| Frontend JavaScript or JSX | Run `npm run build` and `npm run check`, then run `node --check` on every changed authored `.js` file. |
 | Configuration HTML script | Extract and syntax-check its inline script, then verify load, edit, save, reload, and unknown-field preservation. |
 | `meta.json` or `manifest.json` | `jq empty meta.json manifest.json`, then check GUID, version, ABI, owner, assembly name, and release URL consistency. |
 | Embedded asset wiring | Build, then confirm every added resource name exists in `Jellyfin.Plugin.SleekFin.dll`. |
 | Release workflow | Run `actionlint` when available and smoke-test version parsing, version replacement, ZIP contents, checksum generation, and manifest insertion. |
 | Transformation | Verify disabled/malformed input is unchanged, repeated application is idempotent, asset order is correct, and base URLs are preserved. |
 | API or security behavior | Verify authorization, validation, cancellation, status codes, safe errors, and absence of secrets in responses/logs. |
-| User-facing injected UI | Test affected Modern, desktop/mobile legacy, TV, navigation/remount, loading, empty, error, and keyboard paths as applicable. |
+| User-facing injected UI | Test affected Modern, desktop/mobile legacy, TV, navigation/remount, loading, empty, and error paths, plus keyboard behavior only when the feature or existing Jellyfin contract requires it. |
 
 - Do not add test files or test projects unless the user explicitly requests them. Prefer existing checks and temporary local harnesses that are not committed.
 - There is no assumption that an automated suite already exists. Report what actually ran.
 - For browser integration, the meaningful live sequence is: build, install into Jellyfin 12, install/enable File Transformation, restart Jellyfin, hard-refresh the client, inspect console/network output, and exercise the affected lifecycle path.
 - Record the Jellyfin version, plugin version, browser/client, relevant theme/plugins, steps, and outcome for live testing.
+- For reference-driven visual changes, inspect the rendered result after each meaningful iteration. Use side-by-side or overlay comparisons for subtle fidelity work, and preserve any manual user changes made between iterations.
 - A successful build or syntax check is not proof that injected behavior works in a real Jellyfin instance.
 - If live verification is unavailable, say so explicitly before asking for commit approval.
 
@@ -226,7 +240,7 @@ After approval:
 
 ### Commit subjects
 
-Use a short subject in this form:
+Use one comprehensive single-line subject in this form:
 
 ```text
 type: Capitalized description of the completed outcome
@@ -235,10 +249,11 @@ type: Capitalized description of the completed outcome
 - Prefer `feat`, `fix`, `style`, `refactor`, `docs`, `test`, `build`, `ci`, or `chore`.
 - Use `feat` for new behavior and `fix` for corrected behavior. Do not label a bug fix as a feature.
 - SeerrFin historically used `misc`; use a more precise type whenever one exists.
+- Inspect recent commit subjects first and match their tone and level of detail.
 - Match SeerrFin's user-visible, past-tense tone where natural: `Added`, `Fixed`, `Updated`, `Made`, or `Improved`.
-- Describe the result rather than an implementation detail unless the change is inherently technical.
+- Include the main user-visible result and important technical or architectural details while omitting incidental cleanup and low-value implementation trivia.
+- Do not add a commit body, paragraphs, or a dashed list. Keep all relevant information in the single Conventional Commit subject line.
 - Keep one concern per commit. Required cross-layer files for one working vertical slice belong together; unrelated cleanup, documentation, dependencies, formatting, or workflow changes do not.
-- Use a commit body only when the reason, compatibility constraint, migration, or verification caveat would otherwise be lost.
 
 ## Release and version guard
 
