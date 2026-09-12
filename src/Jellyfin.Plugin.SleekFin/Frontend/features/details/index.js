@@ -5,13 +5,20 @@ import { createHero } from './hero.jsx';
 import { createSections } from './sections.jsx';
 import { createSimilar } from './similar.jsx';
 
+const CONCEALED_CLASS = 'sleekfin-details-concealed';
+const DETAIL_PATH = /(^|\/)details\/?$/;
+const HISTORY_METHODS = ['pushState', 'replaceState'];
 const SUPPORTED_TYPES = ['Movie', 'Series', 'Season', 'Episode'];
+// Jellyfin activates a page through viewManager.onViewChange, which dispatches these on the page
+// element it just made current, so event.target identifies the page Jellyfin is showing.
+const VIEW_EVENTS = ['viewinit', 'viewbeforeshow', 'viewshow'];
 const WINDOW_EVENTS = ['hashchange', 'popstate', 'pageshow'];
 const features = (window.SleekFinFeatures = window.SleekFinFeatures || {});
 
 features.details?.stop?.();
 
 const state = {
+  activePage: null,
   currentId: '',
   currentServerId: '',
   generation: 0,
@@ -19,23 +26,99 @@ const state = {
   loadingId: '',
   mount: null,
   page: null,
+  previousPage: null,
   reconcileTimer: 0,
   retryTimer: 0,
   seasons: [],
   similar: [],
   started: false,
+  stopHidden: null,
+  stopHistory: null,
   stopWatching: null,
 };
 
+// Jellyfin 12 is a hash router, so the route is carried in window.location.hash; the pathname
+// fallback mirrors the theme feature and the stripped '!' covers the deprecated bang form. Only the
+// fallback needs location.search tacked on, and some routes start their query with '&'.
 function route() {
-  const match = window.location.hash.match(/^#\/details\?([^#]*)/);
-  const parameters = new URLSearchParams(match ? match[1] : '');
+  const target = (window.location.hash.slice(1) || `${window.location.pathname}${window.location.search}`)
+    .replace(/^!+/, '');
+  const separator = target.search(/[?&]/);
+  const path = (separator < 0 ? target : target.slice(0, separator)).replace(/^[!/]+/, '/');
+  if (!DETAIL_PATH.test(path)) return { id: '', serverId: '' };
+  const parameters = new URLSearchParams(separator < 0 ? '' : target.slice(separator + 1));
   return { id: parameters.get('id') || '', serverId: parameters.get('serverId') || '' };
 }
 
+function conceal(concealed) {
+  document.documentElement.classList.toggle(CONCEALED_CLASS, concealed);
+}
+
+function detailPageOf(target) {
+  return target && typeof target.closest === 'function' ? target.closest('#itemDetailPage') : null;
+}
+
+function activePage() {
+  if (!state.activePage) return null;
+  if (dom.isConnected(state.activePage)) return state.activePage;
+  state.activePage = null;
+  return null;
+}
+
+// Jellyfin renders a page's own artwork as a background-image URL containing /Items/<id>/, which is
+// what tells two containers with live content apart while they are on screen together.
+function referencesId(page, id) {
+  const marker = `/Items/${id}/`;
+  return Array.from(page.querySelectorAll('[style*="/Items/"]'))
+    .some((element) => (element.style.backgroundImage || '').includes(marker));
+}
+
+// A candidate is worth mounting on sight only when it is corroborated: it carries the marker our own
+// mount set, or its own artwork belongs to the requested item.
+function corroborated(page, id) {
+  return page.dataset.sleekfinDetails === 'true' || referencesId(page, id);
+}
+
+// Jellyfin activates a page through viewManager.onViewChange, which sets currentView and then
+// dispatches viewinit/viewbeforeshow/viewshow on that element, so event.target is the active page.
+// Computed visibility cannot identify it: concealment sets visibility: hidden on every
+// #itemDetailPage, and the positional fallback that replaced it mounted onto a stale container,
+// released the concealment and painted the stock page. Without an active element only pages Jellyfin
+// has not hidden are candidates, and one of them has to be identifiable beyond doubt before anything
+// is mounted; otherwise the route waits for the next view event. That stays unambiguous only because
+// reconcile() runs 80 ms after the navigation, by which point Jellyfin's afterAnimate has hidden the
+// outgoing page: if two containers ever lack 'hide' at that moment, the marker and artwork
+// preferences decide or the route waits - it never falls back to document order, which is what
+// picked a stale container.
 function findPage(id) {
   if (!id) return null;
-  return Array.from(document.querySelectorAll('#itemDetailPage')).find(dom.isVisible) || null;
+  const active = activePage();
+  if (active) return active;
+
+  const candidates = Array.from(document.querySelectorAll('#itemDetailPage'))
+    .filter((page) => !page.classList.contains('hide'))
+    // The page the route is leaving stays on screen until Jellyfin swaps containers, and before the
+    // incoming one is appended it is the only hide-less candidate. Mounting this item's hero there
+    // would put it on the wrong page, so that page counts only when its own artwork already belongs
+    // to the requested item.
+    .filter((page) => page !== state.previousPage || referencesId(page, id));
+
+  if (candidates.length === 1) {
+    // A lone candidate is normally the page Jellyfin is showing, but one with no layout boxes cannot
+    // paint at all, so it is mounted only when it is corroborated. This layout test decides whether a
+    // candidate is worth mounting; pageHidden() must not consult layout, because a page Jellyfin is
+    // midway through hiding still has its boxes and would then be reported as hidden.
+    const only = candidates[0];
+    return only.getClientRects().length > 0 || corroborated(only, id) ? only : null;
+  }
+  if (candidates.length > 1) {
+    const mounted = candidates.filter((page) => page.dataset.sleekfinDetails === 'true');
+    if (mounted.length === 1) return mounted[0];
+    const matching = candidates.filter((page) => referencesId(page, id));
+    if (matching.length === 1) return matching[0];
+  }
+
+  return null;
 }
 
 function routeClient(serverId) {
@@ -52,6 +135,7 @@ function loadSeasons(client, userId, mediaItem) {
 }
 
 function destroyMount() {
+  stopHiddenWatch();
   if (!state.mount) return;
   state.mount.episodes?.destroy();
   state.mount.similar.destroy();
@@ -66,7 +150,12 @@ function destroyMount() {
 function mount() {
   if (!state.page || !state.item || !SUPPORTED_TYPES.includes(state.item.Type)) return;
   const hero = createHero(state.page);
-  if (!hero) return;
+  if (!hero) {
+    // Jellyfin's template does not expose the nodes the hero is built from, so the route falls back
+    // to Jellyfin's own page instead of staying hidden until the stylesheet failsafe releases it.
+    conceal(false);
+    return;
+  }
   const actions = createActions(hero.actions, state.item.Type === 'Episode');
   const sections = createSections(state.page);
   const similar = createSimilar(state.page);
@@ -85,50 +174,77 @@ function mount() {
   hero.render(state.item, state.seasons);
   actions.reconcile();
   similar.render(state.similar);
+  // Revealed once Jellyfin has hidden the page it is leaving, which the observer below waits for.
+  concealUntilAlone(state.page);
 }
 
 function load(id, serverId) {
   const client = routeClient(serverId);
   if (!client) {
     if (!window.ApiClient) {
+      // The client has not been assigned yet, so the route keeps waiting for it.
       window.clearTimeout(state.retryTimer);
       state.retryTimer = window.setTimeout(scheduleReconcile, 250);
+    } else {
+      // The route belongs to another server than this client serves, so no item can ever resolve:
+      // Jellyfin's own page has to show instead of a route left dark until the stylesheet failsafe.
+      conceal(false);
     }
     return;
   }
 
   const generation = state.generation;
   const userId = client.getCurrentUserId();
+  const isCurrent = () => generation === state.generation && id === state.currentId;
   state.loadingId = id;
-  Promise.all([client.getItem(userId, id), client.getSimilarItems(id, { userId, limit: 12 }).catch(() => ({ Items: [] }))])
-    .then((results) => {
-      if (generation !== state.generation || id !== state.currentId) return null;
-      state.item = results[0];
-      state.similar = results[1].Items || [];
+
+  // Similar titles and seasons only fill in a view that is already on screen, so they are
+  // requested beside the item instead of gating the reveal the way Promise.all used to.
+  client.getSimilarItems(id, { userId, limit: 12 })
+    .then((response) => {
+      if (!isCurrent()) return;
+      state.similar = response.Items || [];
       scheduleReconcile();
-      if (!SUPPORTED_TYPES.includes(state.item.Type)) return { Items: [] };
-      return loadSeasons(client, userId, state.item);
     })
-    .then((result) => {
-      if (!result || generation !== state.generation || id !== state.currentId) return;
-      state.seasons = result.Items || [];
+    .catch(() => {});
+
+  client.getItem(userId, id)
+    .then((mediaItem) => {
+      if (!isCurrent()) return;
+      state.item = mediaItem;
       state.loadingId = '';
-      if (state.mount) {
-        state.mount.hero.render(state.item, state.seasons);
-        if (!state.mount.episodes && ['Series', 'Season', 'Episode'].includes(state.item.Type) && state.seasons.length) {
-          state.mount.episodes = createEpisodes(state.page, state.item, state.seasons);
-        }
-      }
       scheduleReconcile();
+      if (!SUPPORTED_TYPES.includes(mediaItem.Type)) return;
+
+      // Seasons only extend the view that is already on screen, so a failed season request must
+      // not be handled like a failed item request.
+      loadSeasons(client, userId, mediaItem)
+        .then((result) => {
+          if (!isCurrent()) return;
+          state.seasons = result.Items || [];
+          if (state.mount) {
+            state.mount.hero.render(state.item, state.seasons);
+            if (!state.mount.episodes && ['Series', 'Season', 'Episode'].includes(state.item.Type) && state.seasons.length) {
+              state.mount.episodes = createEpisodes(state.page, state.item, state.seasons);
+            }
+          }
+          scheduleReconcile();
+        })
+        .catch(() => {});
     })
     .catch(() => {
-      if (generation === state.generation && id === state.currentId) {
-        state.loadingId = '';
-      }
+      if (!isCurrent()) return;
+      state.loadingId = '';
+      // Only an item that cannot be resolved falls back to Jellyfin's own page, otherwise the
+      // concealment would leave the route dark until the stylesheet failsafe expires.
+      conceal(false);
     });
 }
 
 function select(page, id, serverId) {
+  // Concealed before anything else so an in-app navigation hides the incoming native page in the
+  // same task as the route change, before Jellyfin appends and paints it.
+  conceal(true);
   destroyMount();
   state.generation += 1;
   state.currentId = id;
@@ -136,12 +252,15 @@ function select(page, id, serverId) {
   state.item = null;
   state.loadingId = '';
   state.page = page;
+  // The page recorded for the previous route must not be mounted onto this one.
+  state.previousPage = state.activePage || state.mount?.page || null;
+  state.activePage = null;
   state.seasons = [];
   state.similar = [];
   load(id, serverId);
 }
 
-function reset() {
+function clearState() {
   destroyMount();
   state.generation += 1;
   state.currentId = '';
@@ -149,8 +268,67 @@ function reset() {
   state.item = null;
   state.loadingId = '';
   state.page = null;
+  state.previousPage = null;
+  state.activePage = null;
   state.seasons = [];
   state.similar = [];
+}
+
+function reset() {
+  clearState();
+  conceal(false);
+}
+
+// Jellyfin hides the outgoing page only in its afterAnimate step, so releasing the concealment while
+// another detail page is still shown exposes the native page: on detail-to-detail navigation as much
+// as when leaving a detail route. Jellyfin's stylesheet defines `.hide { display: none !important }`,
+// which makes that class the authoritative signal, and the observer below fires on the mutation that
+// adds it. A layout test cannot stand in for it: a page Jellyfin is still hiding keeps its layout
+// boxes, so treating "no boxes" as hidden released the concealment early and painted the stock page
+// for a few frames on the way back to a non-detail route. No timer is involved; the stylesheet
+// failsafe stays the only time-based release.
+function pageHidden(page) {
+  if (!dom.isConnected(page)) return true;
+  for (let node = page; node && node !== document.body; node = node.parentElement) {
+    if (node.classList.contains('hide')) return true;
+  }
+  return false;
+}
+
+function shownDetailPages(except) {
+  return Array.from(document.querySelectorAll('#itemDetailPage'))
+    .filter((page) => page !== except && !pageHidden(page));
+}
+
+function stopHiddenWatch() {
+  state.stopHidden?.();
+  state.stopHidden = null;
+}
+
+function concealUntilAlone(except) {
+  stopHiddenWatch();
+  const release = () => {
+    if (shownDetailPages(except).length) return;
+    stopHiddenWatch();
+    conceal(false);
+  };
+  const observer = new MutationObserver(release);
+  const observeChain = (start) => {
+    for (let node = start; node && node !== document.body; node = node.parentElement) {
+      observer.observe(node, { attributes: true, attributeFilter: ['class', 'style'], childList: true });
+    }
+  };
+  Array.from(document.querySelectorAll('#itemDetailPage')).forEach(observeChain);
+  state.stopHidden = () => observer.disconnect();
+  release();
+}
+
+function leaveDetail() {
+  // Re-concealed here because a mounted page was revealed: tearing the hero down would otherwise
+  // put the stock layout back on screen while Jellyfin still shows that page during the transition.
+  clearState();
+  conceal(true);
+  concealUntilAlone(null);
 }
 
 function reconcile() {
@@ -159,21 +337,34 @@ function reconcile() {
   const { id, serverId } = currentRoute;
   const page = findPage(id);
   if (!page) {
+    // A null page means the active page is not identifiable yet, not that the route was left: the
+    // concealment stays and the next reconcile decides. The real exits (non-detail route, failed
+    // request, unsupported item, stop) release it.
     if (state.page || state.mount) {
-      reset();
+      conceal(true);
+      state.page = null;
+      destroyMount();
     }
     return;
   }
-  if (state.page !== page || state.currentId !== id || state.currentServerId !== serverId) {
+  if (state.currentId !== id || state.currentServerId !== serverId) {
     select(page, id, serverId);
     return;
   }
-  if (!state.item && !state.loadingId) {
-    load(id, serverId);
+  if (state.page !== page) {
+    conceal(true);
+    destroyMount();
+    state.page = page;
+  }
+  if (!state.item) {
+    if (!state.loadingId) {
+      load(id, serverId);
+    }
     return;
   }
-  if (!state.item || !SUPPORTED_TYPES.includes(state.item.Type)) {
+  if (!SUPPORTED_TYPES.includes(state.item.Type)) {
     destroyMount();
+    conceal(false);
     return;
   }
   if (!state.mount || !state.mount.hero.isConnected()) {
@@ -192,15 +383,65 @@ function scheduleReconcile() {
   state.reconcileTimer = window.setTimeout(reconcile, 80);
 }
 
+function enter() {
+  const { id, serverId } = route();
+  if (!id) {
+    if (state.currentId || state.page) {
+      leaveDetail();
+    } else {
+      conceal(false);
+    }
+    return;
+  }
+  if (state.currentId === id && state.currentServerId === serverId) return;
+
+  select(null, id, serverId);
+}
+
+function onRouteChange(event) {
+  const page = detailPageOf(event?.target);
+  if (page) {
+    state.activePage = page;
+  }
+  enter();
+  scheduleReconcile();
+}
+
+// Jellyfin 12 navigates through the history package, which calls window.history.pushState, so
+// patching the history methods is what catches an in-app navigation early enough to conceal the
+// native page Jellyfin is about to append. The window events and the page observer stay as the
+// backup for navigations this wrapper cannot see.
+function watchHistory() {
+  const restores = HISTORY_METHODS.map((method) => {
+    const original = window.history[method];
+    window.history[method] = function (...args) {
+      const result = original.apply(this, args);
+      onRouteChange();
+      return result;
+    };
+    return () => {
+      window.history[method] = original;
+    };
+  });
+  return () => restores.forEach((restore) => restore());
+}
+
+// Back and forward never call the history methods, so the window popstate listener in WINDOW_EVENTS
+// is their concealment point. Measured in a browser: popstate is fired at the Window object and does
+// not reach document listeners at all, and on a target the capture and bubble listeners run in
+// registration order, so an extra capture listener buys no ordering. React Router's own popstate
+// handler only schedules an asynchronous render and the restored page is revealed in an effect,
+// while this listener runs inside the popstate task.
 function start() {
   if (state.started) return;
 
   state.started = true;
-  state.stopWatching = dom.watchSpa(scheduleReconcile, {
-    events: WINDOW_EVENTS,
+  state.stopWatching = dom.watchSpa(onRouteChange, {
+    events: [...WINDOW_EVENTS, ...VIEW_EVENTS],
     viewshow: true,
   });
-  scheduleReconcile();
+  state.stopHistory = watchHistory();
+  onRouteChange();
 }
 
 function stop() {
@@ -211,6 +452,8 @@ function stop() {
   window.clearTimeout(state.retryTimer);
   state.stopWatching?.();
   state.stopWatching = null;
+  state.stopHistory?.();
+  state.stopHistory = null;
   reset();
 }
 

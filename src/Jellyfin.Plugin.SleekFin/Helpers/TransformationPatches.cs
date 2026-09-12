@@ -10,9 +10,22 @@ public static class TransformationPatches
         "<link\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>",
         RegexOptions.CultureInvariant);
 
+    // Matches the deferred asset scripts and the inline boot script, so a repeated transformation
+    // replaces them instead of stacking them. The body is matched lazily, which stops each match at
+    // its own closing tag and keeps it from swallowing the document content between two injected
+    // elements.
     private static readonly Regex InjectedScripts = new(
-        "<script\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>\\s*</script>",
+        "<script\\b[^>]*\\bdata-sleekfin-(?:(?:[a-z]+-)?asset=\"[^\"]*\"|boot\\b)[^>]*>[\\s\\S]*?</script>",
         RegexOptions.CultureInvariant);
+
+    // Jellyfin paints its own detail page long before the deferred bundle runs, so only a
+    // synchronous inline script parsed with the head can conceal it from the first frame. It is
+    // emitted last in the head, behind the stylesheets that style the concealed state, and the
+    // class name below is the one the details bundle adds and removes.
+    private const string BootElement =
+        @"<script data-sleekfin-boot>(function(){var h=window.location.hash.slice(1).replace(/^!+/,'');"
+        + @"var s=h||window.location.pathname,i=s.search(/[?&]/),p=(i<0?s:s.slice(0,i)).replace(/^[!\/]+/,'/');"
+        + @"if(/(^|\/)details\/?$/.test(p)){document.documentElement.classList.add('sleekfin-details-concealed');}})();</script>";
 
     public static string IndexHtml(PatchRequestPayload payload)
     {
@@ -45,6 +58,8 @@ public static class TransformationPatches
             string closingTag = asset.IsStyle ? "</head>" : "</body>";
             contents = contents.Replace(closingTag, $"{element}{closingTag}", StringComparison.Ordinal);
         }
+
+        contents = contents.Replace("</head>", $"{BootElement}</head>", StringComparison.Ordinal);
 
         return contents;
     }
