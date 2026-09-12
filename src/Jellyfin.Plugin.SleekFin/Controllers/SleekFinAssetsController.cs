@@ -7,43 +7,47 @@ namespace Jellyfin.Plugin.SleekFin.Controllers;
 [Route("SleekFin")]
 public sealed class SleekFinAssetsController : ControllerBase
 {
+    private static readonly IReadOnlyDictionary<string, string> AssetFolders = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["sleekfin-theme.css"] = "Theme",
+        ["sleekfin-theme.js"] = "Theme",
+        ["sleekfin-icons.js"] = "Components",
+        ["sleekfin-components.css"] = "Components",
+        ["sleekfin-components.js"] = "Components",
+        ["sleekfin-header.css"] = "Header",
+        ["sleekfin-header.js"] = "Header",
+        ["sleekfin-hero.css"] = "Hero",
+        ["sleekfin-hero.js"] = "Hero",
+        ["sleekfin-media.css"] = "Media",
+        ["sleekfin-media.js"] = "Media",
+        ["sleekfin-details.css"] = "Details",
+        ["sleekfin-details.js"] = "Details"
+    };
+
     private static readonly HashSet<string> FontFileNames = new(StringComparer.Ordinal)
+    {
+        "inter-cyrillic-ext.woff2",
+        "inter-cyrillic.woff2",
+        "inter-greek-ext.woff2",
+        "inter-greek.woff2",
+        "inter-vietnamese.woff2",
+        "inter-latin-ext.woff2",
+        "inter-latin.woff2"
+    };
+
+    [HttpGet("{assetFileName}")]
+    [AllowAnonymous]
+    public ActionResult GetAsset(string assetFileName)
+    {
+        if (!AssetFolders.TryGetValue(assetFileName, out string? folder))
         {
-            "inter-cyrillic-ext.woff2",
-            "inter-cyrillic.woff2",
-            "inter-greek-ext.woff2",
-            "inter-greek.woff2",
-            "inter-vietnamese.woff2",
-            "inter-latin-ext.woff2",
-            "inter-latin.woff2"
-        };
+            return NotFound();
+        }
 
-    [HttpGet("sleekfin-header.css")]
-    [AllowAnonymous]
-    public ActionResult GetHeaderStyles()
-    {
-        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Header.sleekfin-header.css", "text/css; charset=utf-8");
-    }
-
-    [HttpGet("sleekfin-header.js")]
-    [AllowAnonymous]
-    public ActionResult GetHeaderScript()
-    {
-        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Header.sleekfin-header.js", "text/javascript; charset=utf-8");
-    }
-
-    [HttpGet("sleekfin-hero.css")]
-    [AllowAnonymous]
-    public ActionResult GetHeroStyles()
-    {
-        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Hero.sleekfin-hero.css", "text/css; charset=utf-8");
-    }
-
-    [HttpGet("sleekfin-hero.js")]
-    [AllowAnonymous]
-    public ActionResult GetHeroScript()
-    {
-        return EmbeddedFile("Jellyfin.Plugin.SleekFin.Inject.Hero.sleekfin-hero.js", "text/javascript; charset=utf-8");
+        string contentType = assetFileName.EndsWith(".css", StringComparison.Ordinal)
+            ? "text/css; charset=utf-8"
+            : "text/javascript; charset=utf-8";
+        return EmbeddedFile($"Jellyfin.Plugin.SleekFin.Inject.{folder}.{assetFileName}", contentType);
     }
 
     [HttpGet("fonts/{fontFileName}")]

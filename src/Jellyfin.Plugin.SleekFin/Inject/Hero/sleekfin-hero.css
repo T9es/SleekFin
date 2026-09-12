@@ -1,20 +1,11 @@
-@font-face {
-    font-display: swap;
-    font-family: Inter;
-    font-style: normal;
-    font-weight: 100 900;
-    src: url("fonts/inter-latin.woff2") format("woff2");
-}
-
 #indexPage.homePage.libraryPage:has(.sleekfin-hero) {
-    background: #05070a;
+    background: #000;
     /* Jellyfin's wide absolute-tab rule might load after Modern home override */
     padding-top: 0 !important;
 }
 
 .sleekfin-hero {
-    --sleekfin-hero-background: #05070a;
-    background: var(--sleekfin-hero-background);
+    background: #000;
     box-sizing: border-box;
     color: #fff;
     font-family: Inter, "Noto Sans", sans-serif;
@@ -59,14 +50,14 @@ html.sleekfin-header-mounted .sleekfin-hero {
 }
 
 .sleekfin-hero-vignette {
-    background: linear-gradient(#05070a00 50%, #05070a1f 64%, #05070a47 76%, #05070a75 86%, #05070aa3 94%, #05070ac7 100%), linear-gradient(90deg, #05070ab8 0%, #05070a85 16%, #05070a57 32%, #05070a30 46%, #05070a17 57%, #05070a08 64%, #05070a00 70%);
+    background: linear-gradient(#0000 50%, #0000001f 64%, #00000047 76%, #00000075 86%, #000000a3 94%, #000000c7 100%), linear-gradient(90deg, #000000b8 0%, #00000085 16%, #00000057 32%, #00000030 46%, #00000017 57%, #00000008 64%, #0000 70%);
     inset: 0;
     pointer-events: none;
     position: absolute;
 }
 
 .sleekfin-hero-seam {
-    background: linear-gradient(180deg, #05070a00 0%, #05070a1f 20%, #05070a4d 42%, #05070a8c 65%, #05070acc 84%, var(--sleekfin-hero-background) 100%);
+    background: linear-gradient(180deg, #0000 0%, #0000001f 20%, #0000004d 42%, #0000008c 65%, #000000cc 84%, #000 100%);
     bottom: 0;
     height: 140px;
     left: 0;
@@ -123,21 +114,15 @@ html.sleekfin-header-mounted .sleekfin-hero {
     flex-wrap: wrap;
     font-size: 14px;
     font-weight: 500;
-    gap: 0;
     line-height: 18px;
     margin-top: 16px;
-}
-
-.sleekfin-hero-fact-dot {
-    color: rgba(255, 255, 255, 0.48);
-    margin: 0 8px;
 }
 
 .sleekfin-hero-score {
     color: #fff;
 }
 
-.sleekfin-hero-score::first-letter {
+.sleekfin-hero-score .sleekfin-icon {
     color: #dc2626;
 }
 
@@ -155,69 +140,14 @@ html.sleekfin-header-mounted .sleekfin-hero {
 
 .sleekfin-hero-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     margin-top: 18px;
 }
 
-.sleekfin-hero-button {
-    align-items: center;
-    border-radius: 999px;
-    box-sizing: border-box;
-    cursor: pointer;
-    display: inline-flex;
-    font: 500 16px/1 Inter, "Noto Sans", sans-serif;
-    gap: 9px;
-    height: 44px;
-    justify-content: center;
-    min-width: 0;
-    transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-}
-
-.sleekfin-hero-button svg {
-    fill: currentColor;
-    flex: 0 0 22px;
-    height: 22px;
-    width: 22px;
-}
-
-.sleekfin-hero-button-play {
-    background: rgb(238, 241, 246);
-    border: 1px solid rgb(238, 241, 246);
-    color: rgb(5, 7, 10);
-    padding: 0 28px;
-}
-
-.sleekfin-hero-button-info {
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    backdrop-filter: blur(18px) saturate(140%);
-    background: linear-gradient(rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(22, 22, 24, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 6px 14px -6px rgba(0, 0, 0, 0.55);
-    color: #fff;
-    padding: 0 24px;
-}
-
-.sleekfin-hero-button:hover,
-.sleekfin-hero-button:focus-visible {
-    transform: scale(1.035);
-}
-
-.sleekfin-hero-button-play:hover,
-.sleekfin-hero-button-play:focus-visible {
-    background: #fff;
-    border-color: #fff;
-}
-
-.sleekfin-hero-button-info:hover,
-.sleekfin-hero-button-info:focus-visible {
-    background: linear-gradient(#ffffff1a 0%, #ffffff08 100%), #242428e6;
-    border-color: #ffffff29;
-    box-shadow: inset 0 1px #ffffff24, 0 8px 18px -6px #0000008c;
-}
-
-.sleekfin-hero-button:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 3px;
+.sleekfin-hero-button.sleekfin-button-control {
+    font-size: 16px;
+    line-height: 24px;
 }
 
 @media (min-width: 768px) {
@@ -258,27 +188,5 @@ html.sleekfin-header-mounted .sleekfin-hero {
     .sleekfin-hero-content {
         padding-left: 96px;
         padding-right: 96px;
-    }
-}
-
-@media (max-width: 520px) {
-    .sleekfin-hero-actions {
-        gap: 8px;
-    }
-
-    .sleekfin-hero-button {
-        font-size: 14px;
-    }
-
-    .sleekfin-hero-button-play,
-    .sleekfin-hero-button-info {
-        padding: 0 18px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .sleekfin-hero-slide,
-    .sleekfin-hero-button {
-        transition: none;
     }
 }

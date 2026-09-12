@@ -19,6 +19,10 @@ public static class TransformationPatches
         string buildId = assembly.ManifestModule.ModuleVersionId.ToString("N");
         string cacheQuery = $"?v={version}&b={buildId}";
 
+        contents = InjectAssets(contents, "theme", cacheQuery);
+        contents = InjectAssets(contents, "icons", cacheQuery, false);
+        contents = InjectAssets(contents, "components", cacheQuery);
+
         if (SleekFinPlugin.Instance.Configuration.HeaderEnabled)
         {
             contents = InjectAssets(contents, "header", cacheQuery);
@@ -29,22 +33,27 @@ public static class TransformationPatches
             contents = InjectAssets(contents, "hero", cacheQuery);
         }
 
+        contents = InjectAssets(contents, "media", cacheQuery);
+        contents = InjectAssets(contents, "details", cacheQuery);
+
         return contents;
     }
 
-    private static string InjectAssets(string contents, string feature, string cacheQuery)
+    private static string InjectAssets(string contents, string feature, string cacheQuery, bool includeStyles = true)
     {
         string marker = $"data-sleekfin-{feature}-asset";
-        if (contents.Contains(marker, StringComparison.Ordinal))
+        if (includeStyles && !contents.Contains($"{marker}=\"style\"", StringComparison.Ordinal))
         {
-            return contents;
+            string stylesheet = $"<link rel=\"stylesheet\" href=\"../SleekFin/sleekfin-{feature}.css{cacheQuery}\" {marker}=\"style\" />";
+            contents = contents.Replace("</head>", $"{stylesheet}</head>", StringComparison.Ordinal);
         }
 
-        string stylesheet = $"<link rel=\"stylesheet\" href=\"../SleekFin/sleekfin-{feature}.css{cacheQuery}\" {marker}=\"style\" />";
-        string script = $"<script defer src=\"../SleekFin/sleekfin-{feature}.js{cacheQuery}\" {marker}=\"script\"></script>";
+        if (!contents.Contains($"{marker}=\"script\"", StringComparison.Ordinal))
+        {
+            string script = $"<script defer src=\"../SleekFin/sleekfin-{feature}.js{cacheQuery}\" {marker}=\"script\"></script>";
+            contents = contents.Replace("</body>", $"{script}</body>", StringComparison.Ordinal);
+        }
 
-        return contents
-            .Replace("</head>", $"{stylesheet}</head>", StringComparison.Ordinal)
-            .Replace("</body>", $"{script}</body>", StringComparison.Ordinal);
+        return contents;
     }
 }

@@ -1,7 +1,8 @@
 (function (global) {
     'use strict';
 
-    var MODULE_VERSION = '0.1.0';
+    var MODULE_VERSION = '0.3.0';
+    var MAIN_ROOT_CLASS = 'sleekfin-main-ui';
     var ROOT_CLASS = 'sleekfin-header-mounted';
     var WINDOW_EVENTS = ['hashchange', 'pageshow', 'popstate', 'resize', 'scroll'];
     var NAMESPACE = global.SleekFin = global.SleekFin || {};
@@ -51,31 +52,22 @@
         return style.display !== 'none' && style.visibility !== 'hidden';
     }
 
-    function findVisibleModernHeader() {
+    function findVisibleHeader(selector, childSelector) {
         return Array.prototype.find.call(
-            document.querySelectorAll('header.MuiAppBar-root'),
+            document.querySelectorAll(selector),
             function (header) {
-                return isVisible(header) && Boolean(header.querySelector('.MuiToolbar-root'));
-            }
-        ) || null;
-    }
-
-    function findVisibleLegacyHeader() {
-        return Array.prototype.find.call(
-            document.querySelectorAll('.skinHeader'),
-            function (header) {
-                return isVisible(header) && Boolean(header.querySelector('.headerTop'));
+                return isVisible(header) && Boolean(header.querySelector(childSelector));
             }
         ) || null;
     }
 
     function findSurface() {
-        var modern = findVisibleModernHeader();
+        var modern = findVisibleHeader('header.MuiAppBar-root', '.MuiToolbar-root');
         if (modern) {
             return { header: modern, kind: 'modern' };
         }
 
-        var legacy = findVisibleLegacyHeader();
+        var legacy = findVisibleHeader('.skinHeader', '.headerTop');
         return legacy ? { header: legacy, kind: 'legacy' } : null;
     }
 
@@ -151,8 +143,6 @@
         if (label) {
             label.textContent = state.serverName;
         }
-
-        state.fallbackBrand.setAttribute('aria-label', state.serverName + ' home');
     }
 
     function requestServerName() {
@@ -185,20 +175,14 @@
                     updateFallbackBrandName();
                 }
             })
-            .catch(function () {
-                return undefined;
-            });
+            .catch(function () {});
     }
 
     function findBrandImageSource() {
         var nativeImage = document.querySelector('a[href="#/"] img');
 
-        if (nativeImage && nativeImage.currentSrc) {
-            return nativeImage.currentSrc;
-        }
-
-        if (nativeImage && nativeImage.src) {
-            return nativeImage.src;
+        if (nativeImage) {
+            return nativeImage.currentSrc || nativeImage.src;
         }
 
         var icons = Array.prototype.slice.call(document.querySelectorAll('link[rel~="icon"]'));
@@ -210,10 +194,7 @@
     }
 
     function removeFallbackBrand() {
-        if (state.fallbackBrand && state.fallbackBrand.isConnected) {
-            state.fallbackBrand.remove();
-        }
-
+        state.fallbackBrand?.remove();
         state.fallbackBrand = null;
     }
 
@@ -231,14 +212,16 @@
 
         brand.className = 'sleekfin-header-fallback-brand';
         brand.href = '#/';
-        brand.setAttribute('aria-label', serverName + ' home');
-        image.alt = '';
         image.src = findBrandImageSource();
         label.textContent = serverName;
         brand.appendChild(image);
         brand.appendChild(label);
         document.body.appendChild(brand);
         state.fallbackBrand = brand;
+    }
+
+    function updateBrandOffset(mount) {
+        mark(mount, mount.brand || state.fallbackBrand, 'data-sleekfin-header-menu-offset', isVisible(mount.menu) ? 'true' : 'false');
     }
 
     function updateScrolledState(mount) {
@@ -274,13 +257,15 @@
 
             mount.toolbar.style.setProperty('--sleekfin-header-pill-left', Math.round(left) + 'px');
             mount.toolbar.style.setProperty('--sleekfin-header-pill-width', Math.max(40, Math.round(right - left)) + 'px');
-            mount.toolbar.setAttribute('data-sleekfin-header-measured', 'true');
-            mount.markedNodes.add(mount.toolbar);
+            mark(mount, mount.toolbar, 'data-sleekfin-header-measured');
         });
     }
 
     function findModernParts(toolbar) {
         var children = directChildren(toolbar);
+        var menu = children.find(function (element) {
+            return element.matches('button') && Boolean(element.querySelector('svg[data-testid="MenuIcon"]'));
+        }) || null;
         var nav = children.find(function (element) {
             return element.classList.contains('MuiStack-root');
         }) || null;
@@ -297,6 +282,7 @@
         return {
             actions: actions,
             brand: brand,
+            menu: menu,
             nav: nav,
             profile: profile
         };
@@ -312,6 +298,7 @@
             kind: 'modern',
             layoutMode: layoutMode(),
             markedNodes: new Set(),
+            menu: parts.menu,
             nav: parts.nav,
             navLinkCount: parts.nav ? parts.nav.querySelectorAll('a[href]').length : 0,
             profile: parts.profile,
@@ -320,10 +307,14 @@
 
         mark(mount, header, 'data-sleekfin-header', 'modern');
         mark(mount, toolbar, 'data-sleekfin-header-toolbar');
+        mark(mount, parts.menu, 'data-sleekfin-header-menu');
 
         if (parts.brand) {
             readServerName(parts.brand);
             mark(mount, parts.brand, 'data-sleekfin-header-brand');
+            removeFallbackBrand();
+        } else if (parts.menu) {
+            ensureFallbackBrand();
         }
 
         if (parts.nav) {
@@ -357,7 +348,7 @@
         }
 
         document.documentElement.classList.add(ROOT_CLASS);
-        removeFallbackBrand();
+        updateBrandOffset(mount);
         updateActiveControls(mount);
         updateScrolledState(mount);
         scheduleModernMeasurement(mount);
@@ -394,6 +385,7 @@
         var left = header.querySelector('.headerLeft');
         var right = header.querySelector('.headerRight');
         var tabs = header.querySelector('.headerTabs');
+        var menu = left ? left.querySelector('.mainDrawerButton') : null;
         var cluster = document.createElement('div');
         var mount = {
             cluster: cluster,
@@ -401,6 +393,7 @@
             kind: 'legacy',
             layoutMode: layoutMode(),
             markedNodes: new Set(),
+            menu: menu,
             movedNodes: []
         };
 
@@ -412,10 +405,16 @@
 
         if (left) {
             directChildren(left).filter(function (element) {
-                return element.matches('button, .headerButton, .paper-icon-button-light');
+                return element !== menu && element.matches('button, .headerButton, .paper-icon-button-light');
             }).forEach(function (element) {
                 moveIntoCluster(mount, cluster, element);
             });
+        }
+
+        if (menu) {
+            rememberMove(mount, menu);
+            top.insertBefore(menu, cluster);
+            mark(mount, menu, 'data-sleekfin-header-menu');
         }
 
         if (tabs && mount.layoutMode === 'desktop') {
@@ -425,6 +424,7 @@
         moveIntoCluster(mount, cluster, right);
         document.documentElement.classList.add(ROOT_CLASS);
         ensureFallbackBrand();
+        updateBrandOffset(mount);
         updateScrolledState(mount);
         return mount;
     }
@@ -477,13 +477,14 @@
                 || !state.mount.toolbar.hasAttribute('data-sleekfin-header-toolbar')
                 || state.mount.actions !== currentParts.actions
                 || state.mount.brand !== currentParts.brand
+                || state.mount.menu !== currentParts.menu
                 || state.mount.nav !== currentParts.nav
                 || state.mount.profile !== currentParts.profile
                 || state.mount.navLinkCount !== (currentParts.nav ? currentParts.nav.querySelectorAll('a[href]').length : 0)
                 || state.mount.clusterItems.some(function (element) { return !element.isConnected; });
         }
 
-        return !state.mount.cluster || !state.mount.cluster.isConnected;
+        return !state.mount.cluster || !state.mount.cluster.isConnected || state.mount.menu !== surface.header.querySelector('.mainDrawerButton');
     }
 
     function unmount() {
@@ -498,7 +499,7 @@
             return;
         }
 
-        if (isTvLayout()) {
+        if (isTvLayout() || !document.documentElement.classList.contains(MAIN_ROOT_CLASS)) {
             unmount();
             return;
         }
@@ -517,6 +518,7 @@
                 : mountLegacy(surface.header);
         } else {
             updateScrolledState(state.mount);
+            updateBrandOffset(state.mount);
             if (state.mount.kind === 'modern') {
                 updateActiveControls(state.mount);
                 scheduleModernMeasurement(state.mount);
@@ -527,6 +529,12 @@
     function scheduleReconcile() {
         if (state.reconcileTimer) {
             global.clearTimeout(state.reconcileTimer);
+            state.reconcileTimer = 0;
+        }
+
+        if (!document.documentElement.classList.contains(MAIN_ROOT_CLASS)) {
+            unmount();
+            return;
         }
 
         state.reconcileTimer = global.setTimeout(function () {
@@ -576,9 +584,7 @@
     }
 
     NAMESPACE.header = {
-        reconcile: function () {
-            scheduleReconcile();
-        },
+        reconcile: scheduleReconcile,
         stop: stop,
         version: MODULE_VERSION
     };

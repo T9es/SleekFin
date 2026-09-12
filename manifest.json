@@ -6,6 +6,7 @@
     "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
     "owner": "varunaditya-plus",
     "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/thumb.png",
     "repositoryUrl": "https://github.com/varunaditya-plus/SleekFin",
     "versions": [
       {

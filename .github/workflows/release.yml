@@ -155,7 +155,8 @@ jobs:
             cd "${OUT_DIR}"
             zip -j "${ZIP_PATH}" \
               Jellyfin.Plugin.SleekFin.dll \
-              meta.json
+              meta.json \
+              thumb.png
           )
 
           CHECKSUM=$(md5sum "${ZIP_PATH}" | awk '{print toupper($1)}')

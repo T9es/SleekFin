@@ -1,13 +1,18 @@
 (function (global) {
     'use strict';
 
-    var MODULE_VERSION = '0.1.0';
+    var MODULE_VERSION = '0.3.0';
+    var ITEM_FIELDS = 'Overview,Genres,PremiereDate,ProductionYear,ImageTags,BackdropImageTags';
+    var WINDOW_EVENTS = ['hashchange', 'popstate', 'pageshow'];
     var NAMESPACE = global.SleekFin = global.SleekFin || {};
+    var components = NAMESPACE.components;
     var document = global.document;
 
-    if (!document || !document.documentElement) {
+    if (!document || !document.documentElement || !components) {
         return;
     }
+
+    var appendText = components.appendText;
 
     if (NAMESPACE.hero && NAMESPACE.hero.version === MODULE_VERSION) {
         NAMESPACE.hero.reconcile();
@@ -40,32 +45,16 @@
         return !tab || tab === '0';
     }
 
-    function visible(element) {
-        return Boolean(element && element.isConnected && element.getClientRects().length);
-    }
-
     function findHost() {
         if (!isHomeRoute()) {
             return null;
         }
 
-        return Array.prototype.find.call(document.querySelectorAll('#indexPage #homeTab.is-active .sections'), visible) || null;
-    }
-
-    function apiRequest(path) {
-        return global.ApiClient.ajax({
-            type: 'GET',
-            url: global.ApiClient.getUrl(path),
-            dataType: 'json'
-        });
-    }
-
-    function fields() {
-        return 'Overview,Genres,PremiereDate,ProductionYear,ImageTags,BackdropImageTags';
+        return Array.prototype.find.call(document.querySelectorAll('#indexPage #homeTab.is-active .sections'), components.isVisible) || null;
     }
 
     function itemQuery(options) {
-        options.Fields = fields();
+        options.Fields = ITEM_FIELDS;
         options.Recursive = true;
         options.Limit = 10;
         options.EnableTotalRecordCount = false;
@@ -87,7 +76,7 @@
                 return global.ApiClient.getNextUpEpisodes({
                     UserId: global.ApiClient.getCurrentUserId(),
                     Limit: 10,
-                    Fields: fields(),
+                    Fields: ITEM_FIELDS,
                     EnableTotalRecordCount: false
                 }).then(function (result) {
                     return result.Items || [];
@@ -174,70 +163,16 @@
         return options.tag ? global.ApiClient.getImageUrl(item.Id, options) : '';
     }
 
-    function year(item) {
-        if (item.ProductionYear) {
-            return item.ProductionYear;
-        }
-
-        return item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : null;
-    }
-
-    function appendText(parent, className, text) {
-        var element = document.createElement('span');
-        element.className = className;
-        element.textContent = text;
-        parent.appendChild(element);
-        return element;
-    }
-
-    function addFact(parent, text, className) {
-        if (parent.childElementCount) {
-            appendText(parent, 'sleekfin-hero-fact-dot', '•');
-        }
-
-        appendText(parent, className || 'sleekfin-hero-fact', text);
-    }
-
-    function createIcon(kind) {
-        var namespace = 'http://www.w3.org/2000/svg';
-        var svg = document.createElementNS(namespace, 'svg');
-        var path = document.createElementNS(namespace, 'path');
-        svg.setAttribute('viewBox', '0 0 24 24');
-        svg.setAttribute('aria-hidden', 'true');
-        if (kind === 'play') {
-            path.setAttribute('d', 'M8 5v14l11-7z');
-        } else {
-            path.setAttribute('d', 'M11 10h2v7h-2zm1-6a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm0-2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z');
-        }
-
-        svg.appendChild(path);
-        return svg;
-    }
-
-    function setItemAction(button, action, item) {
-        button.classList.add('itemAction');
-        button.dataset.action = action;
-        button.dataset.id = item.Id;
-        button.dataset.serverid = item.ServerId || global.ApiClient.serverId();
-        button.dataset.type = item.Type;
-        button.dataset.mediatype = item.MediaType || 'Video';
-        button.dataset.isfolder = String(Boolean(item.IsFolder));
-    }
-
     function createButton(kind, text, action, item) {
-        var button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'sleekfin-hero-button sleekfin-hero-button-' + kind;
-        button.appendChild(createIcon(kind));
-        appendText(button, 'sleekfin-hero-button-label', text);
-        setItemAction(button, action, item);
+        var button = components.createButton(kind === 'play' ? 'primary' : 'control', kind, text);
+        button.classList.add('sleekfin-hero-button');
+        components.setItemAction(button, item, action);
         return button;
     }
 
     function createSlide(entry, index) {
         var item = entry.display;
         var slide = document.createElement('section');
-        var backdrop = document.createElement('img');
         var vignette = document.createElement('div');
         var seam = document.createElement('div');
         var content = document.createElement('div');
@@ -249,18 +184,15 @@
         var description = document.createElement('p');
         var actions = document.createElement('div');
         var rating = Number(item.CommunityRating || 0);
-        var releaseYear = year(item);
+        var releaseYear = components.itemYear(item);
         var genres = item.Genres || [];
 
         slide.className = 'sleekfin-hero-slide';
-        slide.dataset.index = String(index);
         slide.dataset.active = index === 0 ? 'true' : 'false';
-        slide.inert = index !== 0;
-        slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
 
-        backdrop.className = 'sleekfin-hero-backdrop';
-        backdrop.alt = '';
         if (backdropUrl) {
+            var backdrop = document.createElement('img');
+            backdrop.className = 'sleekfin-hero-backdrop';
             backdrop.src = backdropUrl;
             slide.appendChild(backdrop);
         }
@@ -269,14 +201,12 @@
         seam.className = 'sleekfin-hero-seam';
         slide.appendChild(vignette);
         slide.appendChild(seam);
-
         content.className = 'sleekfin-hero-content';
         stack.className = 'sleekfin-hero-stack';
         titleBox.className = 'sleekfin-hero-title-box';
         if (logoUrl) {
             var logo = document.createElement('img');
             logo.className = 'sleekfin-hero-title-logo';
-            logo.alt = item.Name || '';
             logo.src = logoUrl;
             logo.addEventListener('error', function () {
                 logo.remove();
@@ -289,13 +219,13 @@
 
         facts.className = 'sleekfin-hero-facts';
         if (rating > 0) {
-            addFact(facts, '★ ' + rating.toFixed(1), 'sleekfin-hero-score');
+            components.appendFact(facts, rating.toFixed(1), { className: 'sleekfin-hero-score', icon: 'star' });
         }
         if (releaseYear) {
-            addFact(facts, String(releaseYear));
+            components.appendFact(facts, String(releaseYear));
         }
-        addFact(facts, item.Type === 'Series' ? 'Show' : 'Movie');
-        genres.slice(0, 2).forEach(function (genre) { addFact(facts, genre); });
+        components.appendFact(facts, components.itemTypeLabel(item.Type));
+        genres.slice(0, 2).forEach(function (genre) { components.appendFact(facts, genre); });
 
         description.className = 'sleekfin-hero-description';
         description.textContent = item.Overview || '';
@@ -327,16 +257,13 @@
 
         state.activeIndex = (index + slides.length) % slides.length;
         Array.prototype.forEach.call(slides, function (slide, slideIndex) {
-            var active = slideIndex === state.activeIndex;
-            slide.dataset.active = active ? 'true' : 'false';
-            slide.inert = !active;
-            slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+            slide.dataset.active = slideIndex === state.activeIndex ? 'true' : 'false';
         });
     }
 
     function startRotation() {
         global.clearInterval(state.rotationTimer);
-        if (!state.mount || state.mount.children.length < 2 || global.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (!state.mount || state.mount.children.length < 2) {
             return;
         }
 
@@ -377,7 +304,6 @@
         var shell = document.createElement('div');
         shell.innerHTML = '<div is="emby-itemscontainer" class="sleekfin-hero itemsContainer"></div>';
         var root = shell.firstElementChild;
-        root.setAttribute('aria-roledescription', 'carousel');
         entries.forEach(function (entry, index) { root.appendChild(createSlide(entry, index)); });
         host.parentNode.insertBefore(root, host);
         state.mount = root;
@@ -394,16 +320,18 @@
         global.clearInterval(state.rotationTimer);
         state.rotationTimer = 0;
         state.loadingHost = null;
-        if (state.mount && state.mount.isConnected) {
-            state.mount.remove();
-        }
+        state.mount?.remove();
         state.mount = null;
     }
 
     function mount(host) {
         var generation = ++state.generation;
         state.loadingHost = host;
-        apiRequest('SleekFin/Hero/Settings')
+        global.ApiClient.ajax({
+            type: 'GET',
+            url: global.ApiClient.getUrl('SleekFin/Hero/Settings'),
+            dataType: 'json'
+        })
             .then(function (settings) {
                 if (!settings.enabled || !settings.contentOrder || !settings.contentOrder.length) {
                     return [];
@@ -453,7 +381,7 @@
         state.started = true;
         state.observer = new MutationObserver(scheduleReconcile);
         state.observer.observe(document.getElementById('reactRoot') || document.body, { childList: true, subtree: true });
-        ['hashchange', 'popstate', 'pageshow'].forEach(function (eventName) {
+        WINDOW_EVENTS.forEach(function (eventName) {
             global.addEventListener(eventName, scheduleReconcile);
         });
         document.addEventListener('viewshow', scheduleReconcile);
@@ -467,7 +395,7 @@
             state.observer.disconnect();
             state.observer = null;
         }
-        ['hashchange', 'popstate', 'pageshow'].forEach(function (eventName) {
+        WINDOW_EVENTS.forEach(function (eventName) {
             global.removeEventListener(eventName, scheduleReconcile);
         });
         document.removeEventListener('viewshow', scheduleReconcile);
@@ -477,7 +405,6 @@
     NAMESPACE.hero = {
         version: MODULE_VERSION,
         reconcile: reconcile,
-        start: start,
         stop: stop
     };
 

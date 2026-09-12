@@ -1,1 +1,96 @@
+<div align="center"> (edit later)
+
+<div alt style="text-align: center; transform: scale(.25);">
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset="https://github.com/varunaditya-plus/SleekFin/raw/main/assets/logo_dark.png" />
+		<img alt="SleekFin Logo" src="https://github.com/varunaditya-plus/SleekFin/raw/main/assets/logo_light.png" style="width: 170px;" />
+	</picture>
+</div>
+
 # SleekFin
+![GitHub License](https://www.shieldcn.dev/github/license/varunaditya-plus/SleekFin.svg?variant=outline&size=sm)
+[![GitHub Downloads (all assets, all releases)](https://shieldcn.dev/github/downloads/varunaditya-plus/SleekFin.svg?variant=outline&size=sm)](https://github.com/varunaditya-plus/SleekFin/releases/latest)
+[![GitHub Release](https://shieldcn.dev/github/release/varunaditya-plus/SleekFin.svg?size=sm)](https://github.com/varunaditya-plus/SleekFin/releases/latest)
+![Please star this repo](https://shieldcn.dev/badge/★%20please%20star-22c55e.svg?theme=amber&color=eab308&size=sm&variant=outline)
+
+The ultimate customisation plugin for Jellyfin, which styles the header bar, adds a hero section, and skins all media rows. This plugin adds everything themes add, plus the things themes can't add, all with pixel-precise customisation, letting you tweak the plugin to your needs.
+
+</div>
+
+<!-- <div align="center" style="width:100%;">
+  <video src="..."></video>
+</div> -->
+
+---
+
+## Features
+
+- **Complete reskin:** Applies a fully black interface with dark surfaces, red accents, and uses Inter across the main UI, dialogs, lists, and cards.
+- **Floating header:** Turns Jellyfin's modern and legacy desktop/mobile headers into a custom compact navigation bar which can be customized in multiple styles (coming soon).
+- **Configurable home hero:** Adds a full-width hero section above rows on the home page to display your library's content more nicely.
+- **Redesigned home and library pages:** Restyles the carousels and library pages to show content more clearly with consistent spacing and concise info under posters.
+- **Updated detail pages:** Remade Movie, Series, Season, and Episode pages with full-page backdrop heros, title art, and lots of details about the content itself, organised in a more appealing manner.
+- **Upgraded cast and recommendations:** Restyles cast into a clean horizontal row and turns similar titles into a dedicated **You may like** section with backdrop/poster imagery, ratings, years, and media types.
+- **Responsive layouts:** Adapts the header, hero, media rows, detail pages, controls, typography, and spacing across mobile, tablet, desktop, and ultrawide browser sizes.
+
+## Installation
+
+### First make sure you have these prerequisites:
+- A running Jellyfin **12.0** instance
+- [File Transformation](https://www.iamparadox.dev/jellyfin/plugins/manifest.json) plugin
+
+### Install from plugin catalog
+1. Open **Dashboard → Plugins → Manage Repositories**.
+2. Click **New Repository** and paste this repository URL:
+```
+https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
+```
+3. Now go back to **Plugins** in the sidebar, select **All** in the filters above the plugins, and click SleekFin. Then click **Install**.
+4. Now you have to restart your Jellyfin instance. Go to **Dashboard** and click the **Restart** button. You're done!
+
+### Configuration
+After installation, you can now configure how the extension looks by going to **Dashboard → SleekFin**, and editing anything you want. This plugin is made to be as customizable as possible, so you should be able to tweak anything to your liking. If not, there's always CSS.
+
+<!-- ## Screenshots
+<table>
+  <tr>
+    <td><img width="1720" height="720" alt="Movie tab" src="https://github.com/user-attachments/assets/94fcae0d-9027-4e96-a6fc-d2c8fd1734c5" /></td>
+    <td><img width="1720" height="720" alt="Content modal" src="https://github.com/user-attachments/assets/9b347369-79dd-4f6a-8abb-ba70f83040c3" /></td>
+  </tr>
+  <tr>
+    <td><img width="1720" height="720" alt="Request tab" src="https://github.com/user-attachments/assets/c247919c-a22d-4852-afe5-70f03ee8f8d1" /></td>
+    <td><img width="1720" height="720" alt="Letterboxd import tab" src="https://github.com/user-attachments/assets/4eae17eb-ebbc-4b6c-a28f-241088d00936" /></td>
+  </tr>
+</table>
+... -->
+
+## Downloads
+
+<p align="center">
+  <a href="https://downloadhistory.varunaditya.xyz/#varunaditya-plus/SleekFin&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://downloadhistory.varunaditya.xyz/svg?repos=varunaditya-plus/SleekFin&type=Date&title=&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://downloadhistory.varunaditya.xyz/svg?repos=varunaditya-plus/SleekFin&type=Date&title=" />
+      <img alt="Download History Chart" src="https://downloadhistory.varunaditya.xyz/svg?repos=varunaditya-plus/SleekFin&type=Date&title=" width=600 />
+    </picture>
+  </a>
+</p>
+
+<!-- ## FAQ
+
+<details><summary><b>Question</b></summary>
+
+Answer
+
+</details> -->
+
+
+## Contributing & Support
+If you have any suggestions or features you want to be implemented in this plugin, please open a pull request. For suggestions, feature requests, or bug reports, open an issue. Please include your Jellyfin version and a screenshot if relevant.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for testing expectations, commit format, versioning, and PR guidelines.
+
+## Credits
+- [Inter](https://rsms.me/inter/) by Rasmus Andersson and the Inter Project Authors, under the SIL Open Font License 1.1.
+- Interface icons adapted from [Lucide](https://lucide.dev/), licensed under ISC.
+- Uses [File Transformation](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation) by IAmParadox27.
