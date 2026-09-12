@@ -1,63 +1,40 @@
-/* CSS has no other way to release the concealment on a timer, so the fallback reveal is an
-   animation: if the bundle never mounts, Jellyfin's page comes back on its own. */
-@keyframes sleekfin-details-conceal-failsafe {
-    to {
-        visibility: visible;
-    }
-}
-
-/* Added by the inline boot script while a detail route is entered and removed by the details
-   bundle from mount(). visibility rather than display hides the page without removing its layout,
-   so the bundle can still select, measure and move those nodes while it builds the hero, and the
-   background keeps Jellyfin's own page from showing through before the theme bundle defines the
+/* Added by the inline boot script while a detail route is entered and removed by the details bundle
+   once it has something to show. visibility rather than display hides the page without removing its
+   layout, so the bundle can still select, measure and move those nodes while it builds the hero, and
+   the background keeps Jellyfin's own page from showing through before the theme bundle defines the
    token. */
 html.sleekfin-details-concealed,
 html.sleekfin-details-concealed body {
     background: var(--sleekfin-background, #000);
 }
 
+/* A static rule rather than an animation: the boot script reveals the page by removing the class,
+   which is also what restarts this concealment on a later navigation. */
 html.sleekfin-details-concealed #itemDetailPage {
-    animation: sleekfin-details-conceal-failsafe 0.01s linear 4s forwards;
     visibility: hidden;
-}
-
-/* The reveal is a discrete visibility flip rather than movement, so a reduce preference keeps the
-   same few second escape hatch: a sub-frame animation still applies its end state after the delay,
-   and a reduce user is released if the bundle never mounts. Only the base rule's duration changes,
-   which leaves no animation that can be perceived as motion. */
-@media (prefers-reduced-motion: reduce) {
-    html.sleekfin-details-concealed #itemDetailPage {
-        animation: sleekfin-details-conceal-failsafe 0.001s linear 4s forwards;
-    }
 }
 
 /* Jellyfin's detail route raises its own loading ring on a fixed 10vh circle centred on the viewport
    at z-index 9999999, which both outranks and encloses the loading mark below. Suppressing it while
    the page is concealed leaves a single loader instead of two concentric ones. It stays hidden only
-   while the concealment gate is open: the failsafe above reveals the page without the bundle, so
-   Jellyfin's loader returns if the mount never happens. */
+   while the concealment gate is open: releasing the class without the bundle, which the boot script
+   failsafe does, brings Jellyfin's loader back with its page. */
 html.sleekfin-details-concealed .docspinner {
     display: none !important;
 }
 
 /* The concealment leaves the page blank until the item arrives, which reads as a broken page
    rather than a loading one. The spinner is scoped to the same class, so it exists only while the
-   stock page is hidden and cannot outlive the mount. It fades on the same delay as the failsafe
-   below, so a route whose bundle never arrives is not left with a spinner over a revealed page. */
+   stock page is hidden and cannot outlive the mount: taking the class off is what removes the mark,
+   whether the bundle did it or the failsafe did. */
 @keyframes sleekfin-details-spinner {
     to {
         transform: rotate(1turn);
     }
 }
 
-@keyframes sleekfin-details-spinner-release {
-    to {
-        opacity: 0;
-    }
-}
-
 html.sleekfin-details-concealed::before {
-    animation: sleekfin-details-spinner 0.9s linear infinite, sleekfin-details-spinner-release 0.2s linear 4s forwards;
+    animation: sleekfin-details-spinner 0.9s linear infinite;
     border: 3px solid var(--sleekfin-border, #1d2430);
     border-radius: 50%;
     border-top-color: var(--sleekfin-accent, #dc2626);
@@ -73,10 +50,10 @@ html.sleekfin-details-concealed::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    /* A spinner is motion by definition, so those users get the same mark held still on the same
-       delay, and it fades out when the failsafe releases the page. */
+    /* A spinner is motion by definition, so those users get the same mark held still. It is removed
+       the same way either preference is, by the class coming off. */
     html.sleekfin-details-concealed::before {
-        animation: sleekfin-details-spinner-release 0.2s linear 4s forwards;
+        animation: none;
     }
 }
 

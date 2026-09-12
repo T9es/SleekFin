@@ -152,7 +152,7 @@ function mount() {
   const hero = createHero(state.page);
   if (!hero) {
     // Jellyfin's template does not expose the nodes the hero is built from, so the route falls back
-    // to Jellyfin's own page instead of staying hidden until the stylesheet failsafe releases it.
+    // to Jellyfin's own page instead of staying hidden until the boot failsafe releases it.
     conceal(false);
     return;
   }
@@ -187,7 +187,7 @@ function load(id, serverId) {
       state.retryTimer = window.setTimeout(scheduleReconcile, 250);
     } else {
       // The route belongs to another server than this client serves, so no item can ever resolve:
-      // Jellyfin's own page has to show instead of a route left dark until the stylesheet failsafe.
+      // Jellyfin's own page has to show instead of a route left dark until the boot failsafe.
       conceal(false);
     }
     return;
@@ -236,7 +236,7 @@ function load(id, serverId) {
       if (!isCurrent()) return;
       state.loadingId = '';
       // Only an item that cannot be resolved falls back to Jellyfin's own page, otherwise the
-      // concealment would leave the route dark until the stylesheet failsafe expires.
+      // concealment would leave the route dark until the boot failsafe expires.
       conceal(false);
     });
 }
@@ -285,8 +285,7 @@ function reset() {
 // which makes that class the authoritative signal, and the observer below fires on the mutation that
 // adds it. A layout test cannot stand in for it: a page Jellyfin is still hiding keeps its layout
 // boxes, so treating "no boxes" as hidden released the concealment early and painted the stock page
-// for a few frames on the way back to a non-detail route. No timer is involved; the stylesheet
-// failsafe stays the only time-based release.
+// for a few frames on the way back to a non-detail route.
 function pageHidden(page) {
   if (!dom.isConnected(page)) return true;
   for (let node = page; node && node !== document.body; node = node.parentElement) {
@@ -384,6 +383,10 @@ function scheduleReconcile() {
 }
 
 function enter() {
+  // Only a running instance acts on a navigation: a wrapper Jellyfin or another plugin installs over
+  // the history methods keeps this one in the chain after stop() declined to remove it.
+  if (!state.started) return;
+
   const { id, serverId } = route();
   if (!id) {
     if (state.currentId || state.page) {
@@ -414,13 +417,18 @@ function onRouteChange(event) {
 function watchHistory() {
   const restores = HISTORY_METHODS.map((method) => {
     const original = window.history[method];
-    window.history[method] = function (...args) {
+    const wrapper = function (...args) {
       const result = original.apply(this, args);
       onRouteChange();
       return result;
     };
+    window.history[method] = wrapper;
+    // Restored only while this wrapper is still the installed method: Jellyfin or another plugin
+    // may have wrapped it after us, and assigning the original back would drop their wrapper.
     return () => {
-      window.history[method] = original;
+      if (window.history[method] === wrapper) {
+        window.history[method] = original;
+      }
     };
   });
   return () => restores.forEach((restore) => restore());
