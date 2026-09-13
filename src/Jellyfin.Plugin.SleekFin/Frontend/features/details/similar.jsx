@@ -1,100 +1,123 @@
 import { h, dom, item, Meta, render } from '../../shared/runtime.js';
 
-function imageStyleUrl(url) {
-  return `url("${url.replace(/["\\]/g, '\\$&')}")`;
+function ratingFor(value) {
+  const rating = Number(value);
+  return rating > 0 ? rating.toFixed(1) : '';
+}
+
+function release(card, record) {
+  render(null, record.meta);
+  record.meta.remove();
 }
 
 export function createSimilar(page) {
   const records = new Map();
+  const ratings = new Map();
+  const years = new Map();
+  let pending = false;
+  let destroyed = false;
 
-  function restore(card) {
-    const record = records.get(card);
-    if (!record) return;
-    if (dom.isConnected(record.image)) {
-      if (record.backdrop) {
-        record.image.style.setProperty('--sleekfin-similar-backdrop', record.backdrop);
-      } else {
-        record.image.style.removeProperty('--sleekfin-similar-backdrop');
-      }
-      if (record.poster) {
-        record.image.style.setProperty('--sleekfin-similar-poster', record.poster);
-      } else {
-        record.image.style.removeProperty('--sleekfin-similar-poster');
-      }
-      record.image.classList.toggle('lazy-hidden', record.hadLazyHidden);
-    }
-    render(null, record.meta);
-    record.meta.remove();
-    records.delete(card);
+  // The cards carry no rating or production year of their own, and Jellyfin renders them from a
+  // different similar-items sample than any request returns, so the values are resolved from the
+  // ids actually on screen.
+  function loadValues(cards) {
+    const client = window.ApiClient;
+    if (!client || typeof client.getItems !== 'function') return;
+
+    const ids = cards.map((card) => card.dataset.id).filter((id) => id && !ratings.has(id));
+    if (!ids.length) return;
+
+    // Ids are claimed before the request so a reconcile during the round trip cannot start a
+    // duplicate one. Both values are written when the response arrives, so the meta line is
+    // rebuilt once with the year and the rating together rather than in two passes.
+    ids.forEach((id) => ratings.set(id, ''));
+    pending = true;
+    client
+      .getItems(client.getCurrentUserId(), {
+        EnableTotalRecordCount: false,
+        Fields: 'CommunityRating,ProductionYear',
+        Ids: ids.join(','),
+      })
+      .then((result) => {
+        if (destroyed) return;
+        (result.Items || []).forEach((mediaItem) => {
+          ratings.set(mediaItem.Id, ratingFor(mediaItem.CommunityRating));
+          years.set(mediaItem.Id, item.year(mediaItem));
+        });
+      })
+      .catch(() => {})
+      .then(() => {
+        if (destroyed) return;
+        pending = false;
+        renderItems();
+      });
   }
 
-  function renderItems(items) {
-    const byId = new Map(items.map((mediaItem) => [mediaItem.Id, mediaItem]));
-    const active = new Set();
-    page.querySelectorAll('#similarCollapsible .card[data-id]').forEach((card) => {
-      const mediaItem = byId.get(card.dataset.id);
-      if (!mediaItem) {
-        restore(card);
-        return;
-      }
+  function valuesFor(card) {
+    const id = card.dataset.id;
+    const values = [];
+    const rating = ratings.get(id);
+    if (rating) {
+      values.push({ accent: true, icon: 'star', text: rating });
+    }
+    values.push({ text: years.get(id) || '' });
+    values.push({ text: item.typeLabel(card.dataset.type) });
+    return values;
+  }
 
-      const image = card.querySelector('.cardImageContainer');
+  function renderItems() {
+    const cards = Array.from(page.querySelectorAll('#similarCollapsible .card[data-id]'));
+    cards.forEach((card) => {
       const cardBox = card.querySelector('.cardBox');
-      if (!image || !cardBox) return;
+      if (!cardBox || !dom.isConnected(card)) return;
 
       let record = records.get(card);
-      if (record && (record.id !== card.dataset.id || record.image !== image || record.meta.parentElement !== cardBox)) {
-        restore(card);
+      if (record && record.meta.parentElement !== cardBox) {
+        release(card, record);
         record = null;
       }
       if (!record) {
         const meta = document.createElement('div');
         meta.className = 'sleekfin-details-similar-meta sleekfin-meta';
         cardBox.appendChild(meta);
-        record = {
-          backdrop: image.style.getPropertyValue('--sleekfin-similar-backdrop'),
-          hadLazyHidden: image.classList.contains('lazy-hidden'),
-          id: card.dataset.id,
-          image,
-          meta,
-          poster: image.style.getPropertyValue('--sleekfin-similar-poster'),
-        };
+        record = { meta, rating: '', type: '', year: '' };
         records.set(card, record);
       }
-      active.add(card);
 
-      const backdrop = item.imageUrl(mediaItem, 'Backdrop', { inherit: true, maxWidth: 840, quality: 90 });
-      const poster = item.imageUrl(mediaItem, 'Primary', { maxWidth: 342, quality: 90 });
-      if (backdrop) {
-        image.style.setProperty('--sleekfin-similar-backdrop', imageStyleUrl(backdrop));
+      // A card is reused in place when Jellyfin repaints the row, so the meta line is rebuilt
+      // only once one of its values, including a resolved rating or year, actually changes.
+      const rating = ratings.get(card.dataset.id) || '';
+      const year = years.get(card.dataset.id) || '';
+      if (record.rating !== rating || record.type !== card.dataset.type || record.year !== year) {
+        record.rating = rating;
+        record.type = card.dataset.type;
+        record.year = year;
+        render(<Meta values={valuesFor(card)} />, record.meta);
       }
-      if (poster) {
-        image.style.setProperty('--sleekfin-similar-poster', imageStyleUrl(poster));
-      }
-      if (backdrop || poster) {
-        image.classList.remove('lazy-hidden');
-      }
-
-      const values = [];
-      if (Number(mediaItem.CommunityRating) > 0) {
-        values.push({ accent: true, icon: 'star', text: Number(mediaItem.CommunityRating).toFixed(1) });
-      }
-      values.push({ text: item.year(mediaItem) });
-      values.push({ text: item.typeLabel(mediaItem.Type) || 'Movie' });
-      render(<Meta values={values} />, record.meta);
     });
 
     Array.from(records.keys()).forEach((card) => {
-      if (!active.has(card) || !dom.isConnected(card)) {
-        restore(card);
+      if (!dom.isConnected(card)) {
+        release(card, records.get(card));
+        records.delete(card);
       }
     });
+
+    if (!pending) loadValues(cards);
   }
 
   return {
     destroy() {
-      Array.from(records.keys()).forEach(restore);
+      // A response that arrives after the page is gone must not repopulate these maps or render
+      // into the next detail page, which would leave that page with duplicated metadata.
+      destroyed = true;
+      records.forEach((record, card) => release(card, record));
+      records.clear();
+      ratings.clear();
+      years.clear();
     },
-    render: renderItems,
+    render() {
+      renderItems();
+    },
   };
 }
