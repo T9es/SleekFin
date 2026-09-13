@@ -1,14 +1,14 @@
 {
   "category": "General",
-  "changelog": "Restored artwork in \"You may like\" section, accurate metadata, and added better row density. Changes by @T9es",
+  "changelog": "Added header customization in the new UI Builder tab in config. Also added draggable elements from Jellyfin, Seerrfin, and Jellyfin Enhanced which can be added to the header bar",
   "description": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "guid": "da36c4ef-1d10-4169-8a68-26b194d5301a",
   "name": "SleekFin",
   "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "owner": "varunaditya-plus",
   "targetAbi": "12.0.0.0",
-  "timestamp": "2026-09-13T09:08:58.0000000Z",
-  "version": "1.1.1.0",
+  "timestamp": "2026-09-13T12:48:30.0000000Z",
+  "version": "1.2.0.0",
   "status": "Active",
   "autoUpdate": true,
   "assemblies": [
