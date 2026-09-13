@@ -22,7 +22,6 @@ const state = {
   reconcileTimer: 0,
   retryTimer: 0,
   seasons: [],
-  similar: [],
   started: false,
   stopWatching: null,
 };
@@ -84,7 +83,7 @@ function mount() {
   document.documentElement.classList.add('sleekfin-details-mounted');
   hero.render(state.item, state.seasons);
   actions.reconcile();
-  similar.render(state.similar);
+  similar.render();
 }
 
 function load(id, serverId) {
@@ -100,11 +99,10 @@ function load(id, serverId) {
   const generation = state.generation;
   const userId = client.getCurrentUserId();
   state.loadingId = id;
-  Promise.all([client.getItem(userId, id), client.getSimilarItems(id, { userId, limit: 12 }).catch(() => ({ Items: [] }))])
-    .then((results) => {
+  client.getItem(userId, id)
+    .then((mediaItem) => {
       if (generation !== state.generation || id !== state.currentId) return null;
-      state.item = results[0];
-      state.similar = results[1].Items || [];
+      state.item = mediaItem;
       scheduleReconcile();
       if (!SUPPORTED_TYPES.includes(state.item.Type)) return { Items: [] };
       return loadSeasons(client, userId, state.item);
@@ -137,7 +135,6 @@ function select(page, id, serverId) {
   state.loadingId = '';
   state.page = page;
   state.seasons = [];
-  state.similar = [];
   load(id, serverId);
 }
 
@@ -150,7 +147,6 @@ function reset() {
   state.loadingId = '';
   state.page = null;
   state.seasons = [];
-  state.similar = [];
 }
 
 function reconcile() {
@@ -184,7 +180,7 @@ function reconcile() {
   state.mount.hero.sync();
   state.mount.actions.reconcile();
   state.mount.sections.reconcile();
-  state.mount.similar.render(state.similar);
+  state.mount.similar.render();
 }
 
 function scheduleReconcile() {
