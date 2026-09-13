@@ -63,6 +63,7 @@ function unmount() {
   state.generation += 1;
   removeMount();
   removeReservation();
+  state.resolvedHost = null;
 }
 
 // The hero arrives only after settings and items resolve, but it is taller than a viewport, so
