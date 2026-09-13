@@ -16,7 +16,6 @@ const FIXED_ITEM_IDS = new Set([
 const PLUGIN_ITEM_PATTERN = /^(?:je|sf):[a-z0-9-]{1,64}$/;
 const JELLYFIN_VIEW_PATTERN = /^jellyfin:view:[\da-f-]{16,64}$/;
 const SOURCE_ITEM_PATTERN = /^source:v1:[\da-f]{32}$/;
-const MAX_ITEMS = 128;
 const HEX_COLOR_PATTERN = /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i;
 const RGB_COLOR_PATTERN = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i;
 const RGBA_COLOR_PATTERN = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/i;
@@ -64,14 +63,14 @@ function color(value, fallback) {
   return candidate;
 }
 
-function itemIds(value) {
+function itemIds(value, preserveDuplicates = false) {
   const items = Array.isArray(value) ? value : typeof value === 'string' ? value.split(',') : [];
   const seen = new Set();
   return items.reduce((result, item) => {
     const candidate = String(item || '').trim().toLowerCase();
     const valid = FIXED_ITEM_IDS.has(candidate) || PLUGIN_ITEM_PATTERN.test(candidate) || JELLYFIN_VIEW_PATTERN.test(candidate) || SOURCE_ITEM_PATTERN.test(candidate);
-    if (result.length < MAX_ITEMS && valid && !seen.has(candidate)) {
-      seen.add(candidate);
+    if (valid && (preserveDuplicates || !seen.has(candidate))) {
+      if (!preserveDuplicates) seen.add(candidate);
       result.push(candidate);
     }
     return result;
@@ -97,7 +96,7 @@ export function normalizeSettings(value) {
     hoverOpacity: number(source.hoverOpacity, 0, 100, DEFAULT_SETTINGS.hoverOpacity),
     itemBackgroundColor: color(source.itemBackgroundColor, DEFAULT_SETTINGS.itemBackgroundColor),
     itemHeight: number(source.itemHeight, 24, 80, DEFAULT_SETTINGS.itemHeight),
-    itemOrder: itemIds(source.itemOrder).filter((item) => !hiddenItemIds.has(item)),
+    itemOrder: itemIds(source.itemOrder, true).filter((item) => !hiddenItemIds.has(item)),
     itemSpacing: number(source.itemSpacing, 0, 48, DEFAULT_SETTINGS.itemSpacing),
     itemTextColor: color(source.itemTextColor, DEFAULT_SETTINGS.itemTextColor),
     logoHeight: number(source.logoHeight, 16, 96, DEFAULT_SETTINGS.logoHeight),

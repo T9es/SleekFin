@@ -17,7 +17,7 @@ public sealed class SleekFinHeaderController : ControllerBase
         return Ok(new
         {
             enabled = configuration.HeaderEnabled,
-            itemOrder = HeaderConfiguration.GetItems(configuration.HeaderItemOrder),
+            itemOrder = HeaderConfiguration.GetItems(configuration.HeaderItemOrder, preserveDuplicates: true),
             hiddenItems = HeaderConfiguration.GetItems(configuration.HeaderHiddenItems),
             brandDisplay = configuration.HeaderBrandDisplay,
             brandPosition = configuration.HeaderBrandPosition,

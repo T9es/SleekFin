@@ -207,6 +207,10 @@ html.sleekfin-header-mounted [data-sleekfin-header-profile] img {
 }
 
 @media (max-width: 899px) {
+    html.sleekfin-header-mounted [data-sleekfin-header-toolbar]::after {
+        display: none;
+    }
+
     html.sleekfin-header-mounted [data-sleekfin-header-nav] {
         display: none !important;
     }

@@ -99,13 +99,22 @@ export function createBrandController(isActive) {
     removeFallback();
   }
 
-  function getElement(mount) {
-    return mount.brand || state.fallback;
+  function updateOverlap(mount) {
+    const element = mount.brand || state.fallback;
+    if (!element) return;
+
+    mark(mount, element, 'data-sleekfin-header-overlap-hidden', 'false');
+    if (!mount.proxy || (window.innerWidth >= 1100 && mount.proxy.getAttribute('data-sleekfin-header-overflow-active') !== 'true')) return;
+
+    const brandBounds = element.getBoundingClientRect();
+    const barBounds = mount.proxy.getBoundingClientRect();
+    const overlaps = brandBounds.width > 0 && barBounds.width > 0 && brandBounds.left < barBounds.right && brandBounds.right > barBounds.left && brandBounds.top < barBounds.bottom && brandBounds.bottom > barBounds.top;
+    mark(mount, element, 'data-sleekfin-header-overlap-hidden', overlaps ? 'true' : 'false');
   }
 
   function updateOffset(mount) {
     mark(mount, mount.brand || state.fallback, 'data-sleekfin-header-menu-offset', dom.isVisible(mount.menu) ? 'true' : 'false');
   }
 
-  return { ensureFallback, getElement, removeFallback, resetServer, updateOffset, useNative };
+  return { ensureFallback, removeFallback, resetServer, updateOffset, updateOverlap, useNative };
 }

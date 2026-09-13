@@ -1,7 +1,7 @@
 import { dom } from '../../shared/runtime.js';
 import { createHeaderProxy, needsProxyReplacement, refreshHeaderProxy } from './proxy.js';
 import { settingsSignature } from './settings.js';
-import { applySettings, cleanup as cleanupShared, createMount, directChildren, layoutMode, mark, updateLayoutMeasurements, updateScrolledState } from './shared.js';
+import { applySettings, cleanup as cleanupShared, createMount, directChildren, layoutMode, mark, updateScrolledState } from './shared.js';
 
 function updateActiveControls(mount) {
   const links = mount.header.querySelectorAll('[data-sleekfin-header-segment] a[href]:not([data-sleekfin-header-brand])');
@@ -37,6 +37,10 @@ function scheduleMeasurement(mount) {
   mount.animationFrame = window.requestAnimationFrame(() => {
     mount.animationFrame = 0;
     if (!mount.active || !dom.isConnected(mount.toolbar)) return;
+    if (mount.layoutMode === 'compact') {
+      mark(mount, mount.toolbar, 'data-sleekfin-header-measured', 'false');
+      return;
+    }
     const candidates = mount.clusterItems.filter((element) => dom.isVisible(element) && element.getAttribute('data-sleekfin-header-all-proxied') !== 'true');
     if (!candidates.length) {
       mark(mount, mount.toolbar, 'data-sleekfin-header-measured', 'false');
@@ -88,7 +92,6 @@ export function createModernAdapter(brand) {
     applySettings(headerMount, settings);
     mark(headerMount, header, 'data-sleekfin-header', 'modern');
     mark(headerMount, toolbar, 'data-sleekfin-header-toolbar');
-    mark(headerMount, parts.menu, 'data-sleekfin-header-menu');
     if (parts.brand) {
       brand.useNative(headerMount, parts.brand);
     } else if (parts.menu) {
@@ -113,6 +116,7 @@ export function createModernAdapter(brand) {
     }
 
     headerMount.proxy = createHeaderProxy(headerMount, toolbar, parts.actions || parts.profile, settings);
+    headerMount.updateBrandOverlap = () => brand.updateOverlap(headerMount);
     headerMount.clusterItems = headerMount.proxy
       ? [parts.nav, headerMount.proxy, parts.actions, parts.profile].filter(Boolean)
       : directChildren(toolbar).filter((child) => child === parts.actions || child === parts.profile || (child === parts.nav && headerMount.layoutMode === 'desktop'));
@@ -142,10 +146,9 @@ export function createModernAdapter(brand) {
     );
   }
 
-  function refresh(mount, settings) {
+  function refresh(mount) {
     updateScrolledState(mount);
     brand.updateOffset(mount);
-    updateLayoutMeasurements(mount, mount.toolbar, brand.getElement(mount), settings);
     updateActiveControls(mount);
     refreshHeaderProxy(mount);
     scheduleMeasurement(mount);

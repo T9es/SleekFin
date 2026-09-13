@@ -1,7 +1,7 @@
 import { dom } from '../../shared/runtime.js';
 import { createHeaderProxy, needsProxyReplacement, refreshHeaderProxy } from './proxy.js';
 import { settingsSignature } from './settings.js';
-import { applySettings, cleanup, createMount, directChildren, layoutMode, mark, move, rememberMove, updateLayoutMeasurements, updateScrolledState } from './shared.js';
+import { applySettings, cleanup, createMount, directChildren, layoutMode, mark, move, updateScrolledState } from './shared.js';
 
 export function createLegacyAdapter(brand) {
   function mount(header, settings) {
@@ -32,11 +32,6 @@ export function createLegacyAdapter(brand) {
         .filter((element) => element !== menu && element.matches('button, .headerButton, .paper-icon-button-light'))
         .forEach((element) => move(headerMount, element, cluster));
     }
-    if (menu) {
-      rememberMove(headerMount, menu);
-      top.insertBefore(menu, cluster);
-      mark(headerMount, menu, 'data-sleekfin-header-menu');
-    }
     if (tabs && headerMount.layoutMode === 'desktop') {
       move(headerMount, tabs, cluster);
     }
@@ -44,6 +39,7 @@ export function createLegacyAdapter(brand) {
     brand.ensureFallback();
     const proxyBefore = tabs?.parentNode === cluster ? tabs : right?.parentNode === cluster ? right : null;
     headerMount.proxy = createHeaderProxy(headerMount, cluster, proxyBefore, settings);
+    headerMount.updateBrandOverlap = () => brand.updateOverlap(headerMount);
     return headerMount;
   }
 
@@ -58,10 +54,9 @@ export function createLegacyAdapter(brand) {
     );
   }
 
-  function refresh(mount, settings) {
+  function refresh(mount) {
     updateScrolledState(mount);
     brand.updateOffset(mount);
-    updateLayoutMeasurements(mount, mount.header.querySelector('.headerTop'), brand.getElement(mount), settings);
     refreshHeaderProxy(mount);
   }
 
