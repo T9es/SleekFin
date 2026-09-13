@@ -11,6 +11,18 @@ These instructions apply to the entire repository. Treat `references/` as read-o
 5. Preserve unrelated user changes. Never overwrite, discard, stage, or commit work that is outside the current task.
 6. Distinguish implemented, build-verified, manually tested, and live Jellyfin-verified outcomes. Never present one as another.
 
+## User workflow and product preferences
+
+- Treat the user's corrections to component names and scope literally. If they distinguish the drag box, preview header, live header, drawer, dropdown, or sidebar, verify and change that exact surface.
+- Do not substitute prototypes, isolated mock pages, or approximate stand-ins when the user asks for a Jellyfin change. Implement it in SleekFin, deploy it to the authorized Jellyfin instance, and inspect the actual rendered result.
+- When a design should match SeerrFin, inspect SeerrFin's current configuration markup and styles and make equivalent SleekFin controls use the same structure, dimensions, typography, spacing, colors, and interaction patterns where compatible with SleekFin's scoped naming.
+- Use the actual icons, labels, enabled state, and configurable names exposed by Jellyfin, SeerrFin, or Jellyfin Enhanced. Do not invent glyphs, redraw provider icons, or hardcode labels that the provider can change.
+- Preserve direct manipulation in the UI Builder: show the dragged element, update ordering continuously, animate movement smoothly, and let users drag between the palette, preview, and open overflow surfaces. Do not add arrow controls or click-to-add/remove behavior unless explicitly requested. Preserve duplicate items and draggable structural items such as separators and spaces.
+- Verify header behavior under every affected placement and width: left, center, and right positioning; crowded desktop overflow; mobile dock and drawer layouts; brand overlap; structural-only overflow; and repeated SPA mounts. Header content must not become horizontally scrollable, and hidden items must always have a visible overflow control.
+- When asked to remove dead, redundant, obsolete, or unnecessary code, first identify the exact proven candidates and explain why each is removable. Delete only that approved list unless the user explicitly authorizes the audit and deletion together.
+- After deploying browser assets, use a hard refresh or a fresh cache-busting page load before judging the result. After live interaction tests, discard unsaved test settings and restore any temporary viewport override so the user's browser remains in its normal state.
+- Use credentials the user explicitly provides for the authorized task instead of repeatedly asking during that task, but never write credentials into repository files, logs, commit messages, shell history, or long-term notes.
+
 ## Reference baseline
 
 - Use SeerrFin as the structural reference: one solution, one Jellyfin plugin project, embedded browser assets, a small plugin entry point, role-based folders, and version-triggered release automation.
