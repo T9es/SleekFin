@@ -12,6 +12,7 @@ public sealed class SleekFinPlugin : BasePlugin<PluginConfiguration>, IHasWebPag
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
+        HeaderConfiguration.Normalize(Configuration);
     }
 
     public static SleekFinPlugin Instance { get; private set; } = null!;
@@ -21,6 +22,16 @@ public sealed class SleekFinPlugin : BasePlugin<PluginConfiguration>, IHasWebPag
     public override string Name => "SleekFin";
 
     public override string Description => "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.";
+
+    public override void UpdateConfiguration(BasePluginConfiguration configuration)
+    {
+        if (configuration is PluginConfiguration pluginConfiguration)
+        {
+            HeaderConfiguration.Normalize(pluginConfiguration);
+        }
+
+        base.UpdateConfiguration(configuration);
+    }
 
     public IEnumerable<PluginPageInfo> GetPages()
     {

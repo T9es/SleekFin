@@ -10,36 +10,10 @@ public static class TransformationPatches
         "<link\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>",
         RegexOptions.CultureInvariant);
 
-    // Matches the deferred asset scripts and the inline boot script, so a repeated transformation
-    // replaces them instead of stacking them. The body is matched lazily, which stops each match at
-    // its own closing tag and keeps it from swallowing the document content between two injected
-    // elements.
+    // Also removes the earlier inline boot script if Jellyfin transforms content more than once.
     private static readonly Regex InjectedScripts = new(
         "<script\\b[^>]*\\bdata-sleekfin-(?:(?:[a-z]+-)?asset=\"[^\"]*\"|boot\\b)[^>]*>[\\s\\S]*?</script>",
         RegexOptions.CultureInvariant);
-
-    // The failsafe is a timer in the boot script rather than an animation on the concealed page,
-    // because only removing the class restores Jellyfin's own loading ring and lets a later
-    // navigation conceal again.
-    //
-    // It is re-armed by each concealment, not just the first one. The bundle adds the class again on
-    // every detail navigation, and a window measured from page load would expire in the middle of a
-    // later one, dropping that route's concealment while its item is still loading and so painting
-    // the native page the class exists to hide.
-    //
-    // Jellyfin paints its own detail page long before the deferred bundle runs, so only a
-    // synchronous inline script parsed with the head can conceal it from the first frame. It is
-    // emitted last in the head, behind the stylesheets that style the concealed state, and the
-    // class name below is the one the details bundle adds and removes.
-    private const string BootElement =
-        @"<script data-sleekfin-boot>(function(){var r=document.documentElement;"
-        + @"var c='sleekfin-details-concealed',h=window.location.hash.slice(1).replace(/^!+/,'');"
-        + @"var s=h||window.location.pathname,i=s.search(/[?&]/),p=(i<0?s:s.slice(0,i)).replace(/^[!\/]+/,'/');"
-        + @"if(!/(^|\/)details\/?$/.test(p)){return;}var t=0,a=0;"
-        + @"var w=function(){var n=r.classList.contains(c);if(n===a){return;}a=n;window.clearTimeout(t);"
-        + @"if(n){t=window.setTimeout(function(){r.classList.remove(c);},4000);}};"
-        + @"new MutationObserver(w).observe(r,{attributes:true,attributeFilter:['class']});"
-        + @"r.classList.add(c);})();</script>";
 
     public static string IndexHtml(PatchRequestPayload payload)
     {
@@ -68,12 +42,12 @@ public static class TransformationPatches
             }
 
             string url = $"../SleekFin/{asset.FileName}{cacheQuery}";
-            string element = asset.IsStyle ? $"<link rel=\"stylesheet\" href=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\" />" : $"<script defer src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>";
-            string closingTag = asset.IsStyle ? "</head>" : "</body>";
+            string element = asset.IsStyle
+                ? $"<link rel=\"stylesheet\" href=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\" />"
+                : $"<script{(asset.IsBlockingScript ? string.Empty : " defer")} src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>";
+            string closingTag = asset.IsStyle || asset.IsBlockingScript ? "</head>" : "</body>";
             contents = contents.Replace(closingTag, $"{element}{closingTag}", StringComparison.Ordinal);
         }
-
-        contents = contents.Replace("</head>", $"{BootElement}</head>", StringComparison.Ordinal);
 
         return contents;
     }
@@ -82,8 +56,8 @@ public static class TransformationPatches
     {
         return asset.RequiredFeature switch
         {
-            FrontendAssets.Feature.Header => configuration.HeaderEnabled,
             FrontendAssets.Feature.Hero => configuration.HeroEnabled,
+            FrontendAssets.Feature.Details => configuration.DetailsEnabled,
             _ => true
         };
     }

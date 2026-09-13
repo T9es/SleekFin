@@ -1,4 +1,4 @@
-/* Added by the inline boot script while a detail route is entered and removed by the details bundle
+/* Added by the synchronous boot asset while a detail route is entered and removed by the details bundle
    once it has something to show. visibility rather than display hides the page without removing its
    layout, so the bundle can still select, measure and move those nodes while it builds the hero, and
    the background keeps Jellyfin's own page from showing through before the theme bundle defines the
@@ -47,14 +47,6 @@ html.sleekfin-details-concealed::before {
     top: 50%;
     width: 40px;
     z-index: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    /* A spinner is motion by definition, so those users get the same mark held still. It is removed
-       the same way either preference is, by the class coming off. */
-    html.sleekfin-details-concealed::before {
-        animation: none;
-    }
 }
 
 html.sleekfin-details-mounted {

@@ -1,8 +1,10 @@
 import { dom } from '../../shared/runtime.js';
-import { cleanup, createMount, directChildren, layoutMode, mark, move, rememberMove, updateScrolledState } from './shared.js';
+import { createHeaderProxy, needsProxyReplacement, refreshHeaderProxy } from './proxy.js';
+import { settingsSignature } from './settings.js';
+import { applySettings, cleanup, createMount, directChildren, layoutMode, mark, move, rememberMove, updateLayoutMeasurements, updateScrolledState } from './shared.js';
 
 export function createLegacyAdapter(brand) {
-  function mount(header) {
+  function mount(header, settings) {
     const top = header.querySelector('.headerTop');
     const left = header.querySelector('.headerLeft');
     const right = header.querySelector('.headerRight');
@@ -10,14 +12,18 @@ export function createLegacyAdapter(brand) {
     const menu = left?.querySelector('.mainDrawerButton') || null;
     const cluster = dom.element('<div data-sleekfin-legacy-cluster="true"></div>');
     const headerMount = createMount({
+      actions: right,
       cluster,
       header,
       kind: 'legacy',
       layoutMode: layoutMode(),
       menu,
+      nav: tabs,
+      settingsSignature: settingsSignature(settings),
     });
 
     top.appendChild(cluster);
+    applySettings(headerMount, settings);
     mark(headerMount, header, 'data-sleekfin-header', 'legacy');
     mark(headerMount, top, 'data-sleekfin-legacy-top');
     mark(headerMount, left, 'data-sleekfin-legacy-left');
@@ -36,16 +42,27 @@ export function createLegacyAdapter(brand) {
     }
     move(headerMount, right, cluster);
     brand.ensureFallback();
+    const proxyBefore = tabs?.parentNode === cluster ? tabs : right?.parentNode === cluster ? right : null;
+    headerMount.proxy = createHeaderProxy(headerMount, cluster, proxyBefore, settings);
     return headerMount;
   }
 
-  function needsReplacement(mount, surface) {
-    return mount.header !== surface.header || mount.layoutMode !== layoutMode() || !dom.isConnected(mount.cluster) || mount.menu !== surface.header.querySelector('.mainDrawerButton');
+  function needsReplacement(mount, surface, settings) {
+    return (
+      mount.header !== surface.header ||
+      mount.layoutMode !== layoutMode() ||
+      !dom.isConnected(mount.cluster) ||
+      mount.menu !== surface.header.querySelector('.mainDrawerButton') ||
+      mount.settingsSignature !== settingsSignature(settings) ||
+      needsProxyReplacement(mount, settings)
+    );
   }
 
-  function refresh(mount) {
+  function refresh(mount, settings) {
     updateScrolledState(mount);
     brand.updateOffset(mount);
+    updateLayoutMeasurements(mount, mount.header.querySelector('.headerTop'), brand.getElement(mount), settings);
+    refreshHeaderProxy(mount);
   }
 
   return { cleanup, mount, needsReplacement, refresh };

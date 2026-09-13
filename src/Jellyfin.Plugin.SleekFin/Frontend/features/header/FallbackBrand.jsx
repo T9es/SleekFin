@@ -4,7 +4,7 @@ import { mark } from './shared.js';
 function FallbackBrand({ imageSource, serverName }) {
   return (
     <>
-      <img src={imageSource} />
+      {imageSource ? <img src={imageSource} /> : null}
       <span>{serverName}</span>
     </>
   );
@@ -14,6 +14,7 @@ export function createBrandController(isActive) {
   const state = {
     fallback: null,
     serverName: '',
+    serverNameRequest: 0,
     serverNameRequested: false,
   };
 
@@ -47,12 +48,13 @@ export function createBrandController(isActive) {
     if (state.serverNameRequested || typeof window.fetch !== 'function') return;
 
     const systemInfoUrl = window.ApiClient && typeof window.ApiClient.getUrl === 'function' ? window.ApiClient.getUrl('/System/Info/Public') : new URL('../System/Info/Public', document.baseURI).toString();
+    const request = ++state.serverNameRequest;
     state.serverNameRequested = true;
     window
       .fetch(systemInfoUrl, { credentials: 'same-origin' })
       .then((response) => (response.ok ? response.json() : null))
       .then((systemInfo) => {
-        if (!isActive()) return;
+        if (!isActive() || request !== state.serverNameRequest) return;
 
         const serverName = typeof systemInfo?.ServerName === 'string' ? systemInfo.ServerName.trim() : '';
         if (serverName) {
@@ -61,6 +63,13 @@ export function createBrandController(isActive) {
         }
       })
       .catch(() => {});
+  }
+
+  function resetServer() {
+    state.serverName = '';
+    state.serverNameRequest += 1;
+    state.serverNameRequested = false;
+    renderFallback();
   }
 
   function removeFallback() {
@@ -90,9 +99,13 @@ export function createBrandController(isActive) {
     removeFallback();
   }
 
+  function getElement(mount) {
+    return mount.brand || state.fallback;
+  }
+
   function updateOffset(mount) {
     mark(mount, mount.brand || state.fallback, 'data-sleekfin-header-menu-offset', dom.isVisible(mount.menu) ? 'true' : 'false');
   }
 
-  return { ensureFallback, removeFallback, updateOffset, useNative };
+  return { ensureFallback, getElement, removeFallback, resetServer, updateOffset, useNative };
 }

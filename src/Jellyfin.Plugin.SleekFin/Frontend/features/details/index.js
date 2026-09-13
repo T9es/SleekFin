@@ -6,6 +6,7 @@ import { createSections } from './sections.jsx';
 import { createSimilar } from './similar.jsx';
 
 const CONCEALED_CLASS = 'sleekfin-details-concealed';
+const CONCEAL_EVENT = 'sleekfin:details-conceal';
 const DETAIL_PATH = /(^|\/)details\/?$/;
 const HISTORY_METHODS = ['pushState', 'replaceState'];
 const SUPPORTED_TYPES = ['Movie', 'Series', 'Season', 'Episode'];
@@ -30,7 +31,6 @@ const state = {
   reconcileTimer: 0,
   retryTimer: 0,
   seasons: [],
-  similar: [],
   started: false,
   stopHidden: null,
   stopHistory: null,
@@ -52,6 +52,7 @@ function route() {
 
 function conceal(concealed) {
   document.documentElement.classList.toggle(CONCEALED_CLASS, concealed);
+  if (concealed) document.dispatchEvent(new Event(CONCEAL_EVENT));
 }
 
 function detailPageOf(target) {
@@ -151,9 +152,9 @@ function mount() {
   if (!state.page || !state.item || !SUPPORTED_TYPES.includes(state.item.Type)) return;
   const hero = createHero(state.page);
   if (!hero) {
-    // Jellyfin's template does not expose the nodes the hero is built from, so the route falls back
-    // to Jellyfin's own page instead of staying hidden until the boot failsafe releases it.
-    conceal(false);
+    // Jellyfin's template does not expose the nodes the hero is built from, so keep its page and wait
+    // for the outgoing detail page to hide before revealing it.
+    revealNativePage();
     return;
   }
   const actions = createActions(hero.actions, state.item.Type === 'Episode');
@@ -173,7 +174,7 @@ function mount() {
   document.documentElement.classList.add('sleekfin-details-mounted');
   hero.render(state.item, state.seasons);
   actions.reconcile();
-  similar.render(state.similar);
+  similar.render();
   // Revealed once Jellyfin has hidden the page it is leaving, which the observer below waits for.
   concealUntilAlone(state.page);
 }
@@ -187,8 +188,8 @@ function load(id, serverId) {
       state.retryTimer = window.setTimeout(scheduleReconcile, 250);
     } else {
       // The route belongs to another server than this client serves, so no item can ever resolve:
-      // Jellyfin's own page has to show instead of a route left dark until the boot failsafe.
-      conceal(false);
+      // Jellyfin's own page has to show after the outgoing detail page is hidden.
+      revealNativePage();
     }
     return;
   }
@@ -197,16 +198,6 @@ function load(id, serverId) {
   const userId = client.getCurrentUserId();
   const isCurrent = () => generation === state.generation && id === state.currentId;
   state.loadingId = id;
-
-  // Similar titles and seasons only fill in a view that is already on screen, so they are
-  // requested beside the item instead of gating the reveal the way Promise.all used to.
-  client.getSimilarItems(id, { userId, limit: 12 })
-    .then((response) => {
-      if (!isCurrent()) return;
-      state.similar = response.Items || [];
-      scheduleReconcile();
-    })
-    .catch(() => {});
 
   client.getItem(userId, id)
     .then((mediaItem) => {
@@ -237,11 +228,12 @@ function load(id, serverId) {
       state.loadingId = '';
       // Only an item that cannot be resolved falls back to Jellyfin's own page, otherwise the
       // concealment would leave the route dark until the boot failsafe expires.
-      conceal(false);
+      revealNativePage();
     });
 }
 
 function select(page, id, serverId) {
+  const previousPage = state.mount?.page || state.page || state.previousPage;
   // Concealed before anything else so an in-app navigation hides the incoming native page in the
   // same task as the route change, before Jellyfin appends and paints it.
   conceal(true);
@@ -253,10 +245,9 @@ function select(page, id, serverId) {
   state.loadingId = '';
   state.page = page;
   // The page recorded for the previous route must not be mounted onto this one.
-  state.previousPage = state.activePage || state.mount?.page || null;
+  state.previousPage = previousPage;
   state.activePage = null;
   state.seasons = [];
-  state.similar = [];
   load(id, serverId);
 }
 
@@ -271,7 +262,6 @@ function clearState() {
   state.previousPage = null;
   state.activePage = null;
   state.seasons = [];
-  state.similar = [];
 }
 
 function reset() {
@@ -304,6 +294,19 @@ function stopHiddenWatch() {
   state.stopHidden = null;
 }
 
+function observeDetailPages(callback) {
+  const observer = new MutationObserver(callback);
+  const observeChain = (start) => {
+    for (let node = start; node && node !== document.body; node = node.parentElement) {
+      observer.observe(node, { attributes: true, attributeFilter: ['class', 'style'], childList: true });
+    }
+  };
+  Array.from(document.querySelectorAll('#itemDetailPage')).forEach(observeChain);
+  if (document.body) observer.observe(document.body, { childList: true });
+  state.stopHidden = () => observer.disconnect();
+  callback();
+}
+
 function concealUntilAlone(except) {
   stopHiddenWatch();
   const release = () => {
@@ -311,15 +314,21 @@ function concealUntilAlone(except) {
     stopHiddenWatch();
     conceal(false);
   };
-  const observer = new MutationObserver(release);
-  const observeChain = (start) => {
-    for (let node = start; node && node !== document.body; node = node.parentElement) {
-      observer.observe(node, { attributes: true, attributeFilter: ['class', 'style'], childList: true });
-    }
+  observeDetailPages(release);
+}
+
+function concealUntilPageHidden(page) {
+  stopHiddenWatch();
+  const release = () => {
+    if (!pageHidden(page)) return;
+    stopHiddenWatch();
+    conceal(false);
   };
-  Array.from(document.querySelectorAll('#itemDetailPage')).forEach(observeChain);
-  state.stopHidden = () => observer.disconnect();
-  release();
+  observeDetailPages(release);
+}
+
+function revealNativePage() {
+  concealUntilPageHidden(state.previousPage);
 }
 
 function leaveDetail() {
@@ -340,9 +349,11 @@ function reconcile() {
     // concealment stays and the next reconcile decides. The real exits (non-detail route, failed
     // request, unsupported item, stop) release it.
     if (state.page || state.mount) {
+      const previousPage = state.mount?.page || state.page || state.previousPage;
       conceal(true);
-      state.page = null;
       destroyMount();
+      state.previousPage = previousPage;
+      state.page = null;
     }
     return;
   }
@@ -351,8 +362,10 @@ function reconcile() {
     return;
   }
   if (state.page !== page) {
+    const previousPage = state.mount?.page || state.page || state.previousPage;
     conceal(true);
     destroyMount();
+    state.previousPage = previousPage;
     state.page = page;
   }
   if (!state.item) {
@@ -363,7 +376,7 @@ function reconcile() {
   }
   if (!SUPPORTED_TYPES.includes(state.item.Type)) {
     destroyMount();
-    conceal(false);
+    revealNativePage();
     return;
   }
   if (!state.mount || !state.mount.hero.isConnected()) {
@@ -374,7 +387,7 @@ function reconcile() {
   state.mount.hero.sync();
   state.mount.actions.reconcile();
   state.mount.sections.reconcile();
-  state.mount.similar.render(state.similar);
+  state.mount.similar.render();
 }
 
 function scheduleReconcile() {
