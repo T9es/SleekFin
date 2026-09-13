@@ -26,7 +26,7 @@ The ultimate customisation plugin for Jellyfin, which styles the header bar, add
 ## Features
 
 - **Complete reskin:** Applies a fully black interface with dark surfaces, red accents, and uses Inter across the main UI, dialogs, lists, and cards.
-- **Floating header:** Turns Jellyfin's modern and legacy desktop/mobile headers into a custom compact navigation bar which can be customized in multiple styles (coming soon).
+- **Floating header:** Turns Jellyfin's modern and legacy desktop/mobile headers into a custom compact navigation bar which can be customized in the plugin's UI Builder.
 - **Configurable home hero:** Adds a full-width hero section above rows on the home page to display your library's content more nicely.
 - **Redesigned home and library pages:** Restyles the carousels and library pages to show content more clearly with consistent spacing and concise info under posters.
 - **Updated detail pages:** Remade Movie, Series, Season, and Episode pages with full-page backdrop heros, title art, and lots of details about the content itself, organised in a more appealing manner.
@@ -49,7 +49,7 @@ https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
 4. Now you have to restart your Jellyfin instance. Go to **Dashboard** and click the **Restart** button. You're done!
 
 ### Configuration
-After installation, you can now configure how the extension looks by going to **Dashboard → SleekFin**, and editing anything you want. This plugin is made to be as customizable as possible, so you should be able to tweak anything to your liking. If not, there's always CSS.
+After installation, go to **Dashboard → SleekFin**. The **Overview** tab contains the plugin's existing settings, while **UI Builder** provides a live draggable header preview and controls for its branding, layout, sizing, colors, and states.
 
 ## Screenshots
 <table>

@@ -53,7 +53,6 @@ public static class TransformationPatches
     {
         return asset.RequiredFeature switch
         {
-            FrontendAssets.Feature.Header => configuration.HeaderEnabled,
             FrontendAssets.Feature.Hero => configuration.HeroEnabled,
             _ => true
         };

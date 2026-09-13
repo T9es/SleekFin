@@ -4,22 +4,22 @@
             padding: 2em 1em;
         }
 
-        #sleekFinConfigurationPage .sleekfin-page-banner {
-            align-items: center;
+        .sleekfin-page-banner {
             background: #fff;
-            box-sizing: border-box;
             color: #000;
-            display: flex;
-            font-size: 1.5em;
-            font-weight: 500;
-            justify-content: space-between;
-            line-height: 1.3;
+            width: 100%;
+            box-sizing: border-box;
             padding: 0.5em 1em;
             text-align: center;
-            width: 100%;
+            font-size: 1.5em;
+            font-weight: 500;
+            line-height: 1.3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        #sleekFinConfigurationPage .sleekfin-page-banner a {
+        .sleekfin-page-banner a {
             color: #000;
         }
 
@@ -34,111 +34,301 @@
             max-width: none !important;
         }
 
-        #sleekFinConfigurationPage .sleekfin-container,
-        #sleekFinConfigurationForm {
+        .sleekfin-container,
+        .sleekFinConfigurationForm {
             display: flex;
             flex-direction: column;
         }
 
-        #sleekFinConfigurationForm {
+        .sleekFinConfigurationForm {
             width: 100%;
         }
 
-        #sleekFinConfigurationPage .sleekfin-section-title {
+        .sleekfin-config-section-title {
+            text-align: center;
             font-size: 1.35em;
             font-weight: 400;
-            line-height: 1.3;
             margin: 0 0 1em;
-            text-align: center;
+            line-height: 1.3;
         }
 
-        #sleekFinConfigurationPage .sleekfin-section + .sleekfin-section {
-            margin-top: 2.5em;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-page-banner + .sleekfin-section {
-            margin-top: 1.25em;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-card + .sleekfin-section-title {
-            margin-top: 2.5em;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-card {
+        .sleekfin-card {
             border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
             padding: 1em;
         }
 
-        #sleekFinConfigurationPage .sleekfin-dependency {
-            align-items: center;
+        .sleekfin-dependency {
             display: flex;
-            font-size: 1.05em;
+            align-items: center;
             gap: 10px;
+            font-size: 1.05em;
             line-height: 1.5;
             margin-bottom: 10px;
         }
 
-        #sleekFinConfigurationPage .sleekfin-dependency:last-child {
-            margin-bottom: 0;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-dependency-icon {
-            text-align: center;
-            width: 1.2em;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-dependency.is-ok {
+        .sleekfin-dependency.is-ok {
             color: #4caf50;
         }
 
-        #sleekFinConfigurationPage .sleekfin-dependency.is-missing {
+        .sleekfin-dependency.is-missing {
             color: #ff5252;
         }
 
-        #sleekFinConfigurationPage .sleekfin-toggle-row {
-            align-items: start;
-            display: flex;
-            gap: 1.5em;
-            justify-content: space-between;
-            margin-bottom: 1.25em;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle-row:last-child {
+        .sleekfin-dependency:last-child,
+        .sleekfin-input-group:last-child {
             margin-bottom: 0;
         }
 
-        #sleekFinConfigurationPage .sleekfin-toggle-copy {
-            flex: 1;
-            min-width: 0;
+        .sleekfin-dependency-icon {
+            width: 1.2em;
+            text-align: center;
         }
 
-        #sleekFinConfigurationPage .sleekfin-toggle-label {
-            color: #fff;
+        .sleekfin-input-group {
+            margin-bottom: 1.75em;
+        }
+
+        .sleekfin-label {
             display: block;
+            font-size: 1em;
+            line-height: 1.4;
+            margin-bottom: 0.5em;
+        }
+
+        .sleekfin-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border: 2px solid var(--cardBackground, transparent);
+            background: var(--cardBackground, rgba(255, 255, 255, 0.08));
+            color: inherit;
             font-size: 1.05em;
             line-height: 1.4;
         }
 
-        #sleekFinConfigurationPage .sleekfin-field-description {
-            color: #6a6a6a;
+        .sleekfin-input:focus {
+            border-color: var(--accent, #00a4dc);
+            outline: none;
+        }
+
+        .sleekfin-field-description {
             font-size: 0.92em;
+            color: var(--secondaryTextColor, rgba(255, 255, 255, 0.55));
+            margin-top: 0.55em;
             line-height: 1.55;
-            margin: 0.55em 0 0;
         }
 
-        #sleekFinConfigurationPage .sleekfin-toggle-actions {
-            align-items: center;
+        .sleekFinConfigurationForm .sleekfin-field-description {
+            color: #6a6a6a;
+        }
+
+        .sleekfin-field-main {
             display: flex;
-            flex-shrink: 0;
-            gap: 0.65em;
+            align-items: flex-start;
+            gap: 1.25em;
         }
 
-        #sleekFinConfigurationPage .sleekfin-field {
-            margin-bottom: 1.5em;
+        .sleekfin-label--side {
+            color: #fff;
+            font-size: 1.15em;
+            line-height: 1.4;
+            margin: 0;
+            padding-top: 0.65em;
         }
 
-        #sleekFinConfigurationPage .sleekfin-field:last-child {
+        .sleekfin-input-stack {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sleekfin-save-button {
+            padding: 12px;
+            border: none;
+            border-radius: 0;
+            background: var(--accent, #00a4dc);
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 64px;
+            font-size: 1em;
+        }
+
+        .sleekfin-save-button:hover {
+            opacity: 0.9;
+        }
+
+        .sleekfin-toggle-row {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 1.5em;
+            margin-bottom: 1.25em;
+        }
+
+        .sleekfin-toggle-row:last-child {
             margin-bottom: 0;
+        }
+
+        .sleekfin-toggle-copy {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sleekfin-toggle-label {
+            display: block;
+            font-size: 1.05em;
+            line-height: 1.4;
+            color: #fff;
+        }
+
+        .sleekfin-toggle {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .sleekfin-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .sleekfin-toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.18);
+            transition: background 0.2s ease;
+        }
+
+        .sleekfin-toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            transition: transform 0.2s ease;
+        }
+
+        .sleekfin-toggle input:checked + .sleekfin-toggle-slider {
+            background: var(--accent, #00a4dc);
+        }
+
+        .sleekfin-toggle input:checked + .sleekfin-toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .sleekfin-toggle input:focus-visible + .sleekfin-toggle-slider {
+            outline: 2px solid var(--accent, #00a4dc);
+            outline-offset: 2px;
+        }
+
+        .sleekfin-toggle-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65em;
+            flex-shrink: 0;
+        }
+
+        .sleekfin-choice-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5em;
+        }
+
+        .sleekfin-choice {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .sleekfin-choice input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .sleekfin-choice span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 26px;
+            padding: 0 0.75em;
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.25));
+            background: var(--cardBackground, rgba(255, 255, 255, 0.08));
+            color: inherit;
+            font-size: 0.85em;
+            line-height: 1;
+            white-space: nowrap;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .sleekfin-choice input:checked + span {
+            border-color: var(--accent, #00a4dc);
+            background: rgba(0, 164, 220, 0.18);
+            color: #fff;
+        }
+
+        .sleekfin-choice input:focus-visible + span {
+            outline: 2px solid var(--accent, #00a4dc);
+            outline-offset: 2px;
+        }
+
+        .sleekfin-page-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5em 1em;
+            margin-bottom: 2em;
+            margin-top: 1em;
+            flex-direction: row;
+            width: 100%;
+        }
+
+        .sleekfin-page-nav-button {
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 0.4em 0.75em;
+            line-height: 1.3;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .sleekfin-page-nav-button:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: rgb(255, 255, 255);
+        }
+
+        .sleekfin-page-nav-button.is-active {
+            border-color: var(--accent, #00a4dc);
+            color: var(--accent, #52b2fa);
+        }
+
+        .sleekfin-page-panel {
+            display: none;
+        }
+
+        .sleekfin-page-panel.is-active {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5em;
         }
 
         #sleekFinConfigurationPage .sleekfin-source-list {
@@ -153,14 +343,8 @@
             background: rgba(255, 255, 255, 0.04);
             display: flex;
             gap: 10px;
+            margin-bottom: 0;
             padding: 10px 12px;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-source-row label {
-            align-items: center;
-            display: flex;
-            flex: 1;
-            gap: 10px;
         }
 
         #sleekFinConfigurationPage .sleekfin-source-move {
@@ -173,67 +357,480 @@
             width: 30px;
         }
 
-        #sleekFinConfigurationPage .sleekfin-toggle {
-            display: inline-block;
-            flex-shrink: 0;
-            height: 26px;
+        #sleekFinConfigurationPage .sleekfin-builder-preview {
+            background: #000 center top / cover no-repeat;
+            border: 0;
+            border-bottom: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            box-sizing: border-box;
+            height: 203px;
+            overflow: hidden;
             position: relative;
-            width: 48px;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle input {
-            height: 0;
-            opacity: 0;
-            width: 0;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle-slider {
-            background: rgba(255, 255, 255, 0.18);
-            cursor: pointer;
-            inset: 0;
-            position: absolute;
-            transition: background 0.2s ease;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle-slider:before {
-            background: #fff;
-            bottom: 3px;
-            content: "";
-            height: 20px;
-            left: 3px;
-            position: absolute;
-            transition: transform 0.2s ease;
-            width: 20px;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle input:checked + .sleekfin-toggle-slider {
-            background: var(--accent, #00a4dc);
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle input:checked + .sleekfin-toggle-slider:before {
-            transform: translateX(22px);
-        }
-
-        #sleekFinConfigurationPage .sleekfin-toggle input:focus-visible + .sleekfin-toggle-slider {
-            outline: 2px solid var(--accent, #00a4dc);
-            outline-offset: 2px;
-        }
-
-        #sleekFinConfigurationPage .sleekfin-save-button {
-            background: var(--accent, #00a4dc);
-            border: none;
-            border-radius: 0;
-            color: #fff;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 500;
-            margin-top: 64px;
-            padding: 12px;
             width: 100%;
         }
 
-        #sleekFinConfigurationPage .sleekfin-save-button:hover {
-            opacity: 0.9;
+        #sleekFinConfigurationPage .sleekfin-builder-preview-header {
+            height: var(--sleekfin-preview-header-height, 80px);
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu {
+            align-items: center;
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            color: #fff;
+            display: flex;
+            height: 32px;
+            justify-content: center;
+            left: 20px;
+            padding: 0;
+            position: absolute;
+            top: calc((var(--sleekfin-preview-header-height, 80px) - 32px) / 2);
+            width: 32px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand {
+            align-items: center;
+            color: var(--sleekfin-preview-brand-color, #fff);
+            display: flex;
+            font: 600 14px/1 Inter, "Noto Sans", sans-serif;
+            gap: var(--sleekfin-preview-brand-gap, 10px);
+            height: var(--sleekfin-preview-logo-height, 36px);
+            left: 20px;
+            max-width: 32%;
+            position: absolute;
+            top: calc((var(--sleekfin-preview-header-height, 80px) - var(--sleekfin-preview-logo-height, 36px)) / 2);
+            transform: none;
+            white-space: nowrap;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-position="Center"] .sleekfin-builder-preview-brand {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-position="Right"] .sleekfin-builder-preview-brand {
+            left: auto;
+            right: 20px;
+            transform: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-bar {
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            align-items: center;
+            backdrop-filter: blur(18px) saturate(140%);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012)), rgba(22, 22, 24, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 6px 14px -6px rgba(0, 0, 0, 0.55);
+            box-sizing: border-box;
+            display: flex;
+            gap: var(--sleekfin-preview-item-gap, 2px);
+            height: calc(var(--sleekfin-preview-item-height, 32px) + var(--sleekfin-preview-bar-padding, 4px) + var(--sleekfin-preview-bar-padding, 4px));
+            max-width: calc(100% - var(--sleekfin-preview-left-reserve, 20px) - var(--sleekfin-preview-right-reserve, 20px));
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: var(--sleekfin-preview-bar-padding, 4px);
+            position: absolute;
+            right: var(--sleekfin-preview-right-reserve, 20px);
+            scrollbar-width: none;
+            top: calc((var(--sleekfin-preview-header-height, 80px) - var(--sleekfin-preview-item-height, 32px) - var(--sleekfin-preview-bar-padding, 4px) - var(--sleekfin-preview-bar-padding, 4px)) / 2);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-bar-position="Left"] .sleekfin-builder-preview-bar {
+            left: var(--sleekfin-preview-left-reserve, 20px);
+            right: auto;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-bar-position="Center"] .sleekfin-builder-preview-bar {
+            left: var(--sleekfin-preview-center, 50%);
+            right: auto;
+            transform: translateX(-50%);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample {
+            align-items: center;
+            background: var(--sleekfin-preview-item-background, transparent);
+            border: 0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            color: var(--sleekfin-preview-item-color, rgba(255, 255, 255, 0.7));
+            display: inline-flex;
+            flex: 0 0 auto;
+            font: 500 13px/1 Inter, "Noto Sans", sans-serif;
+            gap: 6px;
+            height: var(--sleekfin-preview-item-height, 32px);
+            justify-content: center;
+            min-height: var(--sleekfin-preview-item-height, 32px);
+            min-width: 0;
+            padding: 0 12px;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item {
+            align-items: center;
+            display: inline-flex;
+            flex: 0 0 auto;
+            position: relative;
+            touch-action: none;
+            user-select: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-being-dragged {
+            z-index: 1;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-removing {
+            opacity: 0.35;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-active .sleekfin-builder-live-sample {
+            background: var(--sleekfin-preview-active-background, rgba(255, 255, 255, 0.12));
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.14);
+            color: var(--sleekfin-preview-active-color, #fff);
+            font-weight: 600;
+            opacity: var(--sleekfin-preview-active-opacity, 1);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item .sleekfin-builder-live-sample {
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item .sleekfin-builder-live-sample:hover {
+            opacity: var(--sleekfin-preview-hover-opacity, 1);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample.is-icon-only {
+            min-width: var(--sleekfin-preview-item-height, 32px);
+            padding: 0;
+            width: var(--sleekfin-preview-item-height, 32px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-space {
+            height: 1px;
+            width: var(--sleekfin-preview-item-height, 32px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-separator {
+            background: rgba(255, 255, 255, 0.12);
+            height: calc(var(--sleekfin-preview-item-height, 32px) - 16px);
+            margin: 0 6px;
+            width: 1px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-space .sleekfin-builder-live-sample,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-separator .sleekfin-builder-live-sample {
+            height: var(--sleekfin-preview-item-height, 32px);
+            inset: 50% auto auto 50%;
+            min-height: 0;
+            opacity: 0;
+            padding: 0;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: var(--sleekfin-preview-item-height, 32px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-empty {
+            align-items: center;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            box-sizing: border-box;
+            color: rgba(255, 255, 255, 0.62);
+            display: flex;
+            font: 500 11px/1 Inter, "Noto Sans", sans-serif;
+            height: var(--sleekfin-preview-item-height, 32px);
+            padding: 0 10px;
+            white-space: nowrap;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview.is-dragging .sleekfin-builder-preview-item:not(.is-space):not(.is-separator) .sleekfin-builder-live-sample,
+        #sleekFinConfigurationPage .sleekfin-builder-item.is-drag-source .sleekfin-builder-live-sample,
+        #sleekFinConfigurationPage .sleekfin-builder-drag-ghost .sleekfin-builder-live-sample {
+            animation: sleekfin-builder-jiggle 520ms ease-in-out infinite alternate;
+            transform-origin: 50% 70%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview.is-dragging .sleekfin-builder-preview-item:nth-child(2n) .sleekfin-builder-live-sample {
+            animation-delay: -260ms;
+        }
+
+        @keyframes sleekfin-builder-jiggle {
+            from { transform: rotate(-1deg); }
+            to { transform: rotate(1deg); }
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-drag-ghost {
+            align-items: center;
+            display: flex;
+            filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45));
+            left: 0;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            transform: translate(-50%, -50%);
+            z-index: 1300;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-drag-ghost .sleekfin-builder-live-sample {
+            background: rgba(22, 22, 24, 0.9);
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-drag-ghost.is-unavailable .sleekfin-builder-live-sample,
+        #sleekFinConfigurationPage .sleekfin-builder-drag-ghost.is-unavailable .material-icons {
+            border-color: rgba(255, 82, 82, 0.55);
+            color: #ff5252;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-caption {
+            bottom: 10px;
+            color: #fff;
+            font: 400 0.72em/1.2 Inter, "Noto Sans", sans-serif;
+            left: 15px;
+            letter-spacing: -0.02em;
+            margin: 0;
+            position: absolute;
+            text-align: left;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-heading {
+            color: #fff;
+            font-size: 1.05em;
+            font-weight: 400;
+            line-height: 1.4;
+            margin: 1em 0 0.5em;
+            text-align: left;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-palette {
+            align-items: flex-start;
+            background: var(--cardBackground, rgba(255, 255, 255, 0.08));
+            box-sizing: border-box;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            min-height: 95px;
+            overflow: visible;
+            padding: 13px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item {
+            align-items: center;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: grab;
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+            font: inherit;
+            justify-content: flex-start;
+            min-height: 0;
+            padding: 0;
+            text-align: center;
+            touch-action: none;
+            user-select: none;
+            width: auto;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item .sleekfin-builder-live-sample {
+            background: rgba(0, 0, 0, 0.26);
+            border: 1px solid var(--cardBackground, rgba(255, 255, 255, 0.12));
+            border-radius: 8px;
+            max-width: 100%;
+            min-width: var(--sleekfin-preview-item-height, 32px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item .sleekfin-builder-live-sample.is-space {
+            border: 1px dashed var(--divider, rgba(255, 255, 255, 0.2));
+            box-shadow: none;
+            padding: 0;
+            width: var(--sleekfin-preview-item-height, 32px);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item .sleekfin-builder-live-sample.is-separator {
+            background: transparent;
+            box-shadow: none;
+            padding: 0;
+            width: 24px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item .sleekfin-builder-live-sample.is-separator:before {
+            background: rgba(255, 255, 255, 0.35);
+            content: "";
+            height: calc(var(--sleekfin-preview-item-height, 32px) - 16px);
+            width: 1px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item-caption {
+            color: var(--secondaryTextColor, rgba(255, 255, 255, 0.5));
+            font-size: 0.72em;
+            line-height: 1.2;
+            margin-top: 3px;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: auto;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item.is-unavailable .sleekfin-builder-live-sample .material-icons,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-unavailable .sleekfin-builder-live-sample,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-item.is-unavailable .sleekfin-builder-live-sample .material-icons {
+            color: #ff5252;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-note {
+            color: #6a6a6a;
+            font-size: 0.92em;
+            line-height: 1.55;
+            margin: 0.55em 0 1.25em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-shell {
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu:empty {
+            display: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview.has-menu[data-brand-position="Left"] .sleekfin-builder-preview-brand {
+            left: 62px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand > [data-sleekfin-header-source-visual],
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu > [data-sleekfin-header-source-visual] {
+            align-items: center;
+            display: inline-flex;
+            gap: var(--sleekfin-preview-brand-gap, 10px);
+            height: 100%;
+            min-width: 0;
+            white-space: nowrap;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu > [data-sleekfin-header-source-visual] {
+            justify-content: center;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand [data-sleekfin-header-source-icon] {
+            flex: 0 0 var(--sleekfin-preview-logo-height, 36px);
+            height: var(--sleekfin-preview-logo-height, 36px) !important;
+            margin: 0 !important;
+            width: var(--sleekfin-preview-logo-height, 36px) !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand [data-sleekfin-header-source-icon] img,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand [data-sleekfin-header-source-icon] svg,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand img,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-brand svg {
+            height: var(--sleekfin-preview-logo-height, 36px) !important;
+            max-height: none !important;
+            max-width: none !important;
+            object-fit: contain;
+            width: var(--sleekfin-preview-logo-height, 36px) !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu [data-sleekfin-header-source-icon],
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu svg,
+        #sleekFinConfigurationPage .sleekfin-builder-preview-menu .material-icons {
+            font-size: 20px !important;
+            height: 20px !important;
+            margin: 0 !important;
+            width: 20px !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-display="Logo"] .sleekfin-builder-preview-brand [data-sleekfin-header-source-label],
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-display="ServerName"] .sleekfin-builder-preview-brand [data-sleekfin-header-source-icon] {
+            display: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-display="ServerName"] .sleekfin-builder-preview-brand > [data-sleekfin-header-source-visual] {
+            gap: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-content {
+            padding: 0 1em 1em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample [data-sleekfin-header-source-icon] {
+            flex: 0 0 auto;
+            margin: 0 !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample [data-sleekfin-header-source-icon] svg,
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample > svg,
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample .material-icons {
+            font-size: 14px !important;
+            height: 14px !important;
+            line-height: 14px !important;
+            width: 14px !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample.is-icon-only [data-sleekfin-header-source-icon] svg,
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample.is-icon-only > svg,
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample.is-icon-only .material-icons {
+            font-size: 16px !important;
+            height: 16px !important;
+            line-height: 16px !important;
+            width: 16px !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample .MuiAvatar-root,
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample [data-sleekfin-header-source-avatar] {
+            border-radius: 50%;
+            height: 20px !important;
+            width: 20px !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample img {
+            height: 20px !important;
+            object-fit: cover;
+            width: 20px !important;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample .je-as-sup {
+            font-size: 9px;
+            font-weight: 700;
+            line-height: 1.1;
+            min-width: 10px;
+            pointer-events: none;
+            position: absolute;
+            right: 2px;
+            text-align: center;
+            top: 2px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-live-sample .je-as-sup:empty {
+            display: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item:hover .sleekfin-builder-live-sample {
+            border-color: rgba(255, 255, 255, 0.48);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-item.is-unavailable .sleekfin-builder-live-sample {
+            border-color: rgba(255, 82, 82, 0.55);
+            box-shadow: none;
+            color: #ff5252;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-builder-note span {
+            color: #ff5252;
         }
 
         @media (max-width: 768px) {
@@ -241,6 +838,46 @@
                 padding-left: 0.5em !important;
                 padding-right: 0.5em !important;
             }
+
+            .sleekfin-page-nav {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5em;
+            }
+
+            .sleekfin-page-nav-button {
+                width: auto;
+            }
+
+            .sleekfin-field-main {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5em;
+            }
+
+            .sleekfin-label--side {
+                flex: none;
+                max-width: none;
+                padding-top: 0;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-builder-preview-brand {
+                left: 12px;
+                max-width: 26%;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-builder-preview.has-menu[data-brand-position="Left"] .sleekfin-builder-preview-brand {
+                left: 54px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-builder-preview[data-brand-position="Right"] .sleekfin-builder-preview-brand {
+                right: 12px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-builder-preview-menu {
+                left: 12px;
+            }
+
         }
     </style>
 
@@ -251,73 +888,203 @@
                 <a href="https://github.com/varunaditya-plus/SleekFin" target="_blank" rel="noopener noreferrer">Help</a>
             </div>
 
-            <div class="sleekfin-section">
-                <h2 class="sleekfin-section-title">Dependencies</h2>
-                <div class="sleekfin-card">
-                    <div id="sleekFinDependencyStatus" class="sleekfin-dependency is-missing" role="status" aria-live="polite">
-                        <span class="sleekfin-dependency-icon">✕</span>
-                        <span>File transformation</span>
+            <nav class="sleekfin-page-nav">
+                <button type="button" class="sleekfin-page-nav-button is-active" data-sleekfin-panel="overview">Overview</button>
+                <button type="button" class="sleekfin-page-nav-button" data-sleekfin-panel="ui-builder">UI Builder</button>
+            </nav>
+
+            <form id="sleekFinConfigurationForm" class="sleekFinConfigurationForm">
+                <div class="sleekfin-page-panel is-active" data-sleekfin-panel="overview">
+                    <div class="sleekfin-section-container">
+                        <div class="sleekfin-config-section-title">Dependencies</div>
+                        <div class="sleekfin-card">
+                            <div id="sleekFinDependencyStatus" class="sleekfin-dependency is-missing" role="status" aria-live="polite">
+                                <span class="sleekfin-dependency-icon">✕</span>
+                                <span>File transformation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-section-container">
+                        <div class="sleekfin-config-section-title">Header</div>
+                        <div class="sleekfin-card">
+                            <div class="sleekfin-toggle-row">
+                                <div class="sleekfin-toggle-copy">
+                                    <label class="sleekfin-toggle-label" for="sleekFinEnabled">Enable SleekFin header</label>
+                                    <div class="sleekfin-field-description">Adds a custom skin over Jellyfin's header bar with navigation, search, etc.</div>
+                                </div>
+                                <div class="sleekfin-toggle-actions">
+                                    <label class="sleekfin-toggle">
+                                        <input id="sleekFinEnabled" type="checkbox" checked />
+                                        <span class="sleekfin-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-section-container">
+                        <div class="sleekfin-config-section-title">Hero</div>
+                        <div class="sleekfin-card">
+                            <div class="sleekfin-toggle-row">
+                                <div class="sleekfin-toggle-copy">
+                                    <label class="sleekfin-toggle-label" for="sleekFinHeroEnabled">Enable hero</label>
+                                    <div class="sleekfin-field-description">Adds a full-width hero carousel to the main Jellyfin home tab above media rows.</div>
+                                </div>
+                                <div class="sleekfin-toggle-actions">
+                                    <label class="sleekfin-toggle">
+                                        <input id="sleekFinHeroEnabled" type="checkbox" checked />
+                                        <span class="sleekfin-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="sleekfin-toggle-row">
+                                <div class="sleekfin-toggle-copy">
+                                    <label class="sleekfin-toggle-label" for="sleekFinHeroRandomized">Randomize hero content</label>
+                                    <div class="sleekfin-field-description">Randomly selects items from the content sources you've selected to be shown.</div>
+                                </div>
+                                <div class="sleekfin-toggle-actions">
+                                    <label class="sleekfin-toggle">
+                                        <input id="sleekFinHeroRandomized" type="checkbox" />
+                                        <span class="sleekfin-toggle-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="sleekfin-input-group">
+                                <span class="sleekfin-toggle-label">Content sources</span>
+                                <div class="sleekfin-field-description">Choose which Jellyfin content appears. The first enabled source has the highest priority.</div>
+                                <div id="sleekFinHeroSources" class="sleekfin-source-list"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <form id="sleekFinConfigurationForm" class="sleekfin-section">
-                <h2 class="sleekfin-section-title">Header</h2>
-                <div class="sleekfin-card">
-                    <div class="sleekfin-toggle-row">
-                        <div class="sleekfin-toggle-copy">
-                            <label class="sleekfin-toggle-label" for="sleekFinEnabled">Enable SleekFin header</label>
-                            <p class="sleekfin-field-description">
-                                Adds a custom skin over Jellyfin's header bar with navigation, search, etc.
-                            </p>
+                <div class="sleekfin-page-panel" data-sleekfin-panel="ui-builder">
+                    <div class="sleekfin-section-container">
+                        <div class="sleekfin-config-section-title">Header bar</div>
+                        <div class="sleekfin-builder-shell">
+                        <div id="sleekFinBuilderPreview" class="sleekfin-builder-preview" data-brand-display="Both" data-brand-position="Left" data-bar-position="Right">
+                            <div class="sleekfin-builder-preview-header">
+                                <div id="sleekFinBuilderPreviewMenu" class="sleekfin-builder-preview-menu"></div>
+                                <div id="sleekFinBuilderPreviewBrand" class="sleekfin-builder-preview-brand"></div>
+                                <div id="sleekFinBuilderPreviewBar" class="sleekfin-builder-preview-bar"></div>
+                            </div>
+                            <div class="sleekfin-builder-preview-caption">↑ THIS IS A PREVIEW OF THE TOP OF YOUR HOME SCREEN</div>
                         </div>
-                        <div class="sleekfin-toggle-actions">
-                            <label class="sleekfin-toggle">
-                                <input id="sleekFinEnabled" type="checkbox" checked />
-                                <span class="sleekfin-toggle-slider"></span>
-                            </label>
+
+                        <div class="sleekfin-builder-content">
+                        <h3 class="sleekfin-builder-heading">Drag your favorite things into the header bar</h3>
+                        <div id="sleekFinBuilderPalette" class="sleekfin-builder-palette"></div>
+                        <p id="sleekFinBuilderNote" class="sleekfin-builder-note">*If an item is <span>red</span>, that means it is not enabled in the plugin it is from (and will not show)</p>
+
+                        <div class="sleekfin-toggle-row">
+                            <div class="sleekfin-toggle-copy"><span class="sleekfin-toggle-label">Show logo/server name</span></div>
+                            <div class="sleekfin-toggle-actions sleekfin-choice-group">
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandDisplay" value="Logo" /><span>Logo</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandDisplay" value="ServerName" /><span>Server name</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandDisplay" value="Both" checked /><span>Both</span></label>
+                            </div>
+                        </div>
+
+                        <div class="sleekfin-toggle-row">
+                            <div class="sleekfin-toggle-copy"><span class="sleekfin-toggle-label">Logo/server position</span></div>
+                            <div class="sleekfin-toggle-actions sleekfin-choice-group">
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandPosition" value="Left" checked /><span>Left</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandPosition" value="Center" /><span>Center</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBrandPosition" value="Right" /><span>Right</span></label>
+                            </div>
+                        </div>
+
+                        <div class="sleekfin-toggle-row">
+                            <div class="sleekfin-toggle-copy"><span class="sleekfin-toggle-label">Header bar position</span></div>
+                            <div class="sleekfin-toggle-actions sleekfin-choice-group">
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBarPosition" value="Left" /><span>Left</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBarPosition" value="Center" /><span>Center</span></label>
+                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeaderBarPosition" value="Right" checked /><span>Right</span></label>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderHeight">Header height</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderHeight" class="sleekfin-input" type="number" min="48" max="160" value="80" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderLogoHeight">Logo height</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderLogoHeight" class="sleekfin-input" type="number" min="16" max="96" value="36" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderServerNameColor">Server name text color</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderServerNameColor" class="sleekfin-input" type="text" value="#FFFFFF" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderBrandSpacing">Logo/server name spacing</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderBrandSpacing" class="sleekfin-input" type="number" min="0" max="64" value="10" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderItemSpacing">Header item spacing</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderItemSpacing" class="sleekfin-input" type="number" min="0" max="48" value="2" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderItemHeight">Header item height</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderItemHeight" class="sleekfin-input" type="number" min="24" max="80" value="32" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderBarPadding">Header bar padding</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderBarPadding" class="sleekfin-input" type="number" min="0" max="32" value="4" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderItemBackgroundColor">Item background color</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderItemBackgroundColor" class="sleekfin-input" type="text" value="transparent" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderItemTextColor">Item text color</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderItemTextColor" class="sleekfin-input" type="text" value="rgba(255, 255, 255, 0.7)" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderActiveItemBackgroundColor">Active item background color</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderActiveItemBackgroundColor" class="sleekfin-input" type="text" value="rgba(255, 255, 255, 0.12)" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderActiveItemTextColor">Active item text color</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderActiveItemTextColor" class="sleekfin-input" type="text" value="#FFFFFF" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderHoverOpacity">Hover opacity</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderHoverOpacity" class="sleekfin-input" type="number" min="0" max="100" value="100" /></div>
+                            </div>
+                        </div>
+                        <div class="sleekfin-input-group">
+                            <div class="sleekfin-field-main">
+                                <label class="sleekfin-label sleekfin-label--side" for="sleekFinHeaderActiveItemOpacity">Active item opacity</label>
+                                <div class="sleekfin-input-stack"><input id="sleekFinHeaderActiveItemOpacity" class="sleekfin-input" type="number" min="0" max="100" value="100" /></div>
+                            </div>
+                        </div>
                         </div>
                     </div>
-                </div>
-
-                <h2 class="sleekfin-section-title">Hero</h2>
-                <div class="sleekfin-card">
-                    <div class="sleekfin-toggle-row">
-                        <div class="sleekfin-toggle-copy">
-                            <label class="sleekfin-toggle-label" for="sleekFinHeroEnabled">Enable hero</label>
-                            <p class="sleekfin-field-description">
-                                Adds a full-width hero carousel to the main Jellyfin home tab above media rows.
-                            </p>
-                        </div>
-                        <div class="sleekfin-toggle-actions">
-                            <label class="sleekfin-toggle">
-                                <input id="sleekFinHeroEnabled" type="checkbox" checked />
-                                <span class="sleekfin-toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="sleekfin-toggle-row">
-                        <div class="sleekfin-toggle-copy">
-                            <label class="sleekfin-toggle-label" for="sleekFinHeroRandomized">Randomize hero content</label>
-                            <p class="sleekfin-field-description">
-                                Randomly selects items from the content sources you've selected to be shown.
-                            </p>
-                        </div>
-                        <div class="sleekfin-toggle-actions">
-                            <label class="sleekfin-toggle">
-                                <input id="sleekFinHeroRandomized" type="checkbox" />
-                                <span class="sleekfin-toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="sleekfin-field">
-                        <span class="sleekfin-toggle-label">Content sources</span>
-                        <p class="sleekfin-field-description">
-                            Choose which Jellyfin content appears. The first enabled source has the highest priority.
-                        </p>
-                        <div id="sleekFinHeroSources" class="sleekfin-source-list"></div>
                     </div>
                 </div>
 
@@ -331,6 +1098,8 @@
             'use strict';
 
             var PLUGIN_ID = 'da36c4ef-1d10-4169-8a68-26b194d5301a';
+            var JELLYFIN_ENHANCED_ID = 'f69e946a-4b3c-4e9a-8f0a-8d7c1b2c4d9b';
+            var SEERRFIN_ID = 'c8e4f2a1-9b3d-4e7f-a6c2-1d5e8f0a3b7c';
             var page = document.getElementById('sleekFinConfigurationPage');
             var form = document.getElementById('sleekFinConfigurationForm');
             var enabledInput = document.getElementById('sleekFinEnabled');
@@ -338,6 +1107,12 @@
             var randomizedInput = document.getElementById('sleekFinHeroRandomized');
             var sources = document.getElementById('sleekFinHeroSources');
             var dependencyStatus = document.getElementById('sleekFinDependencyStatus');
+            var preview = document.getElementById('sleekFinBuilderPreview');
+            var previewBar = document.getElementById('sleekFinBuilderPreviewBar');
+            var palette = document.getElementById('sleekFinBuilderPalette');
+            var paletteNote = document.getElementById('sleekFinBuilderNote');
+            var previewBrand = document.getElementById('sleekFinBuilderPreviewBrand');
+            var previewMenu = document.getElementById('sleekFinBuilderPreviewMenu');
             var sourceLabels = {
                 ContinueWatching: 'Continue watching',
                 NextUp: 'Next up',
@@ -346,12 +1121,196 @@
                 Favorites: 'Favorites'
             };
             var defaultSourceOrder = Object.keys(sourceLabels);
+            var builderItems = [
+                { id: 'space', label: '', caption: 'Space', shape: 'space', structural: true },
+                { id: 'separator', label: '', caption: 'Separator', shape: 'separator', structural: true },
+                { id: 'jellyfin:favorites', label: 'Favorites', caption: 'Favorites' },
+                { id: 'jellyfin:syncplay', label: 'SyncPlay', caption: 'SyncPlay' },
+                { id: 'jellyfin:cast', label: 'Cast to device', caption: 'Cast to device' },
+                { id: 'jellyfin:search', label: 'Search', caption: 'Search' },
+                { id: 'jellyfin:user-menu', label: 'User Menu', caption: 'User Menu' },
+                { id: 'jellyfin:audio-player', label: 'Audio player', caption: 'Audio player' },
+                { id: 'jellyfin:home', label: 'Home', caption: 'Home' },
+                { id: 'jellyfin:more', label: 'More', caption: 'More' },
+                { id: 'jellyfin:back', label: 'Back', caption: 'Back' },
+                { id: 'je:random', label: 'Random', caption: 'JE Random' },
+                { id: 'je:active-streams', label: 'Active Streams', caption: 'JE Active Streams' },
+                { id: 'je:bookmarks', label: 'Bookmarks', caption: 'JE Bookmarks' },
+                { id: 'je:hidden-content', label: 'Hidden Content', caption: 'JE Hidden Content' },
+                { id: 'je:requests', label: 'Requests', caption: 'JE Requests' },
+                { id: 'je:calendar', label: 'Calendar', caption: 'JE Calendar' },
+                { id: 'je:recommendations', label: 'Recommendations', caption: 'JE Recommendations' },
+                { id: 'je:activity', label: 'Activity', caption: 'JE Activity' },
+                { id: 'sf:movies', label: 'Movies', caption: 'SeerrFin Movies' },
+                { id: 'sf:tv', label: 'TV Shows', caption: 'SeerrFin TV' },
+                { id: 'sf:requests', label: 'Requests', caption: 'SeerrFin Requests' },
+                { id: 'sf:letterboxd', label: 'Letterboxd', caption: 'SeerrFin Letterboxd' }
+            ];
+            builderItems.forEach(function (item) {
+                item.providerEnabled = !/^(?:je|sf):/.test(item.id);
+                item.available = item.structural === true;
+            });
+            var selectedBuilderItems = [];
+            var hiddenBuilderItems = [];
+            var builderCustomized = false;
+            var draggedBuilderItem = '';
+            var draggedBuilderElement = null;
+            var draggedBuilderFromPreview = false;
+            var draggedBuilderGhost = null;
+            var draggedBuilderSource = null;
+            var draggedBuilderXOffset = 0;
+            var pointerBuilderItem = '';
+            var pointerBuilderFromPreview = false;
+            var pointerBuilderId = null;
+            var pointerBuilderSource = null;
+            var pointerBuilderStartX = 0;
+            var pointerBuilderStartY = 0;
+            var pointerBuilderMoved = false;
+            var suppressBuilderClick = false;
+            var loadRequest = 0;
+            var providerRequest = 0;
+            var previewServerName = 'Jellyfin';
+            var previewResizeListening = false;
+            var previewResizeObserver = null;
+            var builderDefaults = {
+                HeaderBrandDisplay: 'Both',
+                HeaderBrandPosition: 'Left',
+                HeaderBarPosition: 'Right',
+                HeaderHeight: 80,
+                HeaderLogoHeight: 36,
+                HeaderServerNameColor: '#FFFFFF',
+                HeaderBrandSpacing: 10,
+                HeaderItemSpacing: 2,
+                HeaderItemHeight: 32,
+                HeaderBarPadding: 4,
+                HeaderItemBackgroundColor: 'transparent',
+                HeaderItemTextColor: 'rgba(255, 255, 255, 0.7)',
+                HeaderActiveItemBackgroundColor: 'rgba(255, 255, 255, 0.12)',
+                HeaderActiveItemTextColor: '#FFFFFF',
+                HeaderHoverOpacity: 100,
+                HeaderActiveItemOpacity: 100
+            };
+            var builderFields = {
+                HeaderHeight: document.getElementById('sleekFinHeaderHeight'),
+                HeaderLogoHeight: document.getElementById('sleekFinHeaderLogoHeight'),
+                HeaderServerNameColor: document.getElementById('sleekFinHeaderServerNameColor'),
+                HeaderBrandSpacing: document.getElementById('sleekFinHeaderBrandSpacing'),
+                HeaderItemSpacing: document.getElementById('sleekFinHeaderItemSpacing'),
+                HeaderItemHeight: document.getElementById('sleekFinHeaderItemHeight'),
+                HeaderBarPadding: document.getElementById('sleekFinHeaderBarPadding'),
+                HeaderItemBackgroundColor: document.getElementById('sleekFinHeaderItemBackgroundColor'),
+                HeaderItemTextColor: document.getElementById('sleekFinHeaderItemTextColor'),
+                HeaderActiveItemBackgroundColor: document.getElementById('sleekFinHeaderActiveItemBackgroundColor'),
+                HeaderActiveItemTextColor: document.getElementById('sleekFinHeaderActiveItemTextColor'),
+                HeaderHoverOpacity: document.getElementById('sleekFinHeaderHoverOpacity'),
+                HeaderActiveItemOpacity: document.getElementById('sleekFinHeaderActiveItemOpacity')
+            };
 
-            if (!page || !form || !enabledInput || !heroEnabledInput || !randomizedInput || !sources || !dependencyStatus || page.dataset.sleekfinBound === 'true') {
+            if (!page || !form || !enabledInput || !heroEnabledInput || !randomizedInput || !sources || !dependencyStatus || !preview || !previewBar || !palette || !previewBrand || !previewMenu || page.dataset.sleekfinBound === 'true') {
                 return;
             }
 
             page.dataset.sleekfinBound = 'true';
+
+            function readValue(object, name) {
+                var camelName = name.charAt(0).toLowerCase() + name.slice(1);
+                if (object && object[name] !== undefined && object[name] !== null) {
+                    return object[name];
+                }
+                if (object && object[camelName] !== undefined && object[camelName] !== null) {
+                    return object[camelName];
+                }
+                return undefined;
+            }
+
+            function boundedValue(input, fallback) {
+                var value = Number(input.value);
+                var minimum = Number(input.min);
+                var maximum = Number(input.max);
+                if (!isFinite(value)) {
+                    value = fallback;
+                }
+                return Math.min(maximum, Math.max(minimum, Math.round(value)));
+            }
+
+            function builderDimensions() {
+                var headerHeight = boundedValue(builderFields.HeaderHeight, builderDefaults.HeaderHeight);
+                var logoHeight = Math.min(boundedValue(builderFields.HeaderLogoHeight, builderDefaults.HeaderLogoHeight), headerHeight);
+                var itemHeight = Math.min(boundedValue(builderFields.HeaderItemHeight, builderDefaults.HeaderItemHeight), headerHeight);
+                var barPadding = Math.min(boundedValue(builderFields.HeaderBarPadding, builderDefaults.HeaderBarPadding), Math.floor((headerHeight - itemHeight) / 2));
+                return {
+                    HeaderBarPadding: barPadding,
+                    HeaderHeight: headerHeight,
+                    HeaderItemHeight: itemHeight,
+                    HeaderLogoHeight: logoHeight
+                };
+            }
+
+            function validColor(value) {
+                var candidate = String(value || '').trim();
+                var functional;
+                var parts;
+                var hasAlpha;
+                var index;
+                if (/^transparent$/i.test(candidate) || /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i.test(candidate)) {
+                    return true;
+                }
+                functional = candidate.match(/^(rgba?)\((.*)\)$/i);
+                if (!functional) {
+                    return false;
+                }
+                hasAlpha = functional[1].toLowerCase() === 'rgba';
+                parts = functional[2].split(',').map(function (part) { return part.trim(); });
+                if (parts.length !== (hasAlpha ? 4 : 3)) {
+                    return false;
+                }
+                for (index = 0; index < 3; index++) {
+                    if (!/^\d+$/.test(parts[index]) || Number(parts[index]) > 255) {
+                        return false;
+                    }
+                }
+                return !hasAlpha || /^(?:0|1|0?\.\d+|1\.0+)$/.test(parts[3]);
+            }
+
+            function validateBuilderColors() {
+                var colorFields = [
+                    builderFields.HeaderServerNameColor,
+                    builderFields.HeaderItemBackgroundColor,
+                    builderFields.HeaderItemTextColor,
+                    builderFields.HeaderActiveItemBackgroundColor,
+                    builderFields.HeaderActiveItemTextColor
+                ];
+                var invalid = null;
+                var index;
+                for (index = 0; index < colorFields.length; index++) {
+                    if (!validColor(colorFields[index].value)) {
+                        invalid = colorFields[index];
+                        break;
+                    }
+                }
+                if (!invalid) {
+                    return true;
+                }
+                Dashboard.alert('Use transparent, a 3, 4, 6, or 8-digit hex color, or valid rgb()/rgba() values.');
+                invalid.focus();
+                return false;
+            }
+
+            function currentLoad(request) {
+                return request === loadRequest && document.documentElement.contains(page);
+            }
+
+            function selectedRadio(name, fallback) {
+                var input = form.querySelector('input[name="' + name + '"]:checked');
+                return input ? input.value : fallback;
+            }
+
+            function setRadio(name, value, fallback) {
+                var input = form.querySelector('input[name="' + name + '"][value="' + value + '"]') || form.querySelector('input[name="' + name + '"][value="' + fallback + '"]');
+                if (input) {
+                    input.checked = true;
+                }
+            }
 
             function setDependencyStatus(isInstalled) {
                 dependencyStatus.classList.toggle('is-ok', isInstalled);
@@ -363,27 +1322,273 @@
                 }
             }
 
-            function updateDependencyStatus() {
+            function normalizedPluginId(plugin) {
+                return String(plugin.Id || plugin.id || '').replace(/-/g, '').toLowerCase();
+            }
+
+            function activePlugin(plugins, id, name) {
+                var normalizedId = String(id || '').replace(/-/g, '').toLowerCase();
+                return plugins.some(function (plugin) {
+                    var pluginName = String(plugin.Name || plugin.name || '').toLowerCase();
+                    var status = String(plugin.Status || plugin.status || '').toLowerCase();
+                    var matchesId = normalizedId && normalizedPluginId(plugin) === normalizedId;
+                    return status === 'active' && (matchesId || pluginName === name);
+                });
+            }
+
+            function loadPlugins() {
                 return ApiClient.ajax({
                     type: 'GET',
                     url: ApiClient.getUrl('/Plugins'),
                     dataType: 'json'
                 }).then(function (plugins) {
-                    var installed = false;
-                    var i;
-
-                    for (i = 0; i < plugins.length; i++) {
-                        var name = String(plugins[i].Name || '').toLowerCase();
-                        if (name === 'file transformation' && plugins[i].Status === 'Active') {
-                            installed = true;
-                            break;
-                        }
-                    }
-
-                    setDependencyStatus(installed);
+                    var values = Array.isArray(plugins) ? plugins : [];
+                    setDependencyStatus(activePlugin(values, '', 'file transformation'));
+                    return values;
                 }).catch(function () {
                     setDependencyStatus(false);
+                    return [];
                 });
+            }
+
+            function setBuilderAvailability(id, available) {
+                var item = builderItem(id);
+                if (item) {
+                    item.providerEnabled = available;
+                    item.available = item.structural === true || available;
+                }
+            }
+
+            function validBuilderId(id) {
+                return id === 'space' || id === 'separator' || /^jellyfin:(?:movies|shows|audio-player|back|cast|favorites|home|more|search|syncplay|user-menu)$/.test(id) || /^jellyfin:view:[\da-f-]{16,64}$/.test(id) || /^(?:je|sf):[a-z0-9-]{1,64}$/.test(id) || /^source:v1:[\da-f]{32}$/.test(id);
+            }
+
+            function ensureBuilderItem(id) {
+                var item = builderItem(id);
+                if (item || !validBuilderId(id)) {
+                    return item;
+                }
+                item = { id: id, label: id, caption: id, providerEnabled: true, available: false };
+                builderItems.push(item);
+                return item;
+            }
+
+            function headerFeature() {
+                var features = window.SleekFinFeatures;
+                return features && features.header ? features.header : null;
+            }
+
+            function cloneHeaderItem(id) {
+                var feature = headerFeature();
+                return feature && typeof feature.cloneCatalogItem === 'function' ? feature.cloneCatalogItem(id) : null;
+            }
+
+            function refreshPreviewChrome() {
+                var feature = headerFeature();
+                var brand = feature && typeof feature.cloneChromePart === 'function' ? feature.cloneChromePart('brand') : null;
+                var menu = feature && typeof feature.cloneChromePart === 'function' ? feature.cloneChromePart('menu') : null;
+                previewBrand.textContent = '';
+                previewMenu.textContent = '';
+                if (brand) {
+                    previewBrand.appendChild(brand);
+                } else {
+                    var text = document.createElement('span');
+                    text.setAttribute('data-sleekfin-header-source-label', 'true');
+                    text.textContent = previewServerName;
+                    previewBrand.appendChild(text);
+                }
+                if (menu) {
+                    previewMenu.appendChild(menu);
+                }
+                preview.classList.toggle('has-menu', Boolean(menu));
+                Array.prototype.forEach.call(previewBrand.querySelectorAll('img'), function (image) {
+                    image.addEventListener('load', updatePreviewMeasurements, { once: true });
+                });
+                updatePreviewMeasurements();
+            }
+
+            function updatePreviewMeasurements() {
+                window.requestAnimationFrame(function () {
+                    var previewBounds;
+                    var brandBounds;
+                    var menuBounds;
+                    var brandPosition;
+                    var barPosition;
+                    var edge;
+                    var leftReserve;
+                    var rightReserve;
+                    var brandLeft;
+                    var brandRight;
+                    var leftSpace;
+                    var rightSpace;
+                    var safeLeft;
+                    var safeRight;
+                    if (!document.documentElement.contains(preview)) {
+                        return;
+                    }
+                    previewBounds = preview.getBoundingClientRect();
+                    brandBounds = previewBrand.getBoundingClientRect();
+                    brandPosition = preview.dataset.brandPosition || builderDefaults.HeaderBrandPosition;
+                    barPosition = preview.dataset.barPosition || builderDefaults.HeaderBarPosition;
+                    edge = window.innerWidth <= 768 ? 12 : 20;
+                    leftReserve = edge;
+                    rightReserve = edge;
+                    if (preview.classList.contains('has-menu')) {
+                        menuBounds = previewMenu.getBoundingClientRect();
+                        if (menuBounds.width) {
+                            leftReserve = Math.max(leftReserve, Math.ceil(menuBounds.right - previewBounds.left + 10));
+                        }
+                    }
+                    if (brandPosition === 'Left' && brandBounds.width) {
+                        leftReserve = Math.max(leftReserve, Math.ceil(brandBounds.right - previewBounds.left + 12));
+                    } else if (brandPosition === 'Right' && brandBounds.width) {
+                        rightReserve = Math.max(rightReserve, Math.ceil(previewBounds.right - brandBounds.left + 12));
+                    } else if (brandPosition === 'Center' && brandBounds.width) {
+                        brandLeft = Math.floor(brandBounds.left - previewBounds.left - 12);
+                        brandRight = Math.ceil(brandBounds.right - previewBounds.left + 12);
+                        if (barPosition === 'Left') {
+                            rightReserve = Math.max(rightReserve, Math.ceil(previewBounds.width - brandLeft));
+                        } else if (barPosition === 'Right') {
+                            leftReserve = Math.max(leftReserve, brandRight);
+                        } else {
+                            leftSpace = brandLeft - leftReserve;
+                            rightSpace = previewBounds.width - rightReserve - brandRight;
+                            if (rightSpace >= leftSpace) {
+                                leftReserve = Math.max(leftReserve, brandRight);
+                            } else {
+                                rightReserve = Math.max(rightReserve, Math.ceil(previewBounds.width - brandLeft));
+                            }
+                        }
+                    }
+                    leftReserve = Math.max(0, Math.min(previewBounds.width, leftReserve));
+                    rightReserve = Math.max(0, Math.min(previewBounds.width - leftReserve, rightReserve));
+                    safeLeft = leftReserve;
+                    safeRight = previewBounds.width - rightReserve;
+                    preview.style.setProperty('--sleekfin-preview-left-reserve', leftReserve + 'px');
+                    preview.style.setProperty('--sleekfin-preview-right-reserve', rightReserve + 'px');
+                    preview.style.setProperty('--sleekfin-preview-center', (safeLeft + safeRight) / 2 + 'px');
+                });
+            }
+
+            function startPreviewMeasurements() {
+                if (previewResizeListening) {
+                    return;
+                }
+                previewResizeListening = true;
+                if (typeof window.ResizeObserver === 'function') {
+                    previewResizeObserver = new window.ResizeObserver(updatePreviewMeasurements);
+                    previewResizeObserver.observe(preview);
+                } else {
+                    window.addEventListener('resize', updatePreviewMeasurements);
+                }
+                updatePreviewMeasurements();
+            }
+
+            function stopPreviewMeasurements() {
+                if (!previewResizeListening) {
+                    return;
+                }
+                previewResizeListening = false;
+                if (previewResizeObserver) {
+                    previewResizeObserver.disconnect();
+                    previewResizeObserver = null;
+                } else {
+                    window.removeEventListener('resize', updatePreviewMeasurements);
+                }
+            }
+
+            function refreshBuilderCatalog() {
+                var feature = headerFeature();
+                var descriptors = feature && typeof feature.getCatalog === 'function' ? feature.getCatalog() : [];
+                var discovered = [];
+                paletteNote.innerHTML = descriptors.length ? '*If an item is <span>red</span>, that means it is not enabled in the plugin it is from (and will not show)' : '*Visit Home once to load native Jellyfin and plugin header items';
+                builderItems.forEach(function (item) {
+                    item.current = false;
+                    item.available = item.structural === true;
+                });
+                descriptors.forEach(function (descriptor) {
+                    var id = String(descriptor.id || '').toLowerCase();
+                    var item = ensureBuilderItem(id);
+                    if (!item) {
+                        return;
+                    }
+                    item.label = descriptor.label || item.label;
+                    item.caption = descriptor.caption || item.caption;
+                    item.shape = descriptor.shape || item.shape || 'text-only';
+                    item.current = descriptor.current === true;
+                    item.available = /^(?:je|sf):/.test(item.id) ? item.providerEnabled !== false : descriptor.available === true && Boolean(cloneHeaderItem(id));
+                    if (descriptor.inline) {
+                        discovered.push(id);
+                    }
+                });
+                if (!builderCustomized) {
+                    selectedBuilderItems = discovered.slice();
+                } else {
+                    discovered.forEach(function (id) {
+                        if (selectedBuilderItems.indexOf(id) === -1 && hiddenBuilderItems.indexOf(id) === -1) {
+                            selectedBuilderItems.push(id);
+                        }
+                    });
+                }
+                refreshPreviewChrome();
+                renderBuilder();
+            }
+
+            function nativeFeatureEnabled(configuration, enabledName, tabName, enabledByDefault) {
+                var enabled = readValue(configuration, enabledName);
+                return (enabled === true || enabledByDefault && enabled !== false) && readValue(configuration, tabName) === true;
+            }
+
+            function updateProviderAvailability(plugins, request) {
+                var enhancedActive = activePlugin(plugins, JELLYFIN_ENHANCED_ID, 'jellyfin enhanced');
+                var seerrFinActive = activePlugin(plugins, SEERRFIN_ID, 'seerrfin');
+                var enhancedConfiguration = enhancedActive ? ApiClient.getPluginConfiguration(JELLYFIN_ENHANCED_ID).catch(function () { return null; }) : Promise.resolve(null);
+                var seerrFinConfiguration = seerrFinActive ? ApiClient.getPluginConfiguration(SEERRFIN_ID).catch(function () { return null; }) : Promise.resolve(null);
+
+                return Promise.all([enhancedConfiguration, seerrFinConfiguration]).then(function (configurations) {
+                    var enhanced = configurations[0];
+                    var seerrFin = configurations[1];
+                    var tabs = readValue(seerrFin, 'Tabs');
+                    var titles = { movies: 'Movies', tv: 'TV Shows', requests: 'Requests', letterboxd: 'Letterboxd' };
+                    var tab;
+                    var tabIndex;
+                    var title;
+                    var item;
+                    if (request !== providerRequest) {
+                        return;
+                    }
+
+                    setBuilderAvailability('je:random', enhancedActive && readValue(enhanced, 'RandomButtonEnabled') === true);
+                    setBuilderAvailability('je:active-streams', enhancedActive && readValue(enhanced, 'ActiveStreamsEnabled') === true);
+                    setBuilderAvailability('je:bookmarks', enhancedActive && nativeFeatureEnabled(enhanced, 'BookmarksEnabled', 'BookmarksUseNativeTab', true));
+                    setBuilderAvailability('je:hidden-content', enhancedActive && nativeFeatureEnabled(enhanced, 'HiddenContentEnabled', 'HiddenContentUseNativeTab', false));
+                    setBuilderAvailability('je:requests', enhancedActive && nativeFeatureEnabled(enhanced, 'DownloadsPageEnabled', 'DownloadsUseNativeTab', true));
+                    setBuilderAvailability('je:calendar', enhancedActive && nativeFeatureEnabled(enhanced, 'CalendarPageEnabled', 'CalendarUseNativeTab', true));
+                    setBuilderAvailability('je:recommendations', enhancedActive && nativeFeatureEnabled(enhanced, 'RecommendationsPageEnabled', 'RecommendationsUseNativeTab', false));
+                    setBuilderAvailability('je:activity', enhancedActive && nativeFeatureEnabled(enhanced, 'ActivityFeedEnabled', 'ActivityFeedUseNativeTab', false));
+
+                    ['movies', 'tv', 'requests', 'letterboxd'].forEach(function (tabId) {
+                        tab = null;
+                        for (tabIndex = 0; Array.isArray(tabs) && tabIndex < tabs.length; tabIndex++) {
+                            if (String(readValue(tabs[tabIndex], 'Id') || '').toLowerCase() === tabId) {
+                                tab = tabs[tabIndex];
+                                break;
+                            }
+                        }
+                        title = String(readValue(tab, 'Title') || titles[tabId]).trim();
+                        item = builderItem('sf:' + tabId);
+                        item.label = title;
+                        item.caption = 'SeerrFin ' + title;
+                        setBuilderAvailability(item.id, seerrFinActive && readValue(tab, 'Enabled') !== false);
+                    });
+
+                    renderBuilder();
+                });
+            }
+
+            function refreshProviderAvailability() {
+                var request = ++providerRequest;
+                return loadPlugins().then(function (plugins) { return updateProviderAvailability(plugins, request); });
             }
 
             function moveSource(row, direction) {
@@ -396,7 +1601,8 @@
             }
 
             function renderSources(savedOrder) {
-                var ordered = savedOrder.split(',').filter(function (id, index, values) {
+                var saved = String(savedOrder || '').split(',');
+                var ordered = saved.filter(function (id, index, values) {
                     return sourceLabels[id] && values.indexOf(id) === index;
                 });
                 defaultSourceOrder.forEach(function (id) {
@@ -407,19 +1613,30 @@
                 sources.textContent = '';
                 ordered.forEach(function (id) {
                     var row = document.createElement('div');
-                    var label = document.createElement('label');
+                    var copy = document.createElement('div');
                     var checkbox = document.createElement('input');
-                    var text = document.createElement('span');
+                    var text = document.createElement('label');
+                    var actions = document.createElement('div');
+                    var toggle = document.createElement('label');
+                    var slider = document.createElement('span');
                     var up = document.createElement('button');
                     var down = document.createElement('button');
 
-                    row.className = 'sleekfin-source-row';
+                    row.className = 'sleekfin-source-row sleekfin-toggle-row';
                     row.dataset.source = id;
+                    copy.className = 'sleekfin-toggle-copy';
                     checkbox.type = 'checkbox';
-                    checkbox.checked = savedOrder.split(',').indexOf(id) !== -1;
+                    checkbox.id = 'sleekFinHeroSource-' + id;
+                    checkbox.checked = saved.indexOf(id) !== -1;
+                    text.className = 'sleekfin-toggle-label';
+                    text.htmlFor = checkbox.id;
                     text.textContent = sourceLabels[id];
-                    label.appendChild(checkbox);
-                    label.appendChild(text);
+                    actions.className = 'sleekfin-toggle-actions';
+                    toggle.className = 'sleekfin-toggle';
+                    slider.className = 'sleekfin-toggle-slider';
+                    copy.appendChild(text);
+                    toggle.appendChild(checkbox);
+                    toggle.appendChild(slider);
                     up.type = down.type = 'button';
                     up.className = down.className = 'sleekfin-source-move';
                     up.textContent = '↑';
@@ -428,9 +1645,11 @@
                     down.setAttribute('aria-label', 'Move ' + sourceLabels[id] + ' down');
                     up.addEventListener('click', function () { moveSource(row, -1); });
                     down.addEventListener('click', function () { moveSource(row, 1); });
-                    row.appendChild(label);
-                    row.appendChild(up);
-                    row.appendChild(down);
+                    actions.appendChild(up);
+                    actions.appendChild(down);
+                    actions.appendChild(toggle);
+                    row.appendChild(copy);
+                    row.appendChild(actions);
                     sources.appendChild(row);
                 });
             }
@@ -443,23 +1662,606 @@
                 });
             }
 
-            function loadConfiguration() {
-                Dashboard.showLoadingMsg();
-                updateDependencyStatus();
+            function builderItem(id) {
+                var index;
+                for (index = 0; index < builderItems.length; index++) {
+                    if (builderItems[index].id === id) {
+                        return builderItems[index];
+                    }
+                }
+                return null;
+            }
 
-                return ApiClient.getPluginConfiguration(PLUGIN_ID)
-                    .then(function (configuration) {
-                        enabledInput.checked = configuration.HeaderEnabled !== false;
-                        heroEnabledInput.checked = configuration.HeroEnabled !== false;
-                        randomizedInput.checked = configuration.HeroRandomized === true;
-                        renderSources(configuration.HeroContentOrder || defaultSourceOrder.join(','));
+            function beginBuilderCustomization() {
+                builderCustomized = true;
+            }
+
+            function addBuilderItem(id, beforeId) {
+                var item = builderItem(id);
+                var oldIndex = selectedBuilderItems.indexOf(id);
+                var targetIndex;
+                if (!item || id === beforeId) {
+                    return;
+                }
+                beginBuilderCustomization();
+                hiddenBuilderItems = hiddenBuilderItems.filter(function (hiddenId) { return hiddenId !== id; });
+                if (oldIndex !== -1) {
+                    selectedBuilderItems.splice(oldIndex, 1);
+                }
+                targetIndex = beforeId ? selectedBuilderItems.indexOf(beforeId) : -1;
+                selectedBuilderItems.splice(targetIndex === -1 ? selectedBuilderItems.length : targetIndex, 0, id);
+                renderBuilder();
+            }
+
+            function removeBuilderItem(id) {
+                var index = selectedBuilderItems.indexOf(id);
+                if (index !== -1) {
+                    beginBuilderCustomization();
+                    selectedBuilderItems.splice(index, 1);
+                    if (id !== 'space' && id !== 'separator' && hiddenBuilderItems.indexOf(id) === -1) {
+                        hiddenBuilderItems.push(id);
+                    }
+                    renderBuilder();
+                }
+            }
+
+            function moveBuilderGhost(clientX, clientY) {
+                if (draggedBuilderGhost && (clientX || clientY)) {
+                    draggedBuilderGhost.style.left = clientX + 'px';
+                    draggedBuilderGhost.style.top = clientY + 'px';
+                }
+            }
+
+            function startBuilderDrag(id, fromPreview, source, clientX, clientY) {
+                var item = builderItem(id);
+                draggedBuilderItem = id;
+                draggedBuilderFromPreview = fromPreview;
+                draggedBuilderSource = source;
+                draggedBuilderXOffset = 0;
+                draggedBuilderElement = fromPreview ? source : previewBar.querySelector('.sleekfin-builder-preview-item[data-builder-item="' + id + '"]');
+                preview.classList.add('is-dragging');
+                source.classList.add('is-drag-source');
+                if (item) {
+                    draggedBuilderGhost = document.createElement('div');
+                    draggedBuilderGhost.className = 'sleekfin-builder-drag-ghost' + (item.available ? '' : ' is-unavailable');
+                    draggedBuilderGhost.appendChild(createLiveSample(item, false));
+                    page.appendChild(draggedBuilderGhost);
+                    moveBuilderGhost(clientX, clientY);
+                }
+                if (draggedBuilderElement) {
+                    draggedBuilderElement.classList.add('is-being-dragged');
+                }
+            }
+
+            function beginBuilderDrag(event, id, fromPreview, source) {
+                startBuilderDrag(id, fromPreview, source, event.clientX, event.clientY);
+                if (event.dataTransfer) {
+                    event.dataTransfer.effectAllowed = 'move';
+                    event.dataTransfer.setData('text/plain', id);
+                }
+            }
+
+            function endBuilderDrag() {
+                var wasDragging = Boolean(draggedBuilderItem);
+                if (draggedBuilderSource) {
+                    draggedBuilderSource.classList.remove('is-drag-source');
+                }
+                if (draggedBuilderGhost) {
+                    draggedBuilderGhost.remove();
+                }
+                draggedBuilderItem = '';
+                draggedBuilderElement = null;
+                draggedBuilderFromPreview = false;
+                draggedBuilderGhost = null;
+                draggedBuilderSource = null;
+                draggedBuilderXOffset = 0;
+                preview.classList.remove('is-dragging');
+                if (wasDragging) {
+                    renderBuilder();
+                }
+            }
+
+            function animateBuilderMove(change) {
+                var items = Array.prototype.slice.call(previewBar.querySelectorAll('.sleekfin-builder-preview-item'));
+                var positions = items.map(function (element) { return element.getBoundingClientRect().left; });
+                var index;
+                var distance;
+                change();
+                for (index = 0; index < items.length; index++) {
+                    if (!items[index].isConnected || typeof items[index].animate !== 'function') {
+                        continue;
+                    }
+                    distance = positions[index] - items[index].getBoundingClientRect().left;
+                    if (distance) {
+                        items[index].animate([
+                            { transform: 'translateX(' + distance + 'px)' },
+                            { transform: 'translateX(0)' }
+                        ], { duration: 180, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+                    }
+                }
+            }
+
+            function moveBuilderItem(clientX) {
+                var item = builderItem(draggedBuilderItem);
+                var items;
+                var reference = null;
+                var index;
+                var rectangle;
+                var oldBarLeft;
+                if (!item) {
+                    return;
+                }
+                if (!draggedBuilderElement || !draggedBuilderElement.isConnected) {
+                    var empty = previewBar.querySelector('.sleekfin-builder-preview-empty');
+                    oldBarLeft = previewBar.getBoundingClientRect().left;
+                    draggedBuilderElement = createPreviewItem(item, false);
+                    draggedBuilderElement.classList.add('is-being-dragged');
+                    if (empty) {
+                        empty.remove();
+                    }
+                    previewBar.appendChild(draggedBuilderElement);
+                    draggedBuilderXOffset = previewBar.getBoundingClientRect().left - oldBarLeft;
+                }
+                draggedBuilderElement.classList.remove('is-removing');
+                clientX += draggedBuilderXOffset;
+                items = previewBar.querySelectorAll('.sleekfin-builder-preview-item');
+                for (index = 0; index < items.length; index++) {
+                    if (items[index] === draggedBuilderElement) {
+                        continue;
+                    }
+                    rectangle = items[index].getBoundingClientRect();
+                    if (clientX < rectangle.left + rectangle.width / 2) {
+                        reference = items[index];
+                        break;
+                    }
+                }
+                if (reference !== draggedBuilderElement.nextElementSibling && !(reference === null && draggedBuilderElement === previewBar.lastElementChild)) {
+                    animateBuilderMove(function () { previewBar.insertBefore(draggedBuilderElement, reference); });
+                }
+            }
+
+            function commitBuilderOrder() {
+                var order = Array.prototype.map.call(previewBar.querySelectorAll('.sleekfin-builder-preview-item'), function (element) {
+                    return element.dataset.builderItem;
+                });
+                if (!order.length) {
+                    return;
+                }
+                beginBuilderCustomization();
+                selectedBuilderItems = order;
+                hiddenBuilderItems = hiddenBuilderItems.filter(function (id) { return order.indexOf(id) === -1; });
+            }
+
+            function dropBuilderIntoPreview(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (!draggedBuilderItem && event.dataTransfer) {
+                    startBuilderDrag(event.dataTransfer.getData('text/plain'), false, previewBar, event.clientX, event.clientY);
+                }
+                moveBuilderItem(event.clientX);
+                commitBuilderOrder();
+                endBuilderDrag();
+            }
+
+            function beginBuilderPointer(event, id, fromPreview, source) {
+                if (event.button !== 0) {
+                    return;
+                }
+                pointerBuilderItem = id;
+                pointerBuilderFromPreview = fromPreview;
+                pointerBuilderId = event.pointerId;
+                pointerBuilderSource = source;
+                pointerBuilderStartX = event.clientX;
+                pointerBuilderStartY = event.clientY;
+                pointerBuilderMoved = false;
+                try {
+                    source.setPointerCapture(event.pointerId);
+                } catch (error) {}
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            function moveBuilderPointer(event) {
+                var target;
+                if (!pointerBuilderItem || event.pointerId !== pointerBuilderId) {
+                    return;
+                }
+                if (!pointerBuilderMoved && (Math.abs(event.clientX - pointerBuilderStartX) > 6 || Math.abs(event.clientY - pointerBuilderStartY) > 6)) {
+                    pointerBuilderMoved = true;
+                    startBuilderDrag(pointerBuilderItem, pointerBuilderFromPreview, pointerBuilderSource, event.clientX, event.clientY);
+                }
+                if (!pointerBuilderMoved) {
+                    return;
+                }
+                moveBuilderGhost(event.clientX, event.clientY);
+                target = document.elementFromPoint(event.clientX, event.clientY);
+                if (target && previewBar.contains(target)) {
+                    moveBuilderItem(event.clientX);
+                }
+                if (draggedBuilderElement) {
+                    draggedBuilderElement.classList.toggle('is-removing', Boolean(pointerBuilderFromPreview && target && palette.contains(target)));
+                }
+                event.preventDefault();
+            }
+
+            function finishBuilderPointer(event, cancelled) {
+                var id;
+                var fromPreview;
+                var moved;
+                var source;
+                var target;
+                if (!pointerBuilderItem || event.pointerId !== pointerBuilderId) {
+                    return;
+                }
+                id = pointerBuilderItem;
+                fromPreview = pointerBuilderFromPreview;
+                moved = pointerBuilderMoved;
+                source = pointerBuilderSource;
+                target = document.elementFromPoint(event.clientX, event.clientY);
+                pointerBuilderItem = '';
+                pointerBuilderFromPreview = false;
+                pointerBuilderId = null;
+                pointerBuilderSource = null;
+                pointerBuilderMoved = false;
+                try {
+                    source.releasePointerCapture(event.pointerId);
+                } catch (error) {}
+                if (cancelled) {
+                    endBuilderDrag();
+                    return;
+                }
+                suppressBuilderClick = true;
+                window.setTimeout(function () { suppressBuilderClick = false; }, 0);
+                event.preventDefault();
+                event.stopPropagation();
+                if (!moved) {
+                    endBuilderDrag();
+                    if (fromPreview || selectedBuilderItems.indexOf(id) !== -1) {
+                        removeBuilderItem(id);
+                    } else {
+                        addBuilderItem(id);
+                    }
+                } else if (target && previewBar.contains(target)) {
+                    moveBuilderItem(event.clientX);
+                    commitBuilderOrder();
+                    endBuilderDrag();
+                } else if (fromPreview && target && palette.contains(target)) {
+                    endBuilderDrag();
+                    removeBuilderItem(id);
+                } else {
+                    endBuilderDrag();
+                }
+            }
+
+            function createLiveSample(item, interactive) {
+                var sample = document.createElement(interactive ? 'button' : 'span');
+                var template = item.structural ? null : cloneHeaderItem(item.id);
+                var label;
+                var shape = item.shape || 'text-only';
+                if (interactive) {
+                    sample.type = 'button';
+                }
+                sample.className = 'sleekfin-builder-live-sample is-' + shape;
+                if (template) {
+                    while (template.firstChild) {
+                        sample.appendChild(template.firstChild);
+                    }
+                    if (item.id.indexOf('sf:') === 0) {
+                        label = sample.querySelector('[data-sleekfin-header-source-label]');
+                        if (label) {
+                            label.textContent = item.label;
+                        }
+                    }
+                } else if (!item.structural && item.label) {
+                    label = document.createElement('span');
+                    label.setAttribute('data-sleekfin-header-source-label', 'true');
+                    label.textContent = item.label;
+                    sample.appendChild(label);
+                }
+                return sample;
+            }
+
+            function createPaletteItem(item) {
+                var element = document.createElement('button');
+                var sample = createLiveSample(item, false);
+                var caption = document.createElement('span');
+                var selected = selectedBuilderItems.indexOf(item.id) !== -1;
+                element.type = 'button';
+                element.className = 'sleekfin-builder-item' + (item.available ? '' : ' is-unavailable');
+                element.draggable = true;
+                element.dataset.builderItem = item.id;
+                element.title = (selected ? 'Remove ' : 'Add ') + item.caption + (item.available ? '' : ' (will not appear in the header)');
+                caption.className = 'sleekfin-builder-item-caption';
+                caption.textContent = item.caption;
+                element.appendChild(sample);
+                element.appendChild(caption);
+                element.addEventListener('click', function (event) {
+                    if (suppressBuilderClick) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return;
+                    }
+                    if (selectedBuilderItems.indexOf(item.id) === -1) {
+                        addBuilderItem(item.id);
+                    } else {
+                        removeBuilderItem(item.id);
+                    }
+                });
+                element.addEventListener('pointerdown', function (event) { beginBuilderPointer(event, item.id, false, element); });
+                element.addEventListener('dragstart', function (event) { beginBuilderDrag(event, item.id, false, element); });
+                element.addEventListener('dragend', endBuilderDrag);
+                return element;
+            }
+
+            function createPreviewEmpty() {
+                var empty = document.createElement('span');
+                empty.className = 'sleekfin-builder-preview-empty';
+                empty.textContent = 'Native order — drag an item here to customize';
+                return empty;
+            }
+
+            function createPreviewItem(item, active) {
+                var element = document.createElement('div');
+                var main = createLiveSample(item, true);
+                element.className = 'sleekfin-builder-preview-item' + (active ? ' is-active' : '') + (item.available ? '' : ' is-unavailable');
+                if (item.id === 'space') {
+                    element.classList.add('is-space');
+                } else if (item.id === 'separator') {
+                    element.classList.add('is-separator');
+                }
+                element.draggable = true;
+                element.dataset.builderItem = item.id;
+                main.title = 'Remove ' + item.caption;
+                main.addEventListener('click', function (event) {
+                    if (suppressBuilderClick) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return;
+                    }
+                    removeBuilderItem(item.id);
+                });
+                element.addEventListener('pointerdown', function (event) { beginBuilderPointer(event, item.id, true, element); });
+                element.addEventListener('dragstart', function (event) { beginBuilderDrag(event, item.id, true, element); });
+                element.addEventListener('dragend', endBuilderDrag);
+                element.appendChild(main);
+                return element;
+            }
+
+            function renderBuilder() {
+                var visibleItems = [];
+                var activeVisibleIndex = -1;
+                previewBar.textContent = '';
+                palette.textContent = '';
+
+                selectedBuilderItems.forEach(function (id) {
+                    var item = builderItem(id);
+                    if (item) {
+                        visibleItems.push(item);
+                        if (item.current && item.available) {
+                            activeVisibleIndex = visibleItems.length - 1;
+                        }
+                    }
+                });
+
+                if (activeVisibleIndex === -1) {
+                    visibleItems.some(function (item, index) {
+                        if (item.available && item.shape !== 'space' && item.shape !== 'separator') {
+                            activeVisibleIndex = index;
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+
+                if (!visibleItems.length) {
+                    previewBar.appendChild(createPreviewEmpty());
+                } else {
+                    visibleItems.forEach(function (item, visibleIndex) {
+                        previewBar.appendChild(createPreviewItem(item, visibleIndex === activeVisibleIndex));
+                    });
+                }
+
+                builderItems.forEach(function (item) { palette.appendChild(createPaletteItem(item)); });
+                updatePreviewStyles();
+            }
+
+            function updatePreviewStyles() {
+                var dimensions = builderDimensions();
+                var headerHeight = dimensions.HeaderHeight;
+                var logoHeight = dimensions.HeaderLogoHeight;
+                var brandSpacing = boundedValue(builderFields.HeaderBrandSpacing, builderDefaults.HeaderBrandSpacing);
+                var itemSpacing = boundedValue(builderFields.HeaderItemSpacing, builderDefaults.HeaderItemSpacing);
+                var itemHeight = dimensions.HeaderItemHeight;
+                var barPadding = dimensions.HeaderBarPadding;
+                var hoverOpacity = boundedValue(builderFields.HeaderHoverOpacity, builderDefaults.HeaderHoverOpacity) / 100;
+                var activeOpacity = boundedValue(builderFields.HeaderActiveItemOpacity, builderDefaults.HeaderActiveItemOpacity) / 100;
+                preview.dataset.brandDisplay = selectedRadio('sleekFinHeaderBrandDisplay', builderDefaults.HeaderBrandDisplay);
+                preview.dataset.brandPosition = selectedRadio('sleekFinHeaderBrandPosition', builderDefaults.HeaderBrandPosition);
+                preview.dataset.barPosition = selectedRadio('sleekFinHeaderBarPosition', builderDefaults.HeaderBarPosition);
+                page.style.setProperty('--sleekfin-preview-header-height', headerHeight + 'px');
+                page.style.setProperty('--sleekfin-preview-logo-height', logoHeight + 'px');
+                page.style.setProperty('--sleekfin-preview-brand-color', builderFields.HeaderServerNameColor.value || builderDefaults.HeaderServerNameColor);
+                page.style.setProperty('--sleekfin-preview-brand-gap', brandSpacing + 'px');
+                page.style.setProperty('--sleekfin-preview-item-gap', itemSpacing + 'px');
+                page.style.setProperty('--sleekfin-preview-item-height', itemHeight + 'px');
+                page.style.setProperty('--sleekfin-preview-bar-padding', barPadding + 'px');
+                page.style.setProperty('--sleekfin-preview-item-background', builderFields.HeaderItemBackgroundColor.value || builderDefaults.HeaderItemBackgroundColor);
+                page.style.setProperty('--sleekfin-preview-item-color', builderFields.HeaderItemTextColor.value || builderDefaults.HeaderItemTextColor);
+                page.style.setProperty('--sleekfin-preview-active-background', builderFields.HeaderActiveItemBackgroundColor.value || builderDefaults.HeaderActiveItemBackgroundColor);
+                page.style.setProperty('--sleekfin-preview-active-color', builderFields.HeaderActiveItemTextColor.value || builderDefaults.HeaderActiveItemTextColor);
+                page.style.setProperty('--sleekfin-preview-hover-opacity', String(hoverOpacity));
+                page.style.setProperty('--sleekfin-preview-active-opacity', String(activeOpacity));
+                updatePreviewMeasurements();
+            }
+
+            function loadPreviewServerName(loadId) {
+                var request = typeof ApiClient.getPublicSystemInfo === 'function' ? ApiClient.getPublicSystemInfo() : ApiClient.ajax({
+                    type: 'GET',
+                    url: ApiClient.getUrl('/System/Info/Public'),
+                    dataType: 'json'
+                });
+                return request.then(function (information) {
+                    if (currentLoad(loadId)) {
+                        previewServerName = information.ServerName || information.serverName || 'Jellyfin';
+                        refreshPreviewChrome();
+                    }
+                }).catch(function () {
+                    if (currentLoad(loadId)) {
+                        previewServerName = 'Jellyfin';
+                        refreshPreviewChrome();
+                    }
+                });
+            }
+
+            function previewBackdropUrl(item) {
+                var tags = readValue(item, 'BackdropImageTags');
+                var itemId = readValue(item, 'Id');
+                var imageMethod = typeof ApiClient.getScaledImageUrl === 'function' ? ApiClient.getScaledImageUrl : ApiClient.getImageUrl;
+                if ((!Array.isArray(tags) || !tags.length) && Array.isArray(readValue(item, 'ParentBackdropImageTags'))) {
+                    tags = readValue(item, 'ParentBackdropImageTags');
+                    itemId = readValue(item, 'ParentBackdropItemId') || itemId;
+                }
+                if (!itemId || !Array.isArray(tags) || !tags.length || typeof imageMethod !== 'function') {
+                    return '';
+                }
+                return imageMethod.call(ApiClient, itemId, {
+                    index: 0,
+                    maxWidth: 1280,
+                    quality: 90,
+                    tag: tags[0],
+                    type: 'Backdrop'
+                });
+            }
+
+            function loadPreviewBackdrop(loadId) {
+                var userId = typeof ApiClient.getCurrentUserId === 'function' ? ApiClient.getCurrentUserId() : (typeof Dashboard.getCurrentUserId === 'function' ? Dashboard.getCurrentUserId() : '');
+                var request;
+                preview.style.removeProperty('background-image');
+                if (!userId || typeof ApiClient.getItems !== 'function') {
+                    return Promise.resolve();
+                }
+                request = ApiClient.getItems(userId, {
+                    EnableImages: true,
+                    EnableImageTypes: 'Backdrop',
+                    EnableTotalRecordCount: false,
+                    Fields: 'BackdropImageTags,ParentBackdropImageTags',
+                    ImageTypes: 'Backdrop',
+                    IncludeItemTypes: 'Movie,Series',
+                    Limit: 24,
+                    Recursive: true,
+                    SortBy: 'Random'
+                });
+                return request.then(function (result) {
+                    var items = readValue(result, 'Items');
+                    var imageUrls = [];
+                    var image;
+                    var index;
+                    var offset = 0;
+                    if (!currentLoad(loadId)) {
+                        return;
+                    }
+                    for (index = 0; Array.isArray(items) && index < items.length; index++) {
+                        var imageUrl = previewBackdropUrl(items[index]);
+                        if (imageUrl && imageUrls.indexOf(imageUrl) === -1) {
+                            imageUrls.push(imageUrl);
+                        }
+                    }
+                    if (!imageUrls.length) {
+                        return;
+                    }
+                    index = Math.floor(Math.random() * imageUrls.length);
+
+                    function tryBackdrop() {
+                        var imageUrl;
+                        if (!currentLoad(loadId) || offset >= imageUrls.length) {
+                            return;
+                        }
+                        imageUrl = imageUrls[(index + offset) % imageUrls.length];
+                        offset += 1;
+                        image = new Image();
+                        image.onload = function () {
+                            if (currentLoad(loadId)) {
+                                preview.style.backgroundImage = 'url(' + JSON.stringify(imageUrl) + ')';
+                            }
+                        };
+                        image.onerror = tryBackdrop;
+                        image.src = imageUrl;
+                    }
+
+                    tryBackdrop();
+                }).catch(function () {});
+            }
+
+            function builderList(value) {
+                var seen = [];
+                return String(value || '').split(',').map(function (id) { return id.trim().toLowerCase(); }).filter(function (id) {
+                    if (!validBuilderId(id) || seen.indexOf(id) !== -1) {
+                        return false;
+                    }
+                    seen.push(id);
+                    ensureBuilderItem(id);
+                    return true;
+                });
+            }
+
+            function applyBuilderConfiguration(configuration) {
+                selectedBuilderItems = builderList(readValue(configuration, 'HeaderItemOrder'));
+                hiddenBuilderItems = builderList(readValue(configuration, 'HeaderHiddenItems')).filter(function (id) {
+                    return selectedBuilderItems.indexOf(id) === -1;
+                });
+                builderCustomized = selectedBuilderItems.length > 0 || hiddenBuilderItems.length > 0;
+                setRadio('sleekFinHeaderBrandDisplay', readValue(configuration, 'HeaderBrandDisplay'), builderDefaults.HeaderBrandDisplay);
+                setRadio('sleekFinHeaderBrandPosition', readValue(configuration, 'HeaderBrandPosition'), builderDefaults.HeaderBrandPosition);
+                setRadio('sleekFinHeaderBarPosition', readValue(configuration, 'HeaderBarPosition'), builderDefaults.HeaderBarPosition);
+                Object.keys(builderFields).forEach(function (name) {
+                    var value = readValue(configuration, name);
+                    builderFields[name].value = value === undefined ? builderDefaults[name] : value;
+                });
+                refreshBuilderCatalog();
+            }
+
+            function loadConfiguration() {
+                var request = ++loadRequest;
+                Dashboard.showLoadingMsg();
+
+                return Promise.all([ApiClient.getPluginConfiguration(PLUGIN_ID), loadPlugins()])
+                    .then(function (results) {
+                        if (!currentLoad(request)) {
+                            return null;
+                        }
+                        var configuration = results[0];
+                        enabledInput.checked = readValue(configuration, 'HeaderEnabled') !== false;
+                        heroEnabledInput.checked = readValue(configuration, 'HeroEnabled') !== false;
+                        randomizedInput.checked = readValue(configuration, 'HeroRandomized') === true;
+                        renderSources(readValue(configuration, 'HeroContentOrder') || defaultSourceOrder.join(','));
+                        applyBuilderConfiguration(configuration);
+                        loadPreviewServerName(request);
+                        loadPreviewBackdrop(request);
+                        return updateProviderAvailability(results[1], ++providerRequest);
                     })
                     .catch(function () {
-                        Dashboard.alert('SleekFin could not load its configuration.');
+                        if (currentLoad(request)) {
+                            Dashboard.alert('SleekFin could not load its configuration.');
+                        }
                     })
                     .finally(function () {
-                        Dashboard.hideLoadingMsg();
+                        if (currentLoad(request)) {
+                            Dashboard.hideLoadingMsg();
+                        }
                     });
+            }
+
+            function saveBuilderConfiguration(configuration) {
+                var dimensions = builderDimensions();
+                configuration.HeaderItemOrder = builderCustomized ? selectedBuilderItems.join(',') : '';
+                configuration.HeaderHiddenItems = builderCustomized ? hiddenBuilderItems.join(',') : '';
+                configuration.HeaderBrandDisplay = selectedRadio('sleekFinHeaderBrandDisplay', builderDefaults.HeaderBrandDisplay);
+                configuration.HeaderBrandPosition = selectedRadio('sleekFinHeaderBrandPosition', builderDefaults.HeaderBrandPosition);
+                configuration.HeaderBarPosition = selectedRadio('sleekFinHeaderBarPosition', builderDefaults.HeaderBarPosition);
+                Object.keys(builderFields).forEach(function (name) {
+                    var input = builderFields[name];
+                    configuration[name] = dimensions[name] === undefined ? (input.type === 'number' ? boundedValue(input, builderDefaults[name]) : input.value.trim()) : dimensions[name];
+                });
             }
 
             function saveConfiguration(event) {
@@ -467,6 +2269,9 @@
                 var contentOrder = selectedSources();
                 if (heroEnabledInput.checked && !contentOrder.length) {
                     Dashboard.alert('Select at least one hero content source.');
+                    return;
+                }
+                if (!validateBuilderColors()) {
                     return;
                 }
                 Dashboard.showLoadingMsg();
@@ -477,10 +2282,14 @@
                         configuration.HeroEnabled = heroEnabledInput.checked;
                         configuration.HeroRandomized = randomizedInput.checked;
                         configuration.HeroContentOrder = contentOrder.join(',');
+                        saveBuilderConfiguration(configuration);
                         return ApiClient.updatePluginConfiguration(PLUGIN_ID, configuration);
                     })
                     .then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);
+                        if (typeof CustomEvent === 'function') {
+                            window.dispatchEvent(new CustomEvent('sleekfin:header-settings-changed'));
+                        }
                     })
                     .catch(function () {
                         Dashboard.alert('SleekFin could not save its configuration.');
@@ -490,8 +2299,92 @@
                     });
             }
 
-            page.addEventListener('pageshow', loadConfiguration);
+            Array.prototype.forEach.call(page.querySelectorAll('.sleekfin-page-nav-button'), function (button) {
+                button.addEventListener('click', function () {
+                    var panel = button.dataset.sleekfinPanel;
+                    Array.prototype.forEach.call(page.querySelectorAll('.sleekfin-page-nav-button, .sleekfin-page-panel'), function (element) {
+                        element.classList.toggle('is-active', element.dataset.sleekfinPanel === panel);
+                    });
+                    if (panel === 'ui-builder') {
+                        updatePreviewMeasurements();
+                    }
+                });
+            });
+
+            Array.prototype.forEach.call(form.querySelectorAll('input[name^="sleekFinHeader"]'), function (input) {
+                input.addEventListener('change', updatePreviewStyles);
+            });
+
+            Object.keys(builderFields).forEach(function (name) {
+                builderFields[name].addEventListener('input', updatePreviewStyles);
+            });
+
+            previewBar.addEventListener('dragover', function (event) {
+                event.preventDefault();
+                moveBuilderGhost(event.clientX, event.clientY);
+                moveBuilderItem(event.clientX);
+            });
+            previewBar.addEventListener('drop', dropBuilderIntoPreview);
+            palette.addEventListener('dragover', function (event) {
+                event.preventDefault();
+                moveBuilderGhost(event.clientX, event.clientY);
+                if (draggedBuilderElement) {
+                    draggedBuilderElement.classList.toggle('is-removing', draggedBuilderFromPreview);
+                }
+            });
+            palette.addEventListener('dragleave', function () {
+                if (draggedBuilderElement) {
+                    draggedBuilderElement.classList.remove('is-removing');
+                }
+            });
+            palette.addEventListener('drop', function (event) {
+                var id = draggedBuilderItem || (event.dataTransfer && event.dataTransfer.getData('text/plain'));
+                var fromPreview = draggedBuilderFromPreview;
+                event.preventDefault();
+                endBuilderDrag();
+                if (fromPreview) {
+                    removeBuilderItem(id);
+                }
+            });
+            page.addEventListener('pointermove', moveBuilderPointer);
+            page.addEventListener('dragover', function (event) { moveBuilderGhost(event.clientX, event.clientY); });
+            page.addEventListener('pointerup', function (event) { finishBuilderPointer(event, false); });
+            page.addEventListener('pointercancel', function (event) { finishBuilderPointer(event, true); });
+
+            function handleHeaderCatalogChanged() {
+                if (document.documentElement.contains(page)) {
+                    refreshBuilderCatalog();
+                    handleProviderRefresh();
+                }
+            }
+
+            function handleProviderRefresh() {
+                if (document.visibilityState === 'visible' && document.documentElement.contains(page) && page.offsetParent !== null) {
+                    refreshProviderAvailability();
+                }
+            }
+
+            function showConfigurationPage() {
+                window.addEventListener('sleekfin:header-catalog-changed', handleHeaderCatalogChanged);
+                window.addEventListener('focus', handleProviderRefresh);
+                document.addEventListener('visibilitychange', handleProviderRefresh);
+                startPreviewMeasurements();
+                loadConfiguration();
+            }
+
+            function hideConfigurationPage() {
+                window.removeEventListener('sleekfin:header-catalog-changed', handleHeaderCatalogChanged);
+                window.removeEventListener('focus', handleProviderRefresh);
+                document.removeEventListener('visibilitychange', handleProviderRefresh);
+                stopPreviewMeasurements();
+            }
+
+            window.addEventListener('sleekfin:header-catalog-changed', handleHeaderCatalogChanged);
+            page.addEventListener('pageshow', showConfigurationPage);
+            page.addEventListener('pagehide', hideConfigurationPage);
             form.addEventListener('submit', saveConfiguration);
+            startPreviewMeasurements();
+            refreshBuilderCatalog();
         }());
     </script>
 </div>
