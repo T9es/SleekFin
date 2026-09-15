@@ -17,10 +17,14 @@
     // Concealing is guarded so it cannot feed itself: the observer watches the class attribute this
     // script writes, so concealing again in response to its own write would never settle. It writes
     // the class at most once, `settled` latches on every exit, and the observer disconnects as soon
-    // as the conceal is released. The failsafe covers a header that never mounts, which would
-    // otherwise stay concealed. The CSS gives the mounted rule priority, so an adopted header is
-    // visible even in the task where both classes overlap.
+    // as the conceal is released. The write is latched separately from `settled` because the header
+    // feature clears the conceal when it decides not to own the header, which is the case on
+    // dashboard routes, the sign in page and TV layouts; without that latch the observer would put
+    // the conceal straight back and the native header would stay hidden until the failsafe. The
+    // failsafe covers a header bundle that never arrives. The CSS gives the mounted rule priority,
+    // so an adopted header is visible even in the task where both classes overlap.
     var settled = false;
+    var concealed = false;
     var failsafe = 0;
     var observer = null;
 
@@ -41,8 +45,9 @@
             release();
             return;
         }
-        if (root.classList.contains(concealingClass)) return;
+        if (concealed) return;
 
+        concealed = true;
         root.classList.add(concealingClass);
         failsafe = window.setTimeout(release, 4000);
     }
