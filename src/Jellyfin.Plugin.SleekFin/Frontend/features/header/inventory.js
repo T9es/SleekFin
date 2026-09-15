@@ -183,6 +183,7 @@ function modernCandidates(header) {
   const toolbar = header?.querySelector('.MuiToolbar-root');
   const children = toolbar ? Array.from(toolbar.children) : [];
   const nav = children.find((element) => element.classList.contains('MuiStack-root')) || null;
+  const enhancedActions = children.find((element) => element.classList.contains('headerRight')) || null;
   const boxes = children.filter((element) => element.classList.contains('MuiBox-root'));
   const profile = boxes.find((box) => Boolean(box.querySelector('[aria-controls="app-user-menu"]'))) || null;
   const actions = boxes.find((box) => box !== profile && Boolean(box.querySelector('button, a[href]'))) || null;
@@ -193,6 +194,7 @@ function modernCandidates(header) {
   addCandidates(result, seen, nav, 'a[href], button', 'navigation');
   document.querySelectorAll('.MuiDrawer-paper, #user-view-overflow-menu, .customMenuOptions').forEach((container) => addCandidates(result, seen, container, 'a[href]', 'fallback'));
   addCandidates(result, seen, actions, 'button, a[href]', 'actions');
+  addCandidates(result, seen, enhancedActions, 'button, a[href]', 'actions');
   addCandidates(result, seen, profile, 'button, a[href]', 'profile');
   return result;
 }
@@ -370,7 +372,7 @@ function sourceOpensPopup(key, source) {
   );
 }
 
-function visualTemplate(key, source) {
+function visualTemplate(source) {
   const template = document.createElement('span');
   const icons = visualNodes(source);
   const label = visibleLabel(source);
@@ -382,7 +384,6 @@ function visualTemplate(key, source) {
     template.appendChild(text);
   }
   template.setAttribute('data-sleekfin-header-source-visual', icons.length ? (label ? 'icon-text' : 'icon-only') : 'text-only');
-  template.setAttribute('data-sleekfin-header-source-key', key);
   return { label, template };
 }
 
@@ -402,7 +403,7 @@ export function discoverHeaderChrome(surface) {
   if (!surface?.header || isDashboardRoute()) return {};
 
   let brand = surface.header.querySelector('[data-sleekfin-header-brand]');
-  let menu = surface.header.querySelector('[data-sleekfin-header-menu]');
+  let menu = null;
   if (surface.kind === 'modern') {
     const toolbar = surface.header.querySelector('.MuiToolbar-root');
     const children = toolbar ? Array.from(toolbar.children) : [];
@@ -421,7 +422,7 @@ export function discoverHeaderChrome(surface) {
     ]
       .filter(([, source]) => Boolean(source))
       .map(([part, source]) => {
-        const visual = visualTemplate(`jellyfin:${part}`, source);
+        const visual = visualTemplate(source);
         return [
           part,
           {
@@ -447,7 +448,7 @@ export function discoverHeaderControls(surface) {
     const existing = byKey.get(key);
     if (existing && candidateScore(existing) >= candidateScore(candidate)) return;
 
-    const visual = visualTemplate(key, candidate.source);
+    const visual = visualTemplate(candidate.source);
     const record = {
       caption: captionFor(key, candidate.source, visual.label),
       current: candidate.source.getAttribute('aria-current') === 'page' || candidate.source.classList.contains('emby-tab-button-active'),
@@ -533,7 +534,7 @@ export function currentSource(record) {
 }
 
 export function refreshRecordVisual(record) {
-  const visual = visualTemplate(record.key, record.source);
+  const visual = visualTemplate(record.source);
   const signature = visual.template.outerHTML;
   const preserveShape =
     (record.source.hasAttribute('data-sleekfin-header-source-hidden') || record.source.hasAttribute('data-sleekfin-header-source-anchor')) &&

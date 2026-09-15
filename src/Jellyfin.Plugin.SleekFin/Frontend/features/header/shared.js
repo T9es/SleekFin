@@ -5,7 +5,8 @@ export function isTvLayout() {
 }
 
 export function layoutMode() {
-  return window.innerWidth < 900 || document.documentElement.classList.contains('layout-mobile') ? 'compact' : 'desktop';
+  const compact = typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 899px)').matches : window.innerWidth < 900;
+  return compact || document.documentElement.classList.contains('layout-mobile') ? 'compact' : 'desktop';
 }
 
 function findVisibleHeader(selector, childSelector) {
@@ -81,7 +82,6 @@ export function applySettings(mount, settings) {
     '--sleekfin-header-item-spacing': `${settings.itemSpacing}px`,
     '--sleekfin-header-item-text': settings.itemTextColor,
     '--sleekfin-header-logo-height': `${settings.logoHeight}px`,
-    '--sleekfin-header-menu-top': `${(settings.height - 32) / 2}px`,
     '--sleekfin-header-name-color': settings.serverNameColor,
   };
 
@@ -91,48 +91,11 @@ export function applySettings(mount, settings) {
   mark(mount, root, 'data-sleekfin-header-brand-position', settings.brandPosition.toLowerCase());
 }
 
-export function updateLayoutMeasurements(mount, container, brandElement, settings) {
-  const style = window.getComputedStyle(container);
-  const rootStyle = window.getComputedStyle(document.documentElement);
-  const gutter = Number.parseFloat(rootStyle.getPropertyValue('--sleekfin-page-gutter'));
-  mount.layoutPadding ||= { left: Number.parseFloat(style.paddingLeft) || 0, right: Number.parseFloat(style.paddingRight) || 0 };
-  const baseLeft = Number.isFinite(gutter) ? gutter : mount.layoutPadding.left;
-  const baseRight = Number.isFinite(gutter) ? gutter : mount.layoutPadding.right;
-  const containerRect = container.getBoundingClientRect();
-  const contentLeft = containerRect.left + baseLeft;
-  const contentRight = containerRect.right - baseRight;
-  let safeLeft = contentLeft;
-  let safeRight = contentRight;
-  if (dom.isVisible(mount.menu)) safeLeft = Math.max(safeLeft, mount.menu.getBoundingClientRect().right + 10);
-  if (dom.isVisible(brandElement)) {
-    const brandRect = brandElement.getBoundingClientRect();
-    if (settings.brandPosition === 'Left') safeLeft = Math.max(safeLeft, brandRect.right + 12);
-    else if (settings.brandPosition === 'Right') safeRight = Math.min(safeRight, brandRect.left - 12);
-    else if (settings.barPosition === 'Left') safeRight = Math.min(safeRight, brandRect.left - 12);
-    else if (settings.barPosition === 'Right') safeLeft = Math.max(safeLeft, brandRect.right + 12);
-    else {
-      const leftSpace = brandRect.left - 12 - safeLeft;
-      const rightSpace = safeRight - brandRect.right - 12;
-      if (rightSpace >= leftSpace) safeLeft = Math.max(safeLeft, brandRect.right + 12);
-      else safeRight = Math.min(safeRight, brandRect.left - 12);
-    }
-  }
-
-  safeLeft = Math.max(contentLeft, Math.min(contentRight, safeLeft));
-  safeRight = Math.max(safeLeft, Math.min(contentRight, safeRight));
-  const leftReserve = Math.ceil(safeLeft - contentLeft);
-  const rightReserve = Math.ceil(contentRight - safeRight);
-  setStyle(mount, document.documentElement, '--sleekfin-header-left-reserve', `${leftReserve}px`);
-  setStyle(mount, document.documentElement, '--sleekfin-header-right-reserve', `${rightReserve}px`);
-  setStyle(mount, container, 'padding-left', `${baseLeft + leftReserve}px`, 'important');
-  setStyle(mount, container, 'padding-right', `${baseRight + rightReserve}px`, 'important');
-}
-
 export function directChildren(element) {
   return element ? Array.from(element.children) : [];
 }
 
-export function rememberMove(mount, element) {
+function rememberMove(mount, element) {
   mount.movedNodes.push({
     element,
     nextSibling: element.nextSibling,
@@ -197,7 +160,12 @@ export function cleanup(mount) {
     window.cancelAnimationFrame(mount.animationFrame);
     mount.animationFrame = 0;
   }
+  if (mount.proxyFrame) {
+    window.cancelAnimationFrame(mount.proxyFrame);
+    mount.proxyFrame = 0;
+  }
   mount.resizeObserver?.disconnect();
+  mount.overflow?.destroy();
   restoreOwnedAttributes(mount);
   restoreOwnedStyles(mount);
   restoreMovedNodes(mount);
@@ -209,6 +177,7 @@ export function createMount(values) {
   return {
     active: true,
     animationFrame: 0,
+    proxyFrame: 0,
     movedNodes: [],
     ownedAttributes: [],
     ownedStyles: [],

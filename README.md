@@ -13,7 +13,7 @@
 [![GitHub Release](https://shieldcn.dev/github/release/varunaditya-plus/SleekFin.svg?size=sm)](https://github.com/varunaditya-plus/SleekFin/releases/latest)
 ![Please star this repo](https://shieldcn.dev/badge/★%20please%20star-22c55e.svg?theme=amber&color=eab308&size=sm&variant=outline)
 
-The ultimate customisation plugin for Jellyfin, which styles the header bar, adds a hero section, and skins all media rows. This plugin adds everything themes add, plus the things themes can't add, all with pixel-precise customisation, letting you tweak the plugin to your needs.
+The ultimate customisation plugin for Jellyfin, which fully reskins Jellyfin to give it a modern, refreshed look. This plugin is like a superpowered theme, with precise customisation, letting you tweak the plugin as you'd like.
 
 </div>
 
@@ -45,7 +45,7 @@ The ultimate customisation plugin for Jellyfin, which styles the header bar, add
 ```
 https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
 ```
-3. Now go back to **Plugins** in the sidebar, select **All** in the filters above the plugins, and click SleekFin. Then click **Install**.
+3. Now, in the sidebar, go to **Plugins**, select **All** in the filters above the plugins, click SleekFin, and click **Install**.
 4. Now you have to restart your Jellyfin instance. Go to **Dashboard** and click the **Restart** button. You're done!
 
 ### Configuration
@@ -55,8 +55,9 @@ After installation, go to **Dashboard → SleekFin**. The **Overview** tab conta
 <table>
   <tr>
     <td><img width="1720" height="720" alt="Home screen" src="https://github.com/user-attachments/assets/db8e2443-35f1-47d0-a734-c36cd41fd587" /></td>
-    <td><img width="1720" height="720" alt="Movie page" src="https://github.com/user-attachments/assets/c4fb2cef-969e-47f2-93cd-2db019179ddc" /></td>
-
+  </tr>
+  <tr>
+	  <td><img width="1720" height="720" alt="Movie page" src="https://github.com/user-attachments/assets/c4fb2cef-969e-47f2-93cd-2db019179ddc" /></td>
   </tr>
   <tr>
     <td><img width="1720" height="720" alt="Series page" src="https://github.com/user-attachments/assets/28a00655-4b2a-46ef-99a0-6d8b8e111b22" /></td>
@@ -86,9 +87,11 @@ Answer
 
 
 ## Contributing & Support
-If you have any suggestions or features you want to be implemented in this plugin, please open a pull request. For suggestions, feature requests, or bug reports, open an issue. Please include your Jellyfin version and a screenshot if relevant.
+If you have suggestions or features you'd like to be implemented into SleekFin, please open a pull request. For feature requests, suggestions, and bug reports, open an issue. Include your Jellyfin version and a screenshot if relevant.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for testing expectations, commit format, versioning, and PR guidelines.
+
+Use [AGENTS.md](AGENTS.md) with your AI of choice to give it context on this codebase and how code should be written in PRs.
 
 ## Credits
 - [Preact](https://preactjs.com/) by the Preact authors, licensed under MIT.

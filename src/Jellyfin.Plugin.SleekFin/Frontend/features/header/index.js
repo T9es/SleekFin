@@ -4,7 +4,7 @@ import { catalogDescriptors, catalogSignature, chromeSignature, cloneCatalogTemp
 import { createLegacyAdapter } from './legacy.js';
 import { createModernAdapter } from './modern.js';
 import { DEFAULT_SETTINGS, normalizeSettings, settingsSignature } from './settings.js';
-import { findSurface, isTvLayout } from './shared.js';
+import { findSurface, isTvLayout, layoutMode } from './shared.js';
 
 const MAIN_ROOT_CLASS = 'sleekfin-main-ui';
 const ROOT_CLASS = 'sleekfin-header-mounted';
@@ -46,7 +46,7 @@ function cachedHeaderSources(scope = currentScope()) {
       const template = sourceTemplate(record?.template);
       if (template) chrome[part] = { kind: record.kind || '', label: record.label || '', template };
     });
-    if (window.innerWidth >= 900 && chrome.menu?.kind === 'modern') delete chrome.menu;
+    if (layoutMode() === 'desktop' && chrome.menu?.kind === 'modern') delete chrome.menu;
     return { catalog, chrome, scopeKey: scope.key };
   } catch {
     return { catalog: [], chrome: {}, scopeKey: scope.key };
@@ -112,7 +112,7 @@ function createHeaderFeature() {
   }
 
   function clearStaleDashboardMenu() {
-    if (!isDashboardRoute() || window.innerWidth < 900 || state.chrome.menu?.kind !== 'modern') return;
+    if (!isDashboardRoute() || layoutMode() === 'compact' || state.chrome.menu?.kind !== 'modern') return;
 
     const nextChrome = { ...state.chrome };
     delete nextChrome.menu;
@@ -186,7 +186,7 @@ function createHeaderFeature() {
     ['brand', 'menu'].forEach((part) => {
       const record = discoveredChrome[part];
       if (!record) {
-        if (part === 'menu' && surface.kind === 'modern' && window.innerWidth >= 900) delete nextChrome.menu;
+        if (part === 'menu' && surface.kind === 'modern' && layoutMode() === 'desktop') delete nextChrome.menu;
         return;
       }
       nextChrome[part] = { ...record, template: record.template.cloneNode(true) };
@@ -240,7 +240,7 @@ function createHeaderFeature() {
       state.mount = adapter.mount(surface.header, state.settings);
       document.documentElement.classList.add(ROOT_CLASS);
     }
-    adapter.refresh(state.mount, state.settings);
+    adapter.refresh(state.mount);
     captureHeaderSources(surface);
   }
 

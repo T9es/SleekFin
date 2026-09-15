@@ -21,8 +21,6 @@ internal static class HeaderConfiguration
     public const int DefaultHoverOpacity = 100;
     public const int DefaultActiveItemOpacity = 100;
 
-    private const int MaxItems = 128;
-
     private static readonly string[] FixedItemIds =
     [
         "space",
@@ -50,7 +48,7 @@ internal static class HeaderConfiguration
         IReadOnlyList<string> hiddenItems = GetItems(configuration.HeaderHiddenItems);
         var hiddenSet = new HashSet<string>(hiddenItems, StringComparer.Ordinal);
         configuration.HeaderHiddenItems = string.Join(',', hiddenItems);
-        configuration.HeaderItemOrder = string.Join(',', GetItems(configuration.HeaderItemOrder).Where(item => !hiddenSet.Contains(item)));
+        configuration.HeaderItemOrder = string.Join(',', GetItems(configuration.HeaderItemOrder, preserveDuplicates: true).Where(item => !hiddenSet.Contains(item)));
         configuration.HeaderBrandDisplay = NormalizeOption(configuration.HeaderBrandDisplay, BrandDisplays, DefaultBrandDisplay);
         configuration.HeaderBrandPosition = NormalizeOption(configuration.HeaderBrandPosition, Positions, DefaultBrandPosition);
         configuration.HeaderBarPosition = NormalizeOption(configuration.HeaderBarPosition, Positions, DefaultBarPosition);
@@ -69,7 +67,7 @@ internal static class HeaderConfiguration
         configuration.HeaderActiveItemOpacity = Math.Clamp(configuration.HeaderActiveItemOpacity, 0, 100);
     }
 
-    public static IReadOnlyList<string> GetItems(string? value)
+    public static IReadOnlyList<string> GetItems(string? value, bool preserveDuplicates = false)
     {
         var result = new List<string>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
@@ -77,13 +75,9 @@ internal static class HeaderConfiguration
         foreach (string item in (value ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             string candidate = item.ToLowerInvariant();
-            if (IsItemId(candidate) && seen.Add(candidate))
+            if (IsItemId(candidate) && (preserveDuplicates || seen.Add(candidate)))
             {
                 result.Add(candidate);
-                if (result.Count == MaxItems)
-                {
-                    break;
-                }
             }
         }
 
