@@ -45,12 +45,6 @@ export function isDashboardRoute() {
   return document.body?.classList.contains('dashboardDocument') || route === '/dashboard' || route.startsWith('/dashboard/') || route === '/configurationpage' || route === '/metadata';
 }
 
-// The sign in page has no user, so there are no header settings to apply and the native header stays.
-export function isLoginRoute() {
-  const route = appRoute();
-  return route === '/login' || route === '/login.html';
-}
-
 function libraryId(source, route) {
   const dataId = source.getAttribute('data-itemid') || source.getAttribute('data-id');
   const match = /[?&](?:topparentid|parentid)=([^&#]+)/i.exec(route);

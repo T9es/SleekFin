@@ -1,6 +1,6 @@
 import { dom } from '../../shared/runtime.js';
 import { createBrandController } from './FallbackBrand.jsx';
-import { catalogDescriptors, catalogSignature, chromeSignature, cloneCatalogTemplate, cloneChromeTemplate, discoverHeaderChrome, discoverHeaderControls, isDashboardRoute, isLoginRoute } from './inventory.js';
+import { catalogDescriptors, catalogSignature, chromeSignature, cloneCatalogTemplate, cloneChromeTemplate, discoverHeaderChrome, discoverHeaderControls, isDashboardRoute } from './inventory.js';
 import { createLegacyAdapter } from './legacy.js';
 import { createModernAdapter } from './modern.js';
 import { DEFAULT_SETTINGS, normalizeSettings, settingsSignature } from './settings.js';
@@ -215,19 +215,18 @@ function createHeaderFeature() {
 
   // SleekFin hides the native header from the first paint and reveals it by adopting it, so a page
   // it never adopts would sit with no header until the boot script's failsafe. Only a final reason
-  // releases the conceal: a TV layout, a page SleekFin does not own, the sign in page, or settings
-  // that resolved disabled. Settings begin disabled until the first request resolves, and a missing
-  // surface or an in-flight route change are transient, so releasing on those would show the
-  // unstyled native header, which is the flash the conceal exists to prevent. The sign in page is
-  // decided by its route rather than by its missing settings, because a user id is also missing for
-  // a moment while a saved session is restored and releasing on that would clear the conceal on the
-  // pages that do have a header to style.
+  // releases the conceal: a TV layout, a page SleekFin does not own, or settings that resolved
+  // disabled. Settings begin disabled until the first request resolves, and a missing surface or an
+  // in-flight route change are transient, so releasing on those would show the unstyled native
+  // header, which is the flash the conceal exists to prevent. Signed out pages are the one case left
+  // concealed on purpose, because nobody is signed in there and the header SleekFin would adopt does
+  // not exist; the boot script holds that conceal past its own failsafe while nobody is signed in.
   function unmount() {
     cleanupMount();
     brand.removeFallback();
     document.documentElement.classList.remove(ROOT_CLASS);
     const ownsMainUi = document.documentElement.classList.contains(MAIN_ROOT_CLASS);
-    if (isTvLayout() || !ownsMainUi || isLoginRoute() || (state.settingsResolved && !state.settings.enabled)) {
+    if (isTvLayout() || !ownsMainUi || (state.settingsResolved && !state.settings.enabled)) {
       document.documentElement.classList.remove(CONCEAL_CLASS);
     }
   }
