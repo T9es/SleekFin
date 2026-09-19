@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.SleekFin.Configuration;
 using Jellyfin.Plugin.SleekFin.Model;
@@ -49,7 +50,20 @@ public static class TransformationPatches
             contents = contents.Replace(closingTag, $"{element}{closingTag}", StringComparison.Ordinal);
         }
 
+        if (configuration.HeaderEnabled || configuration.HeroEnabled)
+        {
+            contents = contents.Replace("</head>", $"{CreateBootScript(configuration)}</head>", StringComparison.Ordinal);
+        }
+
         return contents;
+    }
+
+    private static string CreateBootScript(PluginConfiguration configuration)
+    {
+        string headerEnabled = configuration.HeaderEnabled ? "true" : "false";
+        string heroEnabled = configuration.HeroEnabled ? "true" : "false";
+        string headerHeight = configuration.HeaderHeight.ToString(CultureInfo.InvariantCulture);
+        return $"<script data-sleekfin-boot>(function(){{'use strict';var r=document.documentElement,t=(location.hash.slice(1)||location.pathname+location.search).replace(/^!+/,''),i=t.search(/[?&]/),p=(i<0?t:t.slice(0,i)).replace(/^[!\\/]+/,'/'),d=p==='/dashboard'||p.indexOf('/dashboard/')===0||p==='/configurationpage'||p==='/metadata';r.style.setProperty('--sleekfin-header-height','{headerHeight}px');if({headerEnabled}&&!d)r.classList.add('sleekfin-header-boot-loading');if({heroEnabled}&&(p==='/'||/(^|\\/)home\\/?$/.test(p)))r.classList.add('sleekfin-hero-boot-loading');setTimeout(function(){{r.classList.remove('sleekfin-header-boot-loading','sleekfin-hero-boot-loading');}},4000);}})();</script>";
     }
 
     private static bool ShouldInject(FrontendAssets.Asset asset, PluginConfiguration configuration)

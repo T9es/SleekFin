@@ -7,7 +7,9 @@ import { DEFAULT_SETTINGS, normalizeSettings, settingsSignature } from './settin
 import { findSurface, isTvLayout, layoutMode } from './shared.js';
 
 const MAIN_ROOT_CLASS = 'sleekfin-main-ui';
+const ROOT_BOOT_LOADING_CLASS = 'sleekfin-header-boot-loading';
 const ROOT_CLASS = 'sleekfin-header-mounted';
+const ROOT_LOADING_CLASS = 'sleekfin-header-loading';
 const SOURCE_CACHE_KEY = 'sleekfin:header-sources:v2';
 const SETTINGS_CHANGED_EVENT = 'sleekfin:header-settings-changed';
 const WINDOW_EVENTS = ['hashchange', 'pageshow', 'popstate', 'resize', 'scroll'];
@@ -92,6 +94,7 @@ function createHeaderFeature() {
     catalogSignature: catalogSignature(cached.catalog),
     chrome: cached.chrome,
     chromeSignature: chromeSignature(cached.chrome),
+    loadingTimer: 0,
     mount: null,
     reconcileTimer: 0,
     settings: DISABLED_SETTINGS,
@@ -106,6 +109,19 @@ function createHeaderFeature() {
   };
   const brand = createBrandController(() => state.started);
   const adapters = { legacy: createLegacyAdapter(brand), modern: createModernAdapter(brand) };
+
+  function finishLoading() {
+    window.clearTimeout(state.loadingTimer);
+    state.loadingTimer = 0;
+    document.documentElement.classList.remove(ROOT_BOOT_LOADING_CLASS, ROOT_LOADING_CLASS);
+  }
+
+  function prepareLoading() {
+    if (state.loadingTimer && document.documentElement.classList.contains(ROOT_LOADING_CLASS)) return;
+    finishLoading();
+    document.documentElement.classList.add(ROOT_LOADING_CLASS);
+    state.loadingTimer = window.setTimeout(finishLoading, 4000);
+  }
 
   function notifyCatalogChanged() {
     if (typeof window.CustomEvent === 'function') window.dispatchEvent(new CustomEvent('sleekfin:header-catalog-changed'));
@@ -225,11 +241,13 @@ function createHeaderFeature() {
     captureHeaderSources(surface);
     if (!state.settings.enabled || isTvLayout() || !document.documentElement.classList.contains(MAIN_ROOT_CLASS)) {
       unmount();
+      if (state.settingsResolved) finishLoading();
       return;
     }
 
     if (!surface) {
       unmount();
+      prepareLoading();
       return;
     }
 
@@ -239,6 +257,7 @@ function createHeaderFeature() {
       brand.removeFallback();
       state.mount = adapter.mount(surface.header, state.settings);
       document.documentElement.classList.add(ROOT_CLASS);
+      finishLoading();
     }
     adapter.refresh(state.mount);
     captureHeaderSources(surface);
@@ -246,19 +265,19 @@ function createHeaderFeature() {
 
   function scheduleReconcile() {
     if (!state.started) return;
-    if (state.reconcileTimer) {
+    if (!document.documentElement.classList.contains(MAIN_ROOT_CLASS)) {
       window.clearTimeout(state.reconcileTimer);
       state.reconcileTimer = 0;
-    }
-    if (!document.documentElement.classList.contains(MAIN_ROOT_CLASS)) {
       unmount();
+      finishLoading();
       return;
     }
+    if (state.reconcileTimer) return;
 
     state.reconcileTimer = window.setTimeout(() => {
       state.reconcileTimer = 0;
       reconcile();
-    }, 60);
+    }, 40);
   }
 
   function scheduleSettingsRetry() {
@@ -305,6 +324,7 @@ function createHeaderFeature() {
         if (!state.started || request !== state.settingsRequest || requestScope !== currentScope().key) return;
 
         if (!state.settingsResolved) state.settings = DISABLED_SETTINGS;
+        finishLoading();
         scheduleReconcile();
         scheduleSettingsRetry();
       });
@@ -345,6 +365,7 @@ function createHeaderFeature() {
     state.stopWatching?.();
     state.stopWatching = null;
     unmount();
+    finishLoading();
   }
 
   function getCatalog() {

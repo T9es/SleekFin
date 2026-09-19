@@ -5,8 +5,14 @@
     mask-image: linear-gradient(#000 0% 58%, #000000d6 72%, #0009 82%, #0000005c 90%, #00000029 96%, #0000 100%);
     object-fit: cover;
     object-position: center 28%;
+    opacity: 0;
     position: absolute;
+    transition: opacity 480ms ease;
     width: 100%;
+}
+
+.sleekfin-hero-backdrop[data-loaded="true"] {
+    opacity: 1;
 }
 
 .sleekfin-hero-vignette {
@@ -54,7 +60,13 @@
     height: 100%;
     object-fit: contain;
     object-position: left bottom;
+    opacity: 0;
+    transition: opacity 320ms ease;
     width: 100%;
+}
+
+.sleekfin-hero-title-logo[data-loaded="true"] {
+    opacity: 1;
 }
 
 .sleekfin-hero-title {

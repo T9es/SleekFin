@@ -143,6 +143,7 @@ function destroyMount() {
   state.mount.sections.destroy();
   state.mount.actions.destroy();
   state.mount.hero.destroy();
+  state.mount.page.classList.remove('sleekfin-details-entering');
   state.mount.page.removeAttribute('data-sleekfin-details');
   state.mount = null;
   document.documentElement.classList.remove('sleekfin-details-mounted');
@@ -312,6 +313,15 @@ function concealUntilAlone(except) {
   const release = () => {
     if (shownDetailPages(except).length) return;
     stopHiddenWatch();
+    if (state.mount?.page === except) {
+      except.classList.add('sleekfin-details-entering');
+      const finish = (event) => {
+        if (event.target !== except || event.animationName !== 'sleekfin-details-enter') return;
+        except.removeEventListener('animationend', finish);
+        except.classList.remove('sleekfin-details-entering');
+      };
+      except.addEventListener('animationend', finish);
+    }
     conceal(false);
   };
   observeDetailPages(release);

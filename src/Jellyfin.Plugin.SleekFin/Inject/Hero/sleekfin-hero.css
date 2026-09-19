@@ -1,7 +1,22 @@
-#indexPage.homePage.libraryPage:has(.sleekfin-hero) {
+#indexPage.homePage.libraryPage:has(.sleekfin-hero),
+html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage.homePage.libraryPage {
     background: var(--sleekfin-background);
     /* Jellyfin's wide absolute-tab rule might load after Modern home override. */
     padding-top: 0 !important;
+}
+
+html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab.is-active > .sections::before {
+    animation: sleekfin-skeleton-pulse 1.4s ease-in-out infinite alternate;
+    background:
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) var(--sleekfin-page-gutter) calc(100% - 244px) / min(340px, 52vw) 76px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) var(--sleekfin-page-gutter) calc(100% - 150px) / min(430px, 68vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) var(--sleekfin-page-gutter) calc(100% - 122px) / min(360px, 58vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) var(--sleekfin-page-gutter) calc(100% - 70px) / 120px 40px no-repeat,
+        linear-gradient(115deg, var(--sleekfin-surface, #101113) 15%, var(--sleekfin-surface-raised, #1a1c20) 42%, var(--sleekfin-surface, #101113) 70%);
+    content: "";
+    display: block;
+    height: 70vh;
+    min-height: 420px;
 }
 
 .sleekfin-hero {
@@ -18,11 +33,60 @@
     width: 100%;
 }
 
+.sleekfin-hero::before,
+.sleekfin-hero::after {
+    content: "";
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 320ms ease;
+    z-index: 2;
+}
+
+.sleekfin-hero::before {
+    background:
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) var(--sleekfin-page-gutter) calc(100% - 244px) / min(340px, 52vw) 76px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) var(--sleekfin-page-gutter) calc(100% - 150px) / min(430px, 68vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) var(--sleekfin-page-gutter) calc(100% - 122px) / min(360px, 58vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) var(--sleekfin-page-gutter) calc(100% - 70px) / 120px 40px no-repeat,
+        linear-gradient(115deg, var(--sleekfin-surface, #101113) 15%, var(--sleekfin-surface-raised, #1a1c20) 42%, var(--sleekfin-surface, #101113) 70%);
+}
+
+.sleekfin-hero::after {
+    animation: sleekfin-skeleton-shimmer 1.6s linear infinite;
+    background: linear-gradient(105deg, transparent 35%, var(--sleekfin-skeleton-shimmer, rgba(226, 229, 234, 0.1)) 50%, transparent 65%);
+    transform: translateX(-100%);
+}
+
+.sleekfin-hero[data-state="loading"]::before,
+.sleekfin-hero[data-state="loading"]::after {
+    opacity: 1;
+}
+
+@keyframes sleekfin-skeleton-pulse {
+    from {
+        opacity: 0.62;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes sleekfin-skeleton-shimmer {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+html:is(.sleekfin-header-boot-loading, .sleekfin-header-loading) .sleekfin-hero,
 html.sleekfin-header-mounted .sleekfin-hero {
     margin-top: calc(-1 * var(--sleekfin-header-height));
 }
 
 @media (min-width: 768px) {
+    html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab.is-active > .sections::before,
     .sleekfin-hero {
         height: 85vh;
     }

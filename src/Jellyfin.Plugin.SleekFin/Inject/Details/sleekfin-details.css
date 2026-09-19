@@ -23,30 +23,46 @@ html.sleekfin-details-concealed .docspinner {
     display: none !important;
 }
 
-/* The concealment leaves the page blank until the item arrives, which reads as a broken page
-   rather than a loading one. The spinner is scoped to the same class, so it exists only while the
-   stock page is hidden and cannot outlive the mount: taking the class off is what removes the mark,
-   whether the bundle did it or the failsafe did. */
-@keyframes sleekfin-details-spinner {
+html.sleekfin-details-concealed::before {
+    animation: sleekfin-details-skeleton-pulse 1.4s ease-in-out infinite alternate;
+    background:
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) 0 0 / min(360px, 70vw) 92px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) 0 116px / min(430px, 78vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line, rgba(211, 215, 221, 0.16)) 0 0) 0 144px / min(390px, 72vw) 14px no-repeat,
+        linear-gradient(var(--sleekfin-skeleton-line-strong, rgba(226, 229, 234, 0.28)) 0 0) 0 196px / 120px 40px no-repeat;
+    bottom: 14vh;
+    content: "";
+    height: 236px;
+    left: var(--sleekfin-page-gutter, 24px);
+    position: fixed;
+    width: min(520px, calc(100vw - var(--sleekfin-page-gutter, 24px) * 2));
+    z-index: 1;
+}
+
+@keyframes sleekfin-details-skeleton-pulse {
+    from {
+        opacity: 0.62;
+    }
+
     to {
-        transform: rotate(1turn);
+        opacity: 1;
     }
 }
 
-html.sleekfin-details-concealed::before {
-    animation: sleekfin-details-spinner 0.9s linear infinite;
-    border: 3px solid var(--sleekfin-border, #1d2430);
-    border-radius: 50%;
-    border-top-color: var(--sleekfin-accent, #dc2626);
-    box-sizing: border-box;
-    content: "";
-    height: 40px;
-    left: 50%;
-    margin: -20px 0 0 -20px;
-    position: fixed;
-    top: 50%;
-    width: 40px;
-    z-index: 1;
+@keyframes sleekfin-details-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#itemDetailPage.sleekfin-details-entering {
+    animation: sleekfin-details-enter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 html.sleekfin-details-mounted {

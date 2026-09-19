@@ -8,8 +8,11 @@
 }
 
 .sleekfin-hero-slide[data-active="true"] {
-    opacity: 1;
-    pointer-events: auto;
     transform: translateX(0);
     z-index: 1;
+}
+
+.sleekfin-hero[data-state="ready"] .sleekfin-hero-slide[data-active="true"] {
+    opacity: 1;
+    pointer-events: auto;
 }
