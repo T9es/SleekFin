@@ -10,6 +10,15 @@
     "repositoryUrl": "https://github.com/varunaditya-plus/SleekFin",
     "versions": [
       {
+        "version": "1.2.1.1",
+        "changelog": "Prevent native detail flashes and add a native detail option. Changes by @T9es",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.2.1.1/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "883F99F4E35B8445F127C25085C8427E",
+        "timestamp": "2026-09-19T10:52:37.0000000Z",
+        "dependencies": []
+      },
+      {
         "version": "1.2.1.0",
         "changelog": "Added responsive header overflow dropdown/drawer, mobile dock behavior, drag-and-drop editing, and improved Jellyfin, SeerrFin, and Jellyfin Enhanced header integration",
         "targetAbi": "12.0.0.0",
