@@ -15,8 +15,8 @@ html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab
         linear-gradient(115deg, var(--sleekfin-surface, #101113) 15%, var(--sleekfin-surface-raised, #1a1c20) 42%, var(--sleekfin-surface, #101113) 70%);
     content: "";
     display: block;
-    height: 70vh;
-    min-height: 420px;
+    height: var(--sleekfin-hero-mobile-height, 70vh);
+    min-height: min(420px, var(--sleekfin-hero-mobile-height, 70vh));
 }
 
 .sleekfin-hero {
@@ -24,13 +24,17 @@ html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab
     box-sizing: border-box;
     color: #fff;
     font-family: var(--sleekfin-font-family);
-    height: 70vh;
+    height: var(--sleekfin-hero-mobile-height, 70vh);
     margin-top: 0;
-    min-height: 420px;
+    min-height: min(420px, var(--sleekfin-hero-mobile-height, 70vh));
     overflow: hidden;
     position: relative;
-    touch-action: pan-y;
+    touch-action: auto;
     width: 100%;
+}
+
+.sleekfin-hero[data-swipe-enabled="true"] {
+    touch-action: pan-y;
 }
 
 .sleekfin-hero::before,
@@ -88,6 +92,7 @@ html.sleekfin-header-mounted .sleekfin-hero {
 @media (min-width: 768px) {
     html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab.is-active > .sections::before,
     .sleekfin-hero {
-        height: 85vh;
+        height: var(--sleekfin-hero-desktop-height, 85vh);
+        min-height: min(420px, var(--sleekfin-hero-desktop-height, 85vh));
     }
 }

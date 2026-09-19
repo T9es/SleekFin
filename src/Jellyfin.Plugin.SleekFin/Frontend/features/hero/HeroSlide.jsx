@@ -1,12 +1,14 @@
 import { Button, Facts, h, item, useState } from '../../shared/runtime.js';
 
-export function HeroSlide({ entry, active }) {
+export function HeroSlide({ entry, active, settings }) {
   const [backdropLoaded, setBackdropLoaded] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
   const [logoLoaded, setLogoLoaded] = useState(false);
   const displayItem = entry.display;
   const logoUrl = item.imageUrl(displayItem, 'Logo');
   const backdropUrl = item.imageUrl(displayItem, 'Backdrop');
+  const showLogo = settings.titleTreatment !== 'Text' && logoUrl && !logoFailed;
+  const showText = settings.titleTreatment !== 'Logo' && !showLogo;
   const rating = Number(displayItem.CommunityRating || 0);
   const facts = [];
 
@@ -25,7 +27,8 @@ export function HeroSlide({ entry, active }) {
       <div class="sleekfin-hero-content">
         <div class="sleekfin-hero-stack">
           <div class="sleekfin-hero-title-box">
-            {logoUrl && !logoFailed ? <img class="sleekfin-hero-title-logo" src={logoUrl} data-loaded={logoLoaded ? 'true' : 'false'} onLoad={() => setLogoLoaded(true)} onError={() => setLogoFailed(true)} /> : <span class="sleekfin-hero-title">{displayItem.Name || ''}</span>}
+            {showLogo && <img class="sleekfin-hero-title-logo" src={logoUrl} data-loaded={logoLoaded ? 'true' : 'false'} onLoad={() => setLogoLoaded(true)} onError={() => setLogoFailed(true)} />}
+            {showText && <span class="sleekfin-hero-title">{displayItem.Name || ''}</span>}
           </div>
           <div class="sleekfin-hero-facts">
             <Facts values={facts} />

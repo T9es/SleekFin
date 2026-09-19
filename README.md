@@ -49,7 +49,7 @@ https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
 4. Now you have to restart your Jellyfin instance. Go to **Dashboard** and click the **Restart** button. You're done!
 
 ### Configuration
-After installation, go to **Dashboard → SleekFin**. The **Overview** tab contains the plugin's settings, including an option to keep Jellyfin's native detail pages while retaining the SleekFin header and hero. Refresh the Jellyfin web client after changing this option. **UI Builder** provides a live draggable header preview and controls for its branding, layout, sizing, colors, and states.
+After installation, go to **Dashboard → SleekFin**. The **Overview** tab contains the plugin's main settings, letting you decide which features you want to enable or disable. Our **UI Builder** gives you live editors for the elements we reskin, letting you tweak them to your liking.
 
 ## Screenshots
 <table>

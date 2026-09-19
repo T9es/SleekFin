@@ -13,6 +13,7 @@ public sealed class SleekFinPlugin : BasePlugin<PluginConfiguration>, IHasWebPag
     {
         Instance = this;
         HeaderConfiguration.Normalize(Configuration);
+        HeroConfiguration.Normalize(Configuration);
     }
 
     public static SleekFinPlugin Instance { get; private set; } = null!;
@@ -28,6 +29,7 @@ public sealed class SleekFinPlugin : BasePlugin<PluginConfiguration>, IHasWebPag
         if (configuration is PluginConfiguration pluginConfiguration)
         {
             HeaderConfiguration.Normalize(pluginConfiguration);
+            HeroConfiguration.Normalize(pluginConfiguration);
         }
 
         base.UpdateConfiguration(configuration);

@@ -1,8 +1,10 @@
 import { dom, h, render } from '../../shared/runtime.js';
 import { Hero } from './Hero.jsx';
+import { applySettings } from './settings.js';
 import { loadEntries, loadSettings } from './source.js';
 
 const WINDOW_EVENTS = ['hashchange', 'popstate', 'pageshow'];
+const SETTINGS_EVENT = 'sleekfin:hero-settings-changed';
 const ROOT_BOOT_LOADING_CLASS = 'sleekfin-hero-boot-loading';
 const ROOT_LOADING_CLASS = 'sleekfin-hero-loading';
 const features = (window.SleekFinFeatures = window.SleekFinFeatures || {});
@@ -10,6 +12,7 @@ const features = (window.SleekFinFeatures = window.SleekFinFeatures || {});
 features.hero?.stop?.();
 
 const state = {
+  enabled: document.documentElement.dataset.sleekfinHeroEnabled === 'true',
   failedHost: null,
   generation: 0,
   loadingTimer: 0,
@@ -73,10 +76,10 @@ function createRoot(host) {
   return root;
 }
 
-function renderHero(root, entries) {
-  if (state.mount !== root || !dom.isConnected(root) || !isHomeRoute() || !entries.length) return;
+function renderHero(root, entries, settings) {
+  if (state.mount !== root || !dom.isConnected(root) || !isHomeRoute()) return;
 
-  render(h(Hero, { entries, root }), root);
+  render(h(Hero, { entries, root, settings }), root);
   state.readyFrame = window.requestAnimationFrame(() => {
     state.readyFrame = 0;
     if (state.mount === root && dom.isConnected(root)) root.dataset.state = 'ready';
@@ -88,11 +91,20 @@ function mount(host) {
   const generation = ++state.generation;
   const root = createRoot(host);
   loadSettings(client)
-    .then((settings) => loadEntries(client, settings))
-    .then((entries) => {
-      if (generation !== state.generation) return;
-      if (entries.length) {
-        renderHero(root, entries);
+    .then((settings) => {
+      if (generation !== state.generation || state.mount !== root || !dom.isConnected(root)) return null;
+      state.enabled = settings.enabled;
+      if (!settings.enabled) {
+        removeMount();
+        return null;
+      }
+      applySettings(root, settings);
+      return loadEntries(client, settings).then((entries) => ({ entries, settings }));
+    })
+    .then((result) => {
+      if (!result || generation !== state.generation) return;
+      if (result.entries.length) {
+        renderHero(root, result.entries, result.settings);
       } else {
         state.failedHost = host;
         removeMount();
@@ -114,6 +126,11 @@ function reconcile() {
     unmount();
     return;
   }
+  if (state.enabled === false) {
+    finishLoading();
+    removeMount();
+    return;
+  }
   if (state.mount && dom.isConnected(state.mount) && state.mount.nextElementSibling === host) return;
   if (state.failedHost === host) return;
 
@@ -123,7 +140,7 @@ function reconcile() {
 
 function scheduleReconcile() {
   const home = isHomeRoute();
-  const loading = home && !dom.isConnected(state.mount) && (!state.failedHost || state.failedHost !== findHost());
+  const loading = home && state.enabled !== false && !dom.isConnected(state.mount) && (!state.failedHost || state.failedHost !== findHost());
   if (!loading) finishLoading();
   else prepareLoading();
   if (state.reconcileTimer) return;
@@ -131,6 +148,13 @@ function scheduleReconcile() {
     state.reconcileTimer = 0;
     reconcile();
   }, 0);
+}
+
+function reloadSettings() {
+  if (!state.started) return;
+  state.enabled = null;
+  unmount();
+  scheduleReconcile();
 }
 
 function start() {
@@ -141,6 +165,7 @@ function start() {
     events: WINDOW_EVENTS,
     viewshow: true,
   });
+  window.addEventListener(SETTINGS_EVENT, reloadSettings);
   scheduleReconcile();
 }
 
@@ -150,6 +175,7 @@ function stop() {
   state.reconcileTimer = 0;
   state.stopWatching?.();
   state.stopWatching = null;
+  window.removeEventListener(SETTINGS_EVENT, reloadSettings);
   unmount();
   finishLoading();
 }

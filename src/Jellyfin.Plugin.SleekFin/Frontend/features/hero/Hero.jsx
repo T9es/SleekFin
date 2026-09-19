@@ -1,7 +1,7 @@
 import { h, useEffect, useRef, useState } from '../../shared/runtime.js';
 import { HeroSlide } from './HeroSlide.jsx';
 
-export function Hero({ entries, root }) {
+export function Hero({ entries, root, settings }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const pointerStartX = useRef(null);
   const rotationTimer = useRef(0);
@@ -18,14 +18,14 @@ export function Hero({ entries, root }) {
       if (!document.hidden && pointerStartX.current === null) {
         setActiveIndex((index) => (index + 1) % entries.length);
       }
-    }, 10000);
+    }, settings.autoRotateSeconds * 1000);
   }
 
   useEffect(() => {
     setActiveIndex((index) => (entries.length ? index % entries.length : 0));
     startRotation();
     return stopRotation;
-  }, [entries.length]);
+  }, [entries.length, settings.autoRotateSeconds]);
 
   function onPointerDown(event) {
     if (event.pointerType !== 'mouse' || event.button === 0) {
@@ -48,6 +48,10 @@ export function Hero({ entries, root }) {
   }
 
   useEffect(() => {
+    if (!settings.swipeEnabled) {
+      onPointerCancel();
+      return undefined;
+    }
     root.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointerup', onPointerUp);
     window.addEventListener('pointercancel', onPointerCancel);
@@ -59,7 +63,7 @@ export function Hero({ entries, root }) {
       window.removeEventListener('blur', onPointerCancel);
       onPointerCancel();
     };
-  }, [entries.length, root]);
+  }, [entries.length, root, settings.autoRotateSeconds, settings.swipeEnabled]);
 
-  return entries.map((entry, index) => <HeroSlide key={`${entry.display.Id || index}-${entry.play.Id || index}`} entry={entry} active={index === activeIndex} />);
+  return entries.map((entry, index) => <HeroSlide key={`${entry.display.Id || index}-${entry.play.Id || index}`} entry={entry} active={index === activeIndex} settings={settings} />);
 }

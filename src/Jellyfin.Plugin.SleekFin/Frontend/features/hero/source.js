@@ -1,3 +1,5 @@
+import { normalizeSettings } from './settings.js';
+
 const ITEM_FIELDS = 'Overview,Genres';
 
 export function loadSettings(client) {
@@ -5,7 +7,7 @@ export function loadSettings(client) {
     type: 'GET',
     url: client.getUrl('SleekFin/Hero/Settings'),
     dataType: 'json',
-  });
+  }).then(normalizeSettings);
 }
 
 function itemQuery(client, options) {
@@ -55,8 +57,6 @@ function loadSource(client, source) {
         SortBy: 'SortName',
         SortOrder: 'Ascending',
       });
-    default:
-      return Promise.resolve([]);
   }
 }
 
@@ -84,7 +84,7 @@ function collect(client, settings) {
         }
       });
     });
-    return (settings.randomized ? shuffle(items) : items).slice(0, 5);
+    return (settings.randomized ? shuffle(items) : items).slice(0, settings.slidesShown);
   });
 }
 
@@ -94,6 +94,6 @@ function prepare(client, item) {
 }
 
 export function loadEntries(client, settings) {
-  if (!settings.enabled || !Array.isArray(settings.contentOrder) || !settings.contentOrder.length) return Promise.resolve([]);
+  if (!settings.contentOrder.length) return Promise.resolve([]);
   return collect(client, settings).then((items) => Promise.all(items.map((item) => prepare(client, item))));
 }
