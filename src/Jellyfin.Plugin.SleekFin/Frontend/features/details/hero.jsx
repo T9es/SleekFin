@@ -110,6 +110,7 @@ export function createHero(page) {
   move(logo, title);
   move(page.querySelector('.nameContainer'), title);
   move(page.querySelector('.overview'), stack);
+  move(page.querySelector('.overview-controls'), stack);
   move(actions, stack);
   page.insertBefore(hero, wrapper);
   sync();
