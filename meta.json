@@ -1,14 +1,14 @@
 {
   "category": "General",
-  "changelog": "Prevent native detail flashes and add a native detail option. Changes by @T9es",
+  "changelog": "Update default jellyfin spinner and media control styling to match SleekFin. Changes by @Tim-Unger",
   "description": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "guid": "da36c4ef-1d10-4169-8a68-26b194d5301a",
   "name": "SleekFin",
   "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "owner": "varunaditya-plus",
   "targetAbi": "12.0.0.0",
-  "timestamp": "2026-09-19T10:52:37.0000000Z",
-  "version": "1.2.1.1",
+  "timestamp": "2026-09-19T11:18:18.0000000Z",
+  "version": "1.2.1.2",
   "status": "Active",
   "autoUpdate": true,
   "assemblies": [
