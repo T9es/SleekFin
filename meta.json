@@ -1,14 +1,14 @@
 {
   "category": "General",
-  "changelog": "Update default jellyfin spinner and media control styling to match SleekFin. Changes by @Tim-Unger",
+  "changelog": "Prevented endless content page loading when opening pages from home posters",
   "description": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "guid": "da36c4ef-1d10-4169-8a68-26b194d5301a",
   "name": "SleekFin",
   "overview": "The ultimate Jellyfin Web revamp, with new elements, styles, plus compatible with the most popular plugins.",
   "owner": "varunaditya-plus",
   "targetAbi": "12.0.0.0",
-  "timestamp": "2026-09-19T11:18:18.0000000Z",
-  "version": "1.2.1.2",
+  "timestamp": "2026-09-19T12:12:43.0000000Z",
+  "version": "1.2.1.3",
   "status": "Active",
   "autoUpdate": true,
   "assemblies": [
