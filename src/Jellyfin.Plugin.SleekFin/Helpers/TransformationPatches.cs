@@ -10,8 +10,9 @@ public static class TransformationPatches
         "<link\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>",
         RegexOptions.CultureInvariant);
 
+    // Also removes the earlier inline boot script if Jellyfin transforms content more than once.
     private static readonly Regex InjectedScripts = new(
-        "<script\\b[^>]*\\bdata-sleekfin-(?:[a-z]+-)?asset=\"[^\"]*\"[^>]*>\\s*</script>",
+        "<script\\b[^>]*\\bdata-sleekfin-(?:(?:[a-z]+-)?asset=\"[^\"]*\"|boot\\b)[^>]*>[\\s\\S]*?</script>",
         RegexOptions.CultureInvariant);
 
     public static string IndexHtml(PatchRequestPayload payload)
@@ -43,9 +44,7 @@ public static class TransformationPatches
             string url = $"../SleekFin/{asset.FileName}{cacheQuery}";
             string element = asset.IsStyle
                 ? $"<link rel=\"stylesheet\" href=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\" />"
-                : asset.IsBlockingScript
-                    ? $"<script src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>"
-                    : $"<script defer src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>";
+                : $"<script{(asset.IsBlockingScript ? string.Empty : " defer")} src=\"{url}\" data-sleekfin-asset=\"{asset.FileName}\"></script>";
             string closingTag = asset.IsStyle || asset.IsBlockingScript ? "</head>" : "</body>";
             contents = contents.Replace(closingTag, $"{element}{closingTag}", StringComparison.Ordinal);
         }
@@ -59,6 +58,7 @@ public static class TransformationPatches
         {
             FrontendAssets.Feature.Header => configuration.HeaderEnabled,
             FrontendAssets.Feature.Hero => configuration.HeroEnabled,
+            FrontendAssets.Feature.Details => configuration.DetailsEnabled,
             _ => true
         };
     }
