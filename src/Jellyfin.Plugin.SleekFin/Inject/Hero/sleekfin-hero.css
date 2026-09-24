@@ -5,6 +5,15 @@ html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage.homePage
     padding-top: 0 !important;
 }
 
+/* MediaBar sets its duplicate carousel inline, so hide it while SleekFin owns the home hero. */
+html.sleekfin-hero-mounted #slides-container {
+    display: none !important;
+}
+
+.sleekfin-hero + .sections.homeSectionsContainer {
+    margin-top: 0;
+}
+
 html:is(.sleekfin-hero-boot-loading, .sleekfin-hero-loading) #indexPage #homeTab.is-active > .sections::before {
     animation: sleekfin-skeleton-pulse 1.4s ease-in-out infinite alternate;
     background:
