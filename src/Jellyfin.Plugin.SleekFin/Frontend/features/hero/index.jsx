@@ -7,6 +7,7 @@ const WINDOW_EVENTS = ['hashchange', 'popstate', 'pageshow'];
 const SETTINGS_EVENT = 'sleekfin:hero-settings-changed';
 const ROOT_BOOT_LOADING_CLASS = 'sleekfin-hero-boot-loading';
 const ROOT_LOADING_CLASS = 'sleekfin-hero-loading';
+const ROOT_MOUNTED_CLASS = 'sleekfin-hero-mounted';
 const features = (window.SleekFinFeatures = window.SleekFinFeatures || {});
 
 features.hero?.stop?.();
@@ -56,6 +57,7 @@ function removeMount() {
   render(null, state.mount);
   state.mount.remove();
   state.mount = null;
+  document.documentElement.classList.remove(ROOT_MOUNTED_CLASS);
 }
 
 function unmount() {
@@ -69,6 +71,7 @@ function createRoot(host) {
   const root = dom.element('<div is="emby-itemscontainer" class="sleekfin-hero itemsContainer" data-contextmenu="false" data-multiselect="false" data-state="loading"></div>');
   host.parentNode.insertBefore(root, host);
   state.mount = root;
+  document.documentElement.classList.add(ROOT_MOUNTED_CLASS);
   finishLoading();
   if (window.CustomElements && typeof window.CustomElements.upgradeSubtree === 'function') {
     window.CustomElements.upgradeSubtree(root);
