@@ -358,6 +358,14 @@
             gap: 2.5em;
         }
 
+        .sleekfin-header-builder-section {
+            order: 1;
+        }
+
+        .sleekfin-hero-builder-section {
+            order: 2;
+        }
+
         #sleekFinConfigurationPage .sleekfin-source-list {
             display: flex;
             flex-direction: column;
@@ -367,7 +375,7 @@
 
         #sleekFinConfigurationPage .sleekfin-source-row {
             align-items: center;
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--cardBackground, rgba(255, 255, 255, 0.08));
             display: flex;
             gap: 10px;
             margin-bottom: 0;
@@ -831,7 +839,6 @@
             display: flex;
             flex-wrap: wrap;
             gap: 18px;
-            min-height: 95px;
             overflow: visible;
             padding: 13px;
         }
@@ -1046,6 +1053,367 @@
             color: #ff5252;
         }
 
+        #sleekFinConfigurationPage .sleekfin-hero-builder-shell {
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview {
+            background: #000;
+            box-sizing: border-box;
+            height: clamp(420px, 44vw, 460px);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-backdrop,
+        #sleekFinConfigurationPage .sleekfin-hero-preview-vignette,
+        #sleekFinConfigurationPage .sleekfin-hero-preview-seam {
+            inset: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-backdrop {
+            height: 100%;
+            object-fit: var(--sleekfin-hero-preview-backdrop-fit, cover);
+            object-position: var(--sleekfin-hero-preview-focus-x, 50%) var(--sleekfin-hero-preview-focus-y, 28%);
+            opacity: var(--sleekfin-hero-preview-backdrop-opacity, 1);
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-vignette {
+            background: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.7244) 16%, rgba(0, 0, 0, 0.4739) 32%, rgba(0, 0, 0, 0.2614) 46%, rgba(0, 0, 0, 0.1253) 57%, rgba(0, 0, 0, 0.0436) 64%, transparent 70%);
+            opacity: var(--sleekfin-hero-preview-vignette, 0.72);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-vignette {
+            transform: scaleX(-1);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-seam {
+            background: linear-gradient(180deg, transparent 66%, rgba(0, 0, 0, 0.28) 78%, rgba(0, 0, 0, 0.68) 91%, #000 100%);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-content {
+            align-items: flex-end;
+            box-sizing: border-box;
+            display: flex;
+            height: 100%;
+            justify-content: flex-start;
+            padding: 28px 30px 45px;
+            position: relative;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Center"] .sleekfin-hero-preview-content {
+            justify-content: center;
+            text-align: center;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-content {
+            justify-content: flex-end;
+            text-align: right;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-vertical-alignment="Top"] .sleekfin-hero-preview-content {
+            align-items: flex-start;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-vertical-alignment="Center"] .sleekfin-hero-preview-content {
+            align-items: center;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-stack {
+            max-width: min(100%, var(--sleekfin-hero-preview-content-width, 560px));
+            min-width: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-title-box {
+            align-items: flex-end;
+            display: flex;
+            max-width: 100%;
+            min-height: 140px;
+            width: 420px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-title-logo {
+            filter: drop-shadow(0 3px 14px rgba(0, 0, 0, 0.45));
+            height: 140px;
+            object-fit: contain;
+            object-position: left bottom;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Center"] .sleekfin-hero-preview-title-box,
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Center"] .sleekfin-hero-preview-facts,
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Center"] .sleekfin-hero-preview-actions {
+            justify-content: center;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-title-box,
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-facts,
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-actions {
+            justify-content: flex-end;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Center"] .sleekfin-hero-preview-title-logo {
+            object-position: center bottom;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-content-alignment="Right"] .sleekfin-hero-preview-title-logo {
+            object-position: right bottom;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-title {
+            color: var(--sleekfin-hero-preview-title-color, #fff);
+            font-size: var(--sleekfin-hero-preview-title-size, 48px);
+            font-weight: var(--sleekfin-hero-preview-title-weight, 800);
+            letter-spacing: -0.03em;
+            line-height: 0.95;
+            text-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-preview[data-title-case="Uppercase"] .sleekfin-hero-preview-title {
+            text-transform: uppercase;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-facts {
+            color: rgba(255, 255, 255, 0.92);
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 18px;
+            margin-top: 16px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-fact-dot {
+            color: rgba(255, 255, 255, 0.42);
+            margin: 0 8px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-description {
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: var(--sleekfin-hero-preview-description-lines, 3);
+            color: var(--sleekfin-hero-preview-description-color, rgba(255, 255, 255, 0.88));
+            display: -webkit-box;
+            font-size: var(--sleekfin-hero-preview-description-size, 15px);
+            font-weight: var(--sleekfin-hero-preview-description-weight, 400);
+            line-height: 1.45;
+            margin: 12px 0 0;
+            overflow: hidden;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button {
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--sleekfin-hero-preview-button-radius, 999px);
+            box-sizing: border-box;
+            display: inline-flex;
+            font: 500 16px/24px var(--sleekfin-font-family, Inter, "Noto Sans", sans-serif);
+            height: var(--sleekfin-hero-preview-button-height, 44px);
+            justify-content: center;
+            letter-spacing: -0.025em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button > svg {
+            flex: 0 0 auto;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button--primary {
+            background: var(--sleekfin-hero-preview-primary-background, #f1f2f4);
+            background: color-mix(in srgb, var(--sleekfin-hero-preview-primary-background, #f1f2f4) var(--sleekfin-hero-preview-primary-opacity, 100%), transparent);
+            border: 0;
+            color: var(--sleekfin-hero-preview-primary-text, #05070a);
+            gap: 12px;
+            padding: 0 28px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button--primary > svg {
+            height: 22px;
+            width: 22px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button--secondary {
+            background: var(--sleekfin-hero-preview-secondary-background, #161618);
+            background: color-mix(in srgb, var(--sleekfin-hero-preview-secondary-background, #161618) var(--sleekfin-hero-preview-secondary-opacity, 82%), transparent);
+            color: var(--sleekfin-hero-preview-secondary-text, #f1f2f4);
+            gap: 12px;
+            padding: 0 24px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-button--secondary > svg {
+            height: 18px;
+            width: 18px;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-preview-caption {
+            bottom: 10px;
+            color: #fff;
+            font: 400 0.72em/1.2 Inter, "Noto Sans", sans-serif;
+            left: 15px;
+            letter-spacing: -0.02em;
+            margin: 0;
+            position: absolute;
+            z-index: 2;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-builder-content {
+            padding: 0 1em 1em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-accordion {
+            margin-top: 0.75em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-accordion > summary {
+            align-items: center;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            font-size: 1.05em;
+            justify-content: space-between;
+            line-height: 1.4;
+            list-style: none;
+            padding: 0 0 0.5em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-accordion > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-accordion > summary::after {
+            color: #6a6a6a;
+            content: "\25BE";
+            font-size: 1.4em;
+            line-height: 1;
+            transform: rotate(-90deg);
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-accordion[open] > summary::after {
+            transform: none;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-settings {
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.2));
+            display: flex;
+            flex-direction: column;
+            gap: 0.75em;
+            padding: 0.85em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-row {
+            align-items: center;
+            display: flex;
+            gap: 1em;
+            justify-content: space-between;
+            min-width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-label {
+            color: #fff;
+            flex: 0 0 auto;
+            font-size: 1.05em;
+            line-height: 1.4;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-control {
+            flex: 1 1 18em;
+            min-width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-row > .sleekfin-choice-group,
+        #sleekFinConfigurationPage .sleekfin-hero-setting-row > .sleekfin-toggle-actions {
+            flex: 0 0 auto;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-grid {
+            display: grid;
+            gap: 0.75em;
+            min-width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-grid--2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-grid--3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-grid--4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-cell {
+            min-width: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-cell > .sleekfin-hero-setting-label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-setting-cell > .sleekfin-hero-setting-control,
+        #sleekFinConfigurationPage .sleekfin-hero-setting-cell > .sleekfin-choice-group {
+            box-sizing: border-box;
+            flex: none;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-number-field {
+            align-items: center;
+            display: flex;
+            padding-bottom: 0;
+            padding-top: 0;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-number-field input {
+            background: transparent;
+            border: 0;
+            color: inherit;
+            flex: 1 1 auto;
+            font: inherit;
+            min-width: 0;
+            outline: 0;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-source-heading {
+            margin-top: 0.25em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-editor-footer {
+            align-items: center;
+            display: flex;
+            gap: 1em;
+            justify-content: flex-end;
+            margin-top: 1.25em;
+        }
+
+        #sleekFinConfigurationPage .sleekfin-hero-reset {
+            background: var(--cardBackground, rgba(255, 255, 255, 0.08));
+            border: 1px solid var(--divider, rgba(255, 255, 255, 0.25));
+            color: inherit;
+            cursor: pointer;
+            flex: 0 0 auto;
+            font: inherit;
+            padding: 0.55em 0.85em;
+        }
+
         @media (max-width: 768px) {
             #sleekFinConfigurationPage .content-primary {
                 padding-left: 0.5em !important;
@@ -1093,6 +1461,69 @@
 
             #sleekFinConfigurationPage .sleekfin-builder-preview-menu {
                 left: 12px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-builder-preview {
+                height: 400px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-content {
+                padding: 24px 18px 45px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-title-box {
+                min-height: 96px;
+                width: min(340px, 70vw);
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-title-logo {
+                height: 96px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-facts {
+                font-size: 14px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-button--primary {
+                gap: 8px;
+                padding: 0 16px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-button--primary > svg {
+                height: 20px;
+                width: 20px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-preview-button--secondary {
+                gap: 8px;
+                padding: 0 16px;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-setting-row {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 0.5em;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-setting-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-setting-control,
+            #sleekFinConfigurationPage .sleekfin-hero-setting-row > .sleekfin-choice-group,
+            #sleekFinConfigurationPage .sleekfin-hero-setting-row > .sleekfin-toggle-actions {
+                flex: none;
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-editor-footer {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            #sleekFinConfigurationPage .sleekfin-hero-reset {
+                width: 100%;
             }
 
         }
@@ -1156,30 +1587,343 @@
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-section-container">
+                        <div class="sleekfin-config-section-title">Details</div>
+                        <div class="sleekfin-card">
                             <div class="sleekfin-toggle-row">
                                 <div class="sleekfin-toggle-copy">
-                                    <label class="sleekfin-toggle-label" for="sleekFinHeroRandomized">Randomize hero content</label>
-                                    <div class="sleekfin-field-description">Randomly selects items from the content sources you've selected to be shown.</div>
+                                    <label class="sleekfin-toggle-label" for="sleekFinDetailsEnabled">Use SleekFin detail pages</label>
+                                    <div class="sleekfin-field-description">Turn this off to keep Jellyfin's original Movie, Series, Season, and Episode pages while keeping the SleekFin header and hero.</div>
                                 </div>
                                 <div class="sleekfin-toggle-actions">
                                     <label class="sleekfin-toggle">
-                                        <input id="sleekFinHeroRandomized" type="checkbox" />
+                                        <input id="sleekFinDetailsEnabled" type="checkbox" checked />
                                         <span class="sleekfin-toggle-slider"></span>
                                     </label>
                                 </div>
                             </div>
-
-                            <div class="sleekfin-input-group">
-                                <span class="sleekfin-toggle-label">Content sources</span>
-                                <div class="sleekfin-field-description">Choose which Jellyfin content appears. The first enabled source has the highest priority.</div>
-                                <div id="sleekFinHeroSources" class="sleekfin-source-list"></div>
-                            </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="sleekfin-page-panel" data-sleekfin-panel="ui-builder">
-                    <div class="sleekfin-section-container">
+                    <div class="sleekfin-section-container sleekfin-hero-builder-section">
+                        <div class="sleekfin-config-section-title">Hero carousel</div>
+                        <div class="sleekfin-hero-builder-shell">
+                            <div id="sleekFinHeroBuilderPreview" class="sleekfin-hero-builder-preview" data-content-alignment="Left" data-title-case="Uppercase" data-vertical-alignment="Bottom">
+                                <img id="sleekFinHeroPreviewBackdrop" class="sleekfin-hero-preview-backdrop" />
+                                <div class="sleekfin-hero-preview-vignette"></div>
+                                <div class="sleekfin-hero-preview-seam"></div>
+                                <div class="sleekfin-hero-preview-content">
+                                    <div class="sleekfin-hero-preview-stack">
+                                        <div class="sleekfin-hero-preview-title-box">
+                                            <img id="sleekFinHeroPreviewLogo" class="sleekfin-hero-preview-title-logo" hidden />
+                                            <div id="sleekFinHeroPreviewTitle" class="sleekfin-hero-preview-title">Django Unchained</div>
+                                        </div>
+                                        <div id="sleekFinHeroPreviewFacts" class="sleekfin-hero-preview-facts">
+                                            <span>★ 8.4</span><span class="sleekfin-hero-preview-fact-dot">·</span><span>2012</span><span class="sleekfin-hero-preview-fact-dot">·</span><span>Movie</span><span class="sleekfin-hero-preview-fact-dot">·</span><span>Western</span><span class="sleekfin-hero-preview-fact-dot">·</span><span>Drama</span>
+                                        </div>
+                                        <p id="sleekFinHeroPreviewDescription" class="sleekfin-hero-preview-description">With the help of a German bounty-hunter, a freed slave sets out to rescue his wife from a brutal plantation owner.</p>
+                                        <div class="sleekfin-hero-preview-actions">
+                                            <span class="sleekfin-hero-preview-button sleekfin-hero-preview-button--primary"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg><span>Play</span></span>
+                                            <span class="sleekfin-hero-preview-button sleekfin-hero-preview-button--secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg><span>More info</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="sleekfin-hero-preview-caption">↑ THIS IS A LIVE PREVIEW OF YOUR HERO CAROUSEL</p>
+                            </div>
+
+                            <div class="sleekfin-hero-builder-content">
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Content rules</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-row">
+                                            <div class="sleekfin-toggle-copy">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroRandomized">Randomize order</label>
+                                                <div class="sleekfin-field-description">Randomly selects items from the enabled content sources.</div>
+                                            </div>
+                                            <div class="sleekfin-toggle-actions">
+                                                <label class="sleekfin-toggle">
+                                                    <input id="sleekFinHeroRandomized" type="checkbox" />
+                                                    <span class="sleekfin-toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-source-heading">
+                                            <span class="sleekfin-hero-setting-label">Content sources</span>
+                                            <div class="sleekfin-field-description">Choose which Jellyfin content appears. The first enabled source has the highest priority.</div>
+                                            <div id="sleekFinHeroSources" class="sleekfin-source-list"></div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-row">
+                                            <label class="sleekfin-hero-setting-label" for="sleekFinHeroSlidesShown">Slides shown</label>
+                                            <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                <input id="sleekFinHeroSlidesShown" type="number" min="1" max="10" value="5" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Layout</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-row">
+                                            <span class="sleekfin-hero-setting-label">Content alignment</span>
+                                            <div class="sleekfin-choice-group">
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroContentAlignment" value="Left" checked /><span>Left</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroContentAlignment" value="Center" /><span>Center</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroContentAlignment" value="Right" /><span>Right</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-row">
+                                            <span class="sleekfin-hero-setting-label">Vertical alignment</span>
+                                            <div class="sleekfin-choice-group">
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroVerticalAlignment" value="Top" /><span>Top</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroVerticalAlignment" value="Center" /><span>Center</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroVerticalAlignment" value="Bottom" checked /><span>Bottom</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroMobileHeight">Mobile height (vh)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroMobileHeight" type="number" min="40" max="100" value="70" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroDesktopHeight">Desktop height (vh)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroDesktopHeight" type="number" min="40" max="100" value="85" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroContentMaxWidth">Content max width (px)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroContentMaxWidth" type="number" min="280" max="1200" value="560" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Artwork</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-row">
+                                            <span class="sleekfin-hero-setting-label">Title treatment</span>
+                                            <div class="sleekfin-choice-group">
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTitleTreatment" value="Auto" checked /><span>Auto</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTitleTreatment" value="Logo" /><span>Logo</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTitleTreatment" value="Text" /><span>Text</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-row">
+                                            <span class="sleekfin-hero-setting-label">Backdrop fit</span>
+                                            <div class="sleekfin-choice-group">
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroBackdropFit" value="Cover" checked /><span>Cover</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroBackdropFit" value="Contain" /><span>Contain</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroBackdropFocusX">Horizontal focus (%)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroBackdropFocusX" type="number" min="0" max="100" value="50" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroBackdropFocusY">Vertical focus (%)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroBackdropFocusY" type="number" min="0" max="100" value="28" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroBackdropOpacity">Backdrop opacity (%)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroBackdropOpacity" type="number" min="0" max="100" value="100" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Type &amp; metadata</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--4">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroTitleSize">Title size (px)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroTitleSize" type="number" min="16" max="96" value="48" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroTitleWeight">Title weight</label>
+                                                <select id="sleekFinHeroTitleWeight" class="sleekfin-input sleekfin-hero-setting-control">
+                                                    <option value="100">100</option>
+                                                    <option value="200">200</option>
+                                                    <option value="300">300</option>
+                                                    <option value="400">400</option>
+                                                    <option value="500">500</option>
+                                                    <option value="600">600</option>
+                                                    <option value="700">700</option>
+                                                    <option value="800" selected>800</option>
+                                                    <option value="900">900</option>
+                                                </select>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <span class="sleekfin-hero-setting-label">Title case</span>
+                                                <div class="sleekfin-choice-group">
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTitleCase" value="Original" /><span>Original</span></label>
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTitleCase" value="Uppercase" checked /><span>Uppercase</span></label>
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroTitleColor">Title color</label>
+                                                <input id="sleekFinHeroTitleColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="#FFFFFF" />
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--4">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroDescriptionSize">Description size (px)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroDescriptionSize" type="number" min="10" max="32" value="15" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroDescriptionWeight">Description weight</label>
+                                                <select id="sleekFinHeroDescriptionWeight" class="sleekfin-input sleekfin-hero-setting-control">
+                                                    <option value="100">100</option>
+                                                    <option value="200">200</option>
+                                                    <option value="300">300</option>
+                                                    <option value="400" selected>400</option>
+                                                    <option value="500">500</option>
+                                                    <option value="600">600</option>
+                                                    <option value="700">700</option>
+                                                    <option value="800">800</option>
+                                                    <option value="900">900</option>
+                                                </select>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroDescriptionColor">Description color</label>
+                                                <input id="sleekFinHeroDescriptionColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="rgba(255, 255, 255, 0.88)" />
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroDescriptionLines">Description lines</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroDescriptionLines" type="number" min="1" max="8" value="3" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Actions</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroPrimaryButtonTextColor">Primary text</label>
+                                                <input id="sleekFinHeroPrimaryButtonTextColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="#05070A" />
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroPrimaryButtonBackgroundColor">Primary background</label>
+                                                <input id="sleekFinHeroPrimaryButtonBackgroundColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="#F1F2F4" />
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroPrimaryButtonOpacity">Primary opacity (%)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroPrimaryButtonOpacity" type="number" min="0" max="100" value="100" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroSecondaryButtonTextColor">Secondary text</label>
+                                                <input id="sleekFinHeroSecondaryButtonTextColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="#F1F2F4" />
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroSecondaryButtonBackgroundColor">Secondary background</label>
+                                                <input id="sleekFinHeroSecondaryButtonBackgroundColor" class="sleekfin-input sleekfin-hero-setting-control" type="text" value="#161618" />
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroSecondaryButtonOpacity">Secondary opacity (%)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroSecondaryButtonOpacity" type="number" min="0" max="100" value="82" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--2">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroButtonHeight">Button height (px)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroButtonHeight" type="number" min="32" max="72" value="44" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <span class="sleekfin-hero-setting-label">Corner radius</span>
+                                                <div class="sleekfin-choice-group">
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroButtonCornerStyle" value="Square" /><span>Square</span></label>
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroButtonCornerStyle" value="Rounded" /><span>Rounded</span></label>
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroButtonCornerStyle" value="Pill" checked /><span>Pill</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <details class="sleekfin-hero-accordion" open>
+                                    <summary>Motion &amp; blending</summary>
+                                    <div class="sleekfin-hero-settings">
+                                        <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroAutoRotateSeconds">Change every (s)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroAutoRotateSeconds" type="number" min="1" max="120" value="10" />
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <span class="sleekfin-hero-setting-label">Transition</span>
+                                                <div class="sleekfin-choice-group">
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTransitionStyle" value="Slide" /><span>Slide</span></label>
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTransitionStyle" value="Fade" /><span>Fade</span></label>
+                                                    <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroTransitionStyle" value="SlideFade" checked /><span>Slide + fade</span></label>
+                                                </div>
+                                            </div>
+                                            <div class="sleekfin-hero-setting-cell">
+                                                <label class="sleekfin-hero-setting-label" for="sleekFinHeroTransitionDurationMs">Transition time (ms)</label>
+                                                <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                    <input id="sleekFinHeroTransitionDurationMs" type="number" min="100" max="2000" value="380" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-row">
+                                            <span class="sleekfin-hero-setting-label">Swipe navigation</span>
+                                            <div class="sleekfin-choice-group">
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroSwipeEnabled" value="false" /><span>Off</span></label>
+                                                <label class="sleekfin-choice"><input type="radio" name="sleekFinHeroSwipeEnabled" value="true" checked /><span>On</span></label>
+                                            </div>
+                                        </div>
+                                        <div class="sleekfin-hero-setting-row">
+                                            <label class="sleekfin-hero-setting-label" for="sleekFinHeroVignetteStrength">Vignette strength (%)</label>
+                                            <div class="sleekfin-input sleekfin-hero-number-field sleekfin-hero-setting-control">
+                                                <input id="sleekFinHeroVignetteStrength" type="number" min="0" max="100" value="72" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </details>
+
+                                <div class="sleekfin-hero-editor-footer">
+                                    <button id="sleekFinHeroReset" class="sleekfin-hero-reset" type="button">Reset hero defaults</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sleekfin-section-container sleekfin-header-builder-section">
                         <div class="sleekfin-config-section-title">Header bar</div>
                         <div class="sleekfin-builder-shell">
                         <div id="sleekFinBuilderPreview" class="sleekfin-builder-preview" data-brand-display="Both" data-brand-position="Left" data-bar-position="Right">
@@ -1375,6 +2119,7 @@
             var form = document.getElementById('sleekFinConfigurationForm');
             var enabledInput = document.getElementById('sleekFinEnabled');
             var heroEnabledInput = document.getElementById('sleekFinHeroEnabled');
+            var detailsEnabledInput = document.getElementById('sleekFinDetailsEnabled');
             var randomizedInput = document.getElementById('sleekFinHeroRandomized');
             var sources = document.getElementById('sleekFinHeroSources');
             var dependencyStatus = document.getElementById('sleekFinDependencyStatus');
@@ -1385,6 +2130,13 @@
             var previewBrand = document.getElementById('sleekFinBuilderPreviewBrand');
             var previewMenu = document.getElementById('sleekFinBuilderPreviewMenu');
             var previewDrawer = document.getElementById('sleekFinBuilderPreviewDrawer');
+            var heroPreview = document.getElementById('sleekFinHeroBuilderPreview');
+            var heroPreviewBackdrop = document.getElementById('sleekFinHeroPreviewBackdrop');
+            var heroPreviewLogo = document.getElementById('sleekFinHeroPreviewLogo');
+            var heroPreviewTitle = document.getElementById('sleekFinHeroPreviewTitle');
+            var heroPreviewFacts = document.getElementById('sleekFinHeroPreviewFacts');
+            var heroPreviewDescription = document.getElementById('sleekFinHeroPreviewDescription');
+            var heroReset = document.getElementById('sleekFinHeroReset');
             var sourceLabels = {
                 ContinueWatching: 'Continue watching',
                 NextUp: 'Next up',
@@ -1447,6 +2199,87 @@
             var previewOverflowToggle = null;
             var previewDrawerOpen = false;
             var previewOverflowItems = [];
+            var heroPreviewHasLogo = false;
+            var heroDefaults = {
+                HeroSlidesShown: 5,
+                HeroContentAlignment: 'Left',
+                HeroVerticalAlignment: 'Bottom',
+                HeroMobileHeight: 70,
+                HeroDesktopHeight: 85,
+                HeroContentMaxWidth: 560,
+                HeroTitleTreatment: 'Auto',
+                HeroBackdropFit: 'Cover',
+                HeroBackdropFocusX: 50,
+                HeroBackdropFocusY: 28,
+                HeroBackdropOpacity: 100,
+                HeroTitleSize: 48,
+                HeroTitleWeight: 800,
+                HeroTitleCase: 'Uppercase',
+                HeroDescriptionSize: 15,
+                HeroDescriptionWeight: 400,
+                HeroDescriptionColor: 'rgba(255, 255, 255, 0.88)',
+                HeroDescriptionLines: 3,
+                HeroTitleColor: '#FFFFFF',
+                HeroButtonHeight: 44,
+                HeroPrimaryButtonBackgroundColor: '#F1F2F4',
+                HeroPrimaryButtonTextColor: '#05070A',
+                HeroPrimaryButtonOpacity: 100,
+                HeroSecondaryButtonBackgroundColor: '#161618',
+                HeroSecondaryButtonOpacity: 82,
+                HeroButtonCornerStyle: 'Pill',
+                HeroSecondaryButtonTextColor: '#F1F2F4',
+                HeroAutoRotateSeconds: 10,
+                HeroTransitionStyle: 'SlideFade',
+                HeroTransitionDurationMs: 380,
+                HeroSwipeEnabled: true,
+                HeroVignetteStrength: 72
+            };
+            var heroFields = {
+                HeroSlidesShown: document.getElementById('sleekFinHeroSlidesShown'),
+                HeroMobileHeight: document.getElementById('sleekFinHeroMobileHeight'),
+                HeroDesktopHeight: document.getElementById('sleekFinHeroDesktopHeight'),
+                HeroContentMaxWidth: document.getElementById('sleekFinHeroContentMaxWidth'),
+                HeroBackdropFocusX: document.getElementById('sleekFinHeroBackdropFocusX'),
+                HeroBackdropFocusY: document.getElementById('sleekFinHeroBackdropFocusY'),
+                HeroBackdropOpacity: document.getElementById('sleekFinHeroBackdropOpacity'),
+                HeroTitleSize: document.getElementById('sleekFinHeroTitleSize'),
+                HeroTitleWeight: document.getElementById('sleekFinHeroTitleWeight'),
+                HeroDescriptionSize: document.getElementById('sleekFinHeroDescriptionSize'),
+                HeroDescriptionWeight: document.getElementById('sleekFinHeroDescriptionWeight'),
+                HeroDescriptionColor: document.getElementById('sleekFinHeroDescriptionColor'),
+                HeroDescriptionLines: document.getElementById('sleekFinHeroDescriptionLines'),
+                HeroTitleColor: document.getElementById('sleekFinHeroTitleColor'),
+                HeroButtonHeight: document.getElementById('sleekFinHeroButtonHeight'),
+                HeroPrimaryButtonBackgroundColor: document.getElementById('sleekFinHeroPrimaryButtonBackgroundColor'),
+                HeroPrimaryButtonTextColor: document.getElementById('sleekFinHeroPrimaryButtonTextColor'),
+                HeroPrimaryButtonOpacity: document.getElementById('sleekFinHeroPrimaryButtonOpacity'),
+                HeroSecondaryButtonBackgroundColor: document.getElementById('sleekFinHeroSecondaryButtonBackgroundColor'),
+                HeroSecondaryButtonOpacity: document.getElementById('sleekFinHeroSecondaryButtonOpacity'),
+                HeroSecondaryButtonTextColor: document.getElementById('sleekFinHeroSecondaryButtonTextColor'),
+                HeroAutoRotateSeconds: document.getElementById('sleekFinHeroAutoRotateSeconds'),
+                HeroTransitionDurationMs: document.getElementById('sleekFinHeroTransitionDurationMs'),
+                HeroVignetteStrength: document.getElementById('sleekFinHeroVignetteStrength')
+            };
+            var heroBounds = {
+                HeroSlidesShown: [1, 10],
+                HeroMobileHeight: [40, 100],
+                HeroDesktopHeight: [40, 100],
+                HeroContentMaxWidth: [280, 1200],
+                HeroBackdropFocusX: [0, 100],
+                HeroBackdropFocusY: [0, 100],
+                HeroBackdropOpacity: [0, 100],
+                HeroTitleSize: [16, 96],
+                HeroTitleWeight: [100, 900],
+                HeroDescriptionSize: [10, 32],
+                HeroDescriptionWeight: [100, 900],
+                HeroDescriptionLines: [1, 8],
+                HeroButtonHeight: [32, 72],
+                HeroPrimaryButtonOpacity: [0, 100],
+                HeroSecondaryButtonOpacity: [0, 100],
+                HeroAutoRotateSeconds: [1, 120],
+                HeroTransitionDurationMs: [100, 2000],
+                HeroVignetteStrength: [0, 100]
+            };
             var builderDefaults = {
                 HeaderBrandDisplay: 'Both',
                 HeaderBrandPosition: 'Left',
@@ -1481,7 +2314,9 @@
                 HeaderActiveItemOpacity: document.getElementById('sleekFinHeaderActiveItemOpacity')
             };
 
-            if (!page || !form || !enabledInput || !heroEnabledInput || !randomizedInput || !sources || !dependencyStatus || !preview || !previewBar || !palette || !previewBrand || !previewMenu || !previewDrawer || page.dataset.sleekfinBound === 'true') {
+            var missingHeroField = Object.keys(heroFields).some(function (name) { return !heroFields[name]; });
+
+            if (!page || !form || !enabledInput || !heroEnabledInput || !detailsEnabledInput || !randomizedInput || !sources || !dependencyStatus || !preview || !previewBar || !palette || !previewBrand || !previewMenu || !previewDrawer || !heroPreview || !heroPreviewBackdrop || !heroPreviewLogo || !heroPreviewTitle || !heroPreviewFacts || !heroPreviewDescription || !heroReset || missingHeroField || page.dataset.sleekfinBound === 'true') {
                 return;
             }
 
@@ -1506,6 +2341,21 @@
                     value = fallback;
                 }
                 return Math.min(maximum, Math.max(minimum, Math.round(value)));
+            }
+
+            function boundedHeroValue(name) {
+                var bounds = heroBounds[name];
+                var rawValue = heroFields[name].value.trim();
+                var value = rawValue === '' ? heroDefaults[name] : Number(rawValue);
+                if (!isFinite(value)) {
+                    value = heroDefaults[name];
+                }
+                return Math.min(bounds[1], Math.max(bounds[0], Math.round(value)));
+            }
+
+            function heroColor(name) {
+                var value = heroFields[name].value.trim();
+                return validColor(value) ? value : heroDefaults[name];
             }
 
             function builderDimensions() {
@@ -1547,8 +2397,14 @@
                 return !hasAlpha || /^(?:0|1|0?\.\d+|1\.0+)$/.test(parts[3]);
             }
 
-            function validateBuilderColors() {
+            function validateColors() {
                 var colorFields = [
+                    heroFields.HeroTitleColor,
+                    heroFields.HeroDescriptionColor,
+                    heroFields.HeroPrimaryButtonBackgroundColor,
+                    heroFields.HeroPrimaryButtonTextColor,
+                    heroFields.HeroSecondaryButtonBackgroundColor,
+                    heroFields.HeroSecondaryButtonTextColor,
                     builderFields.HeaderServerNameColor,
                     builderFields.HeaderItemBackgroundColor,
                     builderFields.HeaderItemTextColor,
@@ -1585,6 +2441,89 @@
                 if (input) {
                     input.checked = true;
                 }
+            }
+
+            function updateHeroPreview() {
+                var buttonRadius = { Square: '0', Rounded: '12px', Pill: '999px' }[selectedRadio('sleekFinHeroButtonCornerStyle', heroDefaults.HeroButtonCornerStyle)];
+                var mobile = window.innerWidth < 768;
+                var height = boundedHeroValue(mobile ? 'HeroMobileHeight' : 'HeroDesktopHeight');
+                var defaultHeight = heroDefaults[mobile ? 'HeroMobileHeight' : 'HeroDesktopHeight'];
+                var previewHeight = Math.max(360, Math.min(640, Math.round((mobile ? 400 : 460) * height / defaultHeight)));
+                var titleTreatment = selectedRadio('sleekFinHeroTitleTreatment', heroDefaults.HeroTitleTreatment);
+                var showLogo = titleTreatment !== 'Text' && heroPreviewHasLogo;
+
+                heroPreview.dataset.contentAlignment = selectedRadio('sleekFinHeroContentAlignment', heroDefaults.HeroContentAlignment);
+                heroPreview.dataset.verticalAlignment = selectedRadio('sleekFinHeroVerticalAlignment', heroDefaults.HeroVerticalAlignment);
+                heroPreview.dataset.titleCase = selectedRadio('sleekFinHeroTitleCase', heroDefaults.HeroTitleCase);
+                heroPreview.style.height = previewHeight + 'px';
+                heroPreview.style.setProperty('--sleekfin-hero-preview-backdrop-fit', selectedRadio('sleekFinHeroBackdropFit', heroDefaults.HeroBackdropFit).toLowerCase());
+                heroPreview.style.setProperty('--sleekfin-hero-preview-focus-x', boundedHeroValue('HeroBackdropFocusX') + '%');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-focus-y', boundedHeroValue('HeroBackdropFocusY') + '%');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-backdrop-opacity', String(boundedHeroValue('HeroBackdropOpacity') / 100));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-vignette', String(boundedHeroValue('HeroVignetteStrength') / 100));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-content-width', boundedHeroValue('HeroContentMaxWidth') + 'px');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-title-color', heroColor('HeroTitleColor'));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-title-size', boundedHeroValue('HeroTitleSize') + 'px');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-title-weight', String(boundedHeroValue('HeroTitleWeight')));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-description-color', heroColor('HeroDescriptionColor'));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-description-size', boundedHeroValue('HeroDescriptionSize') + 'px');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-description-weight', String(boundedHeroValue('HeroDescriptionWeight')));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-description-lines', String(boundedHeroValue('HeroDescriptionLines')));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-button-height', boundedHeroValue('HeroButtonHeight') + 'px');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-button-radius', buttonRadius);
+                heroPreview.style.setProperty('--sleekfin-hero-preview-primary-background', heroColor('HeroPrimaryButtonBackgroundColor'));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-primary-opacity', boundedHeroValue('HeroPrimaryButtonOpacity') + '%');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-primary-text', heroColor('HeroPrimaryButtonTextColor'));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-secondary-background', heroColor('HeroSecondaryButtonBackgroundColor'));
+                heroPreview.style.setProperty('--sleekfin-hero-preview-secondary-opacity', boundedHeroValue('HeroSecondaryButtonOpacity') + '%');
+                heroPreview.style.setProperty('--sleekfin-hero-preview-secondary-text', heroColor('HeroSecondaryButtonTextColor'));
+                heroPreviewLogo.hidden = !showLogo;
+                heroPreviewTitle.hidden = showLogo || titleTreatment === 'Logo';
+            }
+
+            function applyHeroConfiguration(configuration) {
+                var contentOrder = readValue(configuration, 'HeroContentOrder');
+                randomizedInput.checked = readValue(configuration, 'HeroRandomized') === true;
+                renderSources(contentOrder === undefined ? defaultSourceOrder.join(',') : contentOrder);
+                Object.keys(heroFields).forEach(function (name) {
+                    var input = heroFields[name];
+                    var value = readValue(configuration, name);
+                    input.value = value === undefined ? heroDefaults[name] : value;
+                    if (input.type === 'number') {
+                        value = boundedHeroValue(name);
+                        input.defaultValue = String(value);
+                        input.value = String(value);
+                    }
+                    if (input.tagName === 'SELECT' && !input.value) {
+                        input.value = heroDefaults[name];
+                    }
+                });
+                setRadio('sleekFinHeroContentAlignment', readValue(configuration, 'HeroContentAlignment'), heroDefaults.HeroContentAlignment);
+                setRadio('sleekFinHeroVerticalAlignment', readValue(configuration, 'HeroVerticalAlignment'), heroDefaults.HeroVerticalAlignment);
+                setRadio('sleekFinHeroTitleTreatment', readValue(configuration, 'HeroTitleTreatment'), heroDefaults.HeroTitleTreatment);
+                setRadio('sleekFinHeroBackdropFit', readValue(configuration, 'HeroBackdropFit'), heroDefaults.HeroBackdropFit);
+                setRadio('sleekFinHeroTitleCase', readValue(configuration, 'HeroTitleCase'), heroDefaults.HeroTitleCase);
+                setRadio('sleekFinHeroButtonCornerStyle', readValue(configuration, 'HeroButtonCornerStyle'), heroDefaults.HeroButtonCornerStyle);
+                setRadio('sleekFinHeroTransitionStyle', readValue(configuration, 'HeroTransitionStyle'), heroDefaults.HeroTransitionStyle);
+                setRadio('sleekFinHeroSwipeEnabled', String(readValue(configuration, 'HeroSwipeEnabled') !== false), String(heroDefaults.HeroSwipeEnabled));
+                updateHeroPreview();
+            }
+
+            function resetHeroDefaults() {
+                randomizedInput.checked = false;
+                renderSources(defaultSourceOrder.join(','));
+                Object.keys(heroFields).forEach(function (name) {
+                    heroFields[name].value = heroDefaults[name];
+                });
+                setRadio('sleekFinHeroContentAlignment', heroDefaults.HeroContentAlignment, heroDefaults.HeroContentAlignment);
+                setRadio('sleekFinHeroVerticalAlignment', heroDefaults.HeroVerticalAlignment, heroDefaults.HeroVerticalAlignment);
+                setRadio('sleekFinHeroTitleTreatment', heroDefaults.HeroTitleTreatment, heroDefaults.HeroTitleTreatment);
+                setRadio('sleekFinHeroBackdropFit', heroDefaults.HeroBackdropFit, heroDefaults.HeroBackdropFit);
+                setRadio('sleekFinHeroTitleCase', heroDefaults.HeroTitleCase, heroDefaults.HeroTitleCase);
+                setRadio('sleekFinHeroButtonCornerStyle', heroDefaults.HeroButtonCornerStyle, heroDefaults.HeroButtonCornerStyle);
+                setRadio('sleekFinHeroTransitionStyle', heroDefaults.HeroTransitionStyle, heroDefaults.HeroTransitionStyle);
+                setRadio('sleekFinHeroSwipeEnabled', String(heroDefaults.HeroSwipeEnabled), String(heroDefaults.HeroSwipeEnabled));
+                updateHeroPreview();
             }
 
             function setDependencyStatus(isInstalled) {
@@ -1880,6 +2819,7 @@
                     return;
                 }
                 previewResizeListening = true;
+                window.addEventListener('resize', updateHeroPreview);
                 if (typeof window.ResizeObserver === 'function') {
                     previewResizeObserver = new window.ResizeObserver(updatePreviewMeasurements);
                     previewResizeObserver.observe(preview);
@@ -1887,6 +2827,7 @@
                     window.addEventListener('resize', updatePreviewMeasurements);
                 }
                 updatePreviewMeasurements();
+                updateHeroPreview();
             }
 
             function stopPreviewMeasurements() {
@@ -1894,6 +2835,7 @@
                     return;
                 }
                 previewResizeListening = false;
+                window.removeEventListener('resize', updateHeroPreview);
                 if (previewResizeObserver) {
                     previewResizeObserver.disconnect();
                     previewResizeObserver = null;
@@ -2542,19 +3484,119 @@
                 });
             }
 
+            function previewLogoUrl(item) {
+                var imageTags = readValue(item, 'ImageTags');
+                var itemId = readValue(item, 'Id');
+                var tag = imageTags && (imageTags.Logo || imageTags.logo);
+                if (!itemId || !tag || typeof ApiClient.getImageUrl !== 'function') {
+                    return '';
+                }
+                return ApiClient.getImageUrl(itemId, {
+                    maxHeight: 240,
+                    quality: 90,
+                    tag: tag,
+                    type: 'Logo'
+                });
+            }
+
+            function renderHeroPreviewFacts(values) {
+                heroPreviewFacts.textContent = '';
+                values.filter(Boolean).forEach(function (value, index) {
+                    var fact;
+                    var separator;
+                    if (index) {
+                        separator = document.createElement('span');
+                        separator.textContent = '·';
+                        heroPreviewFacts.appendChild(separator);
+                    }
+                    fact = document.createElement('span');
+                    fact.textContent = value;
+                    heroPreviewFacts.appendChild(fact);
+                });
+            }
+
+            function resetHeroPreviewMedia() {
+                heroPreviewHasLogo = false;
+                heroPreviewBackdrop.removeAttribute('src');
+                heroPreviewLogo.removeAttribute('src');
+                heroPreviewTitle.textContent = 'Django Unchained';
+                renderHeroPreviewFacts(['★ 8.4', '2012', 'Movie', 'Western', 'Drama']);
+                heroPreviewDescription.hidden = false;
+                heroPreviewDescription.textContent = 'With the help of a German bounty-hunter, a freed slave sets out to rescue his wife from a brutal plantation owner.';
+                updateHeroPreview();
+            }
+
+            function populateHeroPreviewItem(item, backdropUrl, loadId) {
+                var genres = readValue(item, 'Genres');
+                var logoUrl = previewLogoUrl(item);
+                var overview = String(readValue(item, 'Overview') || '').trim();
+                var premiereDate = readValue(item, 'PremiereDate');
+                var rating = Number(readValue(item, 'CommunityRating'));
+                var type = String(readValue(item, 'Type') || '');
+                var year = readValue(item, 'ProductionYear');
+                var facts = [];
+                var logo;
+
+                if (!year && premiereDate) {
+                    year = new Date(premiereDate).getFullYear();
+                    if (!isFinite(year)) {
+                        year = '';
+                    }
+                }
+                if (rating > 0) {
+                    facts.push('★ ' + rating.toFixed(1));
+                }
+                facts.push(year ? String(year) : '');
+                facts.push(type === 'Series' ? 'TV Show' : type);
+                if (Array.isArray(genres)) {
+                    facts = facts.concat(genres.slice(0, 2));
+                }
+
+                heroPreviewTitle.textContent = String(readValue(item, 'Name') || 'Featured title');
+                renderHeroPreviewFacts(facts);
+                heroPreviewDescription.hidden = !overview;
+                heroPreviewDescription.textContent = overview;
+                if (backdropUrl) {
+                    preview.style.backgroundImage = 'url(' + JSON.stringify(backdropUrl) + ')';
+                    heroPreviewBackdrop.src = backdropUrl;
+                }
+                heroPreviewHasLogo = false;
+                heroPreviewLogo.removeAttribute('src');
+                updateHeroPreview();
+                if (!logoUrl) {
+                    return;
+                }
+                logo = new Image();
+                logo.onload = function () {
+                    if (currentLoad(loadId)) {
+                        heroPreviewLogo.src = logoUrl;
+                        heroPreviewHasLogo = true;
+                        updateHeroPreview();
+                    }
+                };
+                logo.onerror = function () {
+                    if (currentLoad(loadId)) {
+                        heroPreviewHasLogo = false;
+                        updateHeroPreview();
+                    }
+                };
+                logo.src = logoUrl;
+            }
+
             function loadPreviewBackdrop(loadId) {
                 var userId = typeof ApiClient.getCurrentUserId === 'function' ? ApiClient.getCurrentUserId() : (typeof Dashboard.getCurrentUserId === 'function' ? Dashboard.getCurrentUserId() : '');
                 var request;
                 preview.style.removeProperty('background-image');
+                resetHeroPreviewMedia();
                 if (!userId || typeof ApiClient.getItems !== 'function') {
                     return Promise.resolve();
                 }
                 request = ApiClient.getItems(userId, {
                     EnableImages: true,
-                    EnableImageTypes: 'Backdrop',
+                    EnableImageTypes: 'Backdrop,Logo',
                     EnableTotalRecordCount: false,
-                    Fields: 'BackdropImageTags,ParentBackdropImageTags',
-                    ImageTypes: 'Backdrop',
+                    Fields: 'BackdropImageTags,CommunityRating,Genres,ImageTags,Overview,ParentBackdropImageTags,ParentBackdropItemId,PremiereDate,ProductionYear',
+                    ImageTypes: 'Backdrop,Logo',
                     IncludeItemTypes: 'Movie,Series',
                     Limit: 24,
                     Recursive: true,
@@ -2562,7 +3604,7 @@
                 });
                 return request.then(function (result) {
                     var items = readValue(result, 'Items');
-                    var imageUrls = [];
+                    var candidates = [];
                     var image;
                     var index;
                     var offset = 0;
@@ -2571,30 +3613,37 @@
                     }
                     for (index = 0; Array.isArray(items) && index < items.length; index++) {
                         var imageUrl = previewBackdropUrl(items[index]);
-                        if (imageUrl && imageUrls.indexOf(imageUrl) === -1) {
-                            imageUrls.push(imageUrl);
+                        if (imageUrl && !candidates.some(function (candidate) { return candidate.url === imageUrl; })) {
+                            candidates.push({ item: items[index], url: imageUrl });
                         }
                     }
-                    if (!imageUrls.length) {
+                    if (!candidates.length) {
+                        if (Array.isArray(items) && items.length) {
+                            populateHeroPreviewItem(items[0], '', loadId);
+                        }
                         return;
                     }
-                    index = Math.floor(Math.random() * imageUrls.length);
+                    index = Math.floor(Math.random() * candidates.length);
 
                     function tryBackdrop() {
-                        var imageUrl;
-                        if (!currentLoad(loadId) || offset >= imageUrls.length) {
+                        var candidate;
+                        if (!currentLoad(loadId)) {
                             return;
                         }
-                        imageUrl = imageUrls[(index + offset) % imageUrls.length];
+                        if (offset >= candidates.length) {
+                            populateHeroPreviewItem(candidates[index].item, '', loadId);
+                            return;
+                        }
+                        candidate = candidates[(index + offset) % candidates.length];
                         offset += 1;
                         image = new Image();
                         image.onload = function () {
                             if (currentLoad(loadId)) {
-                                preview.style.backgroundImage = 'url(' + JSON.stringify(imageUrl) + ')';
+                                populateHeroPreviewItem(candidate.item, candidate.url, loadId);
                             }
                         };
                         image.onerror = tryBackdrop;
-                        image.src = imageUrl;
+                        image.src = candidate.url;
                     }
 
                     tryBackdrop();
@@ -2643,8 +3692,8 @@
                         var configuration = results[0];
                         enabledInput.checked = readValue(configuration, 'HeaderEnabled') !== false;
                         heroEnabledInput.checked = readValue(configuration, 'HeroEnabled') !== false;
-                        randomizedInput.checked = readValue(configuration, 'HeroRandomized') === true;
-                        renderSources(readValue(configuration, 'HeroContentOrder') || defaultSourceOrder.join(','));
+                        detailsEnabledInput.checked = readValue(configuration, 'DetailsEnabled') !== false;
+                        applyHeroConfiguration(configuration);
                         applyBuilderConfiguration(configuration);
                         loadPreviewServerName(request);
                         loadPreviewBackdrop(request);
@@ -2660,6 +3709,28 @@
                             Dashboard.hideLoadingMsg();
                         }
                     });
+            }
+
+            function saveHeroConfiguration(configuration, contentOrder) {
+                configuration.HeroRandomized = randomizedInput.checked;
+                configuration.HeroContentOrder = contentOrder.join(',');
+                Object.keys(heroBounds).forEach(function (name) {
+                    configuration[name] = boundedHeroValue(name);
+                });
+                configuration.HeroTitleColor = heroFields.HeroTitleColor.value.trim();
+                configuration.HeroDescriptionColor = heroFields.HeroDescriptionColor.value.trim();
+                configuration.HeroPrimaryButtonBackgroundColor = heroFields.HeroPrimaryButtonBackgroundColor.value.trim();
+                configuration.HeroPrimaryButtonTextColor = heroFields.HeroPrimaryButtonTextColor.value.trim();
+                configuration.HeroSecondaryButtonBackgroundColor = heroFields.HeroSecondaryButtonBackgroundColor.value.trim();
+                configuration.HeroSecondaryButtonTextColor = heroFields.HeroSecondaryButtonTextColor.value.trim();
+                configuration.HeroContentAlignment = selectedRadio('sleekFinHeroContentAlignment', heroDefaults.HeroContentAlignment);
+                configuration.HeroVerticalAlignment = selectedRadio('sleekFinHeroVerticalAlignment', heroDefaults.HeroVerticalAlignment);
+                configuration.HeroTitleTreatment = selectedRadio('sleekFinHeroTitleTreatment', heroDefaults.HeroTitleTreatment);
+                configuration.HeroBackdropFit = selectedRadio('sleekFinHeroBackdropFit', heroDefaults.HeroBackdropFit);
+                configuration.HeroTitleCase = selectedRadio('sleekFinHeroTitleCase', heroDefaults.HeroTitleCase);
+                configuration.HeroButtonCornerStyle = selectedRadio('sleekFinHeroButtonCornerStyle', heroDefaults.HeroButtonCornerStyle);
+                configuration.HeroTransitionStyle = selectedRadio('sleekFinHeroTransitionStyle', heroDefaults.HeroTransitionStyle);
+                configuration.HeroSwipeEnabled = selectedRadio('sleekFinHeroSwipeEnabled', String(heroDefaults.HeroSwipeEnabled)) === 'true';
             }
 
             function saveBuilderConfiguration(configuration) {
@@ -2682,7 +3753,7 @@
                     Dashboard.alert('Select at least one hero content source.');
                     return;
                 }
-                if (!validateBuilderColors()) {
+                if (!validateColors()) {
                     return;
                 }
                 Dashboard.showLoadingMsg();
@@ -2691,8 +3762,8 @@
                     .then(function (configuration) {
                         configuration.HeaderEnabled = enabledInput.checked;
                         configuration.HeroEnabled = heroEnabledInput.checked;
-                        configuration.HeroRandomized = randomizedInput.checked;
-                        configuration.HeroContentOrder = contentOrder.join(',');
+                        configuration.DetailsEnabled = detailsEnabledInput.checked;
+                        saveHeroConfiguration(configuration, contentOrder);
                         saveBuilderConfiguration(configuration);
                         return ApiClient.updatePluginConfiguration(PLUGIN_ID, configuration);
                     })
@@ -2700,6 +3771,7 @@
                         Dashboard.processPluginConfigurationUpdateResult(result);
                         if (typeof CustomEvent === 'function') {
                             window.dispatchEvent(new CustomEvent('sleekfin:header-settings-changed'));
+                            window.dispatchEvent(new CustomEvent('sleekfin:hero-settings-changed'));
                         }
                     })
                     .catch(function () {
@@ -2718,9 +3790,23 @@
                     });
                     if (panel === 'ui-builder') {
                         updatePreviewMeasurements();
+                        updateHeroPreview();
                     }
                 });
             });
+
+            Array.prototype.forEach.call(form.querySelectorAll('input[name="sleekFinHeroContentAlignment"], input[name="sleekFinHeroVerticalAlignment"], input[name="sleekFinHeroTitleTreatment"], input[name="sleekFinHeroBackdropFit"], input[name="sleekFinHeroTitleCase"], input[name="sleekFinHeroButtonCornerStyle"]'), function (input) {
+                input.addEventListener('change', updateHeroPreview);
+            });
+
+            Object.keys(heroFields).forEach(function (name) {
+                var input = heroFields[name];
+                if (name !== 'HeroSlidesShown' && name !== 'HeroAutoRotateSeconds' && name !== 'HeroTransitionDurationMs') {
+                    input.addEventListener(input.tagName === 'SELECT' ? 'change' : 'input', updateHeroPreview);
+                }
+            });
+
+            heroReset.addEventListener('click', resetHeroDefaults);
 
             Array.prototype.forEach.call(form.querySelectorAll('input[name^="sleekFinHeader"]'), function (input) {
                 input.addEventListener('change', updatePreviewStyles);
@@ -2818,8 +3904,8 @@
             }
 
             window.addEventListener('sleekfin:header-catalog-changed', handleHeaderCatalogChanged);
-            page.addEventListener('pageshow', showConfigurationPage);
-            page.addEventListener('pagehide', hideConfigurationPage);
+            page.addEventListener('viewshow', showConfigurationPage);
+            page.addEventListener('viewhide', hideConfigurationPage);
             form.addEventListener('submit', saveConfiguration);
             startPreviewMeasurements();
             refreshBuilderCatalog();

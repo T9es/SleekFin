@@ -192,7 +192,7 @@
 }
 
 .sleekfin-details-episode-number {
-    color: rgba(238, 241, 246, 0.68);
+    color: rgba(241, 242, 244, 0.68);
     font: 600 10px/14px var(--sleekfin-font-family);
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -206,7 +206,7 @@
 .sleekfin-details-episode-overview {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    color: rgba(238, 241, 246, 0.72);
+    color: rgba(241, 242, 244, 0.72);
     display: -webkit-box;
     font: 400 13px/18px var(--sleekfin-font-family);
     margin-top: 4px;
@@ -215,7 +215,7 @@
 
 .sleekfin-details-episode-footer {
     align-items: center;
-    color: rgba(238, 241, 246, 0.7);
+    color: rgba(241, 242, 244, 0.7);
     display: flex;
     font: 400 12px/16px var(--sleekfin-font-family);
     justify-content: space-between;

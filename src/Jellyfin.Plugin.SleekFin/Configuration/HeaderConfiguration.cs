@@ -116,7 +116,7 @@ internal static class HeaderConfiguration
         return normalized ?? fallback;
     }
 
-    private static string NormalizeColor(string? value, string fallback)
+    internal static string NormalizeColor(string? value, string fallback)
     {
         string candidate = value?.Trim() ?? string.Empty;
         if (string.Equals(candidate, "transparent", StringComparison.OrdinalIgnoreCase))
