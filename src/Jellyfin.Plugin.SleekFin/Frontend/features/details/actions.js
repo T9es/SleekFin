@@ -1,14 +1,16 @@
 import { decorateNativeButton, restoreNativeButton } from '../../shared/runtime.js';
 
-export function createActions(container, item) {
-  // Jellyfin's detail template hardcodes data-action="resume" on the primary button and only ever
-  // updates its title, so the label is decided by the item's own playback position instead. The
-  // play-from-the-beginning button keeps its own name whatever that position is.
-  const isResumable = Number(item.UserData?.PlaybackPositionTicks || 0) > 0;
-  const hasEpisodeResume = item.Type === 'Episode' && isResumable;
+export function createActions(container, getItem) {
   const decorated = new Set();
 
   function reconcile() {
+    const item = getItem();
+    // Jellyfin crosses the two controls over their class names: the replay-icon .btnReplay carries
+    // data-action="play" and starts at 0, while the play-arrow .btnPlay carries data-action="resume" and
+    // is the one that resumes, which is why Jellyfin titles it ButtonResume whenever a position exists.
+    // Those are Jellyfin's localized strings, so the labels here are decided from the playback position.
+    const isResumable = Number(item.UserData?.PlaybackPositionTicks || 0) > 0;
+    const hasEpisodeResume = item.Type === 'Episode' && isResumable;
     const buttons = container.querySelectorAll('.btnPlay, .btnReplay, .btnDownload, .btnUserRating');
 
     buttons.forEach((element) => {

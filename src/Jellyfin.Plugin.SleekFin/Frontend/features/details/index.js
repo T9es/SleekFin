@@ -34,7 +34,10 @@ const state = {
   started: false,
   stopHidden: null,
   stopHistory: null,
+  stopUserData: null,
   stopWatching: null,
+  userDataRetry: false,
+  userDataRevision: 0,
 };
 
 // Jellyfin 12 is a hash router, so the route is carried in window.location.hash; the pathname
@@ -157,7 +160,7 @@ function mount() {
     revealNativePage();
     return;
   }
-  const actions = createActions(hero.actions, state.item);
+  const actions = createActions(hero.actions, () => state.item);
   const sections = createSections(state.page);
   const similar = createSimilar(state.page);
   const episodes = ['Series', 'Season', 'Episode'].includes(state.item.Type) && state.seasons.length ? createEpisodes(state.page, state.item, state.seasons) : null;
@@ -179,6 +182,41 @@ function mount() {
   concealUntilAlone(state.page);
 }
 
+// A notification for the item on screen can arrive before load() has installed it, when the route
+// change has already cleared the item and the request is still in flight. That notification cannot be
+// applied, and the response may have been read before the position was saved, so load() re-reads the
+// route instead of this applying user data to an item it may not belong to.
+function isItemLoading(id) {
+  return Boolean(id) && state.loadingId === id && state.currentId === id;
+}
+
+function onUserDataChanged(message) {
+  const client = window.ApiClient;
+  const item = state.item;
+  const data = message?.Data;
+  if (!client || !data || data.UserId != client.getCurrentUserId()) return;
+  const itemId = item?.Id || (isItemLoading(state.currentId) ? state.currentId : '');
+  if (!itemId) return;
+  // Alternate versions share the same user data key, so a key match would apply another version's
+  // position to the item on screen.
+  const userData = (data.UserDataList || []).find((entry) => entry.ItemId == itemId);
+  if (!userData) return;
+  if (!item) {
+    state.userDataRevision += 1;
+    return;
+  }
+  item.UserData = userData;
+  scheduleReconcile();
+}
+
+function watchUserData() {
+  const client = window.ApiClient;
+  if (!client || state.stopUserData) return;
+  // The SDK's message type enum is not exposed as a global in the deployed web client, and its
+  // OutboundWebSocketMessageType.UserDataChanged member is this exact string.
+  state.stopUserData = client.subscribe(['UserDataChanged'], onUserDataChanged);
+}
+
 function load(id, serverId) {
   const client = routeClient(serverId);
   if (!client) {
@@ -198,12 +236,24 @@ function load(id, serverId) {
   const userId = client.getCurrentUserId();
   const isCurrent = () => generation === state.generation && id === state.currentId;
   state.loadingId = id;
+  const revision = state.userDataRevision;
+  // Re-reading once is enough in practice: a notification is broadcast only after the position it
+  // carries was saved, so a request issued after it was read answers with that position. The retry
+  // is capped so a stream of notifications cannot spin the request instead.
+  const retrying = state.userDataRetry;
+  state.userDataRetry = false;
 
   client.getItem(userId, id)
     .then((mediaItem) => {
       if (!isCurrent()) return;
+      if (!retrying && revision !== state.userDataRevision) {
+        state.userDataRetry = true;
+        load(id, serverId);
+        return;
+      }
       state.item = mediaItem;
       state.loadingId = '';
+      state.userDataRetry = false;
       scheduleReconcile();
       if (!SUPPORTED_TYPES.includes(mediaItem.Type)) return;
 
@@ -341,6 +391,9 @@ function leaveDetail() {
 
 function reconcile() {
   if (!state.started) return;
+  // Jellyfin can assign window.ApiClient after start(), so the running loop retries the one-time
+  // subscription until a client exists.
+  watchUserData();
   const currentRoute = route();
   const { id, serverId } = currentRoute;
   const page = findPage(id);
@@ -462,6 +515,7 @@ function start() {
     viewshow: true,
   });
   state.stopHistory = watchHistory();
+  watchUserData();
   onRouteChange();
 }
 
@@ -475,6 +529,8 @@ function stop() {
   state.stopWatching = null;
   state.stopHistory?.();
   state.stopHistory = null;
+  state.stopUserData?.();
+  state.stopUserData = null;
   reset();
 }
 
