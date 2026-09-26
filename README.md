@@ -26,6 +26,7 @@ The ultimate customisation plugin for Jellyfin, which fully reskins Jellyfin to 
 ## Features
 
 - **Complete reskin:** Applies a fully black interface with dark surfaces, red accents, and uses Inter across the main UI, dialogs, lists, and cards.
+- **Jellyfin Enhanced integration:** Reskins [Jellyfin Enhanced](https://github.com/n00bcodr/Jellyfin-Enhanced) panels and controls to match SleekFin when the plugin is installed.
 - **Floating header:** Turns Jellyfin's modern and legacy desktop/mobile headers into a custom compact navigation bar which can be customized in the plugin's UI Builder.
 - **Configurable home hero:** Adds a full-width hero section above rows on the home page to display your library's content more nicely.
 - **Redesigned home and library pages:** Restyles the carousels and library pages to show content more clearly with consistent spacing and concise info under posters.

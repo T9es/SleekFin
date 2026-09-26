@@ -32,6 +32,8 @@ public static class FrontendAssets
         new("sleekfin-header-brand.css", "Header"),
         new("sleekfin-header-modern.css", "Header"),
         new("sleekfin-header-legacy.css", "Header"),
+        new("sleekfin-je-components.css", "JellyfinEnhanced"),
+        new("sleekfin-je-active-streams.css", "JellyfinEnhanced"),
         new("sleekfin-hero.css", "Hero", Feature.Hero),
         new("sleekfin-hero-slide.css", "Hero", Feature.Hero),
         new("sleekfin-hero-carousel.css", "Hero", Feature.Hero),
