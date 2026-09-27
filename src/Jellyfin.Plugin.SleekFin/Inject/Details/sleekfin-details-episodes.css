@@ -39,6 +39,7 @@
     z-index: 1110;
 }
 
+.sleekfin-details-season-native,
 .sleekfin-details-season-trigger,
 .sleekfin-details-season-title {
     color: var(--sleekfin-text);
@@ -49,15 +50,19 @@
     margin: 0;
 }
 
+.sleekfin-details-season-native,
 .sleekfin-details-season-trigger {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
     border: 0;
     cursor: pointer;
-    display: inline-flex;
     max-width: 100%;
     padding: 0 22px 0 0;
+}
+
+.sleekfin-details-season-trigger {
+    display: inline-flex;
     text-align: left;
 }
 
@@ -85,12 +90,18 @@
     padding: 6px;
     pointer-events: auto;
     position: fixed;
+    scrollbar-width: none;
+    touch-action: manipulation;
     width: max-content;
     z-index: 20;
 }
 
 .sleekfin-details-season-menu[data-positioned="false"] {
     visibility: hidden;
+}
+
+.sleekfin-details-season-menu::-webkit-scrollbar {
+    display: none;
 }
 
 .sleekfin-details-season-option {
@@ -109,6 +120,8 @@
     padding: 0 10px;
     text-align: left;
     text-overflow: ellipsis;
+    touch-action: manipulation;
+    user-select: none;
     white-space: nowrap;
     width: 100%;
 }
@@ -128,7 +141,6 @@
 }
 
 .sleekfin-details-season-option[data-selected="true"] {
-    box-shadow: inset 2px 0 var(--sleekfin-accent);
     color: var(--sleekfin-header-active-text, var(--sleekfin-text));
 }
 
@@ -362,6 +374,7 @@
 }
 
 @media (max-width: 767px) {
+    .sleekfin-details-season-native,
     .sleekfin-details-season-trigger,
     .sleekfin-details-season-title {
         font-size: 20px;

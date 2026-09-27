@@ -1,5 +1,9 @@
 import { Fragment, h, Icon, IconButton, item, dom, render, SectionHeading, useEffect, useMemo, useRef, useState } from '../../shared/runtime.js';
 
+// Roughly six rows. Below this the space under a trigger is too cramped to be worth keeping the
+// menu anchored to it, so the menu is allowed to flip above instead.
+const MIN_USABLE_HEIGHT = 240;
+
 function downloadEpisode(client, episode) {
   const link = document.createElement('a');
   link.href = client.getItemDownloadUrl(episode.Id);
@@ -71,7 +75,7 @@ function seasonKeyboardKey(event) {
     : '';
 }
 
-function Episodes({ client, list, mediaItem, seasons }) {
+function Episodes({ client, list, mediaItem, seasons, seasonPickerEnabled }) {
   const firstSeason = useMemo(() => seasons.filter((season) => Number(season.IndexNumber) > 0)[0] || seasons[0] || null, [seasons]);
   const [episodes, setEpisodes] = useState([]);
   const [query, setQuery] = useState('');
@@ -130,17 +134,21 @@ function Episodes({ client, list, mediaItem, seasons }) {
         id={seasonMenuId}
         ref={seasonMenu}
         role="listbox"
+        // Hidden inline rather than by stylesheet, so the listbox cannot paint unstyled in document
+        // flow before the positioner runs. This covers only the pre-positioning window: the
+        // positioner unhides the menu regardless, so a stylesheet that never loads still shows it.
+        style="visibility:hidden"
       >
         {seasons.map((season, index) => (
           <div
-            aria-selected={index === activeIndex}
+            aria-selected={index === selectedSeasonIndex}
             class="sleekfin-details-season-option"
             data-active={index === activeIndex ? 'true' : 'false'}
             data-selected={index === selectedSeasonIndex ? 'true' : 'false'}
             id={`${seasonMenuId}-option-${index}`}
             key={season.Id}
             onClick={() => chooseSeason(season, index)}
-            onMouseMove={() => setActiveSeasonIndex(index)}
+            onPointerMove={() => setActiveSeasonIndex(index)}
             role="option"
           >
             <span>{seasonLabel(season)}</span>
@@ -164,29 +172,47 @@ function Episodes({ client, list, mediaItem, seasons }) {
       const menu = seasonMenu.current;
       if (!trigger || !menu) return;
       const triggerRect = trigger.getBoundingClientRect();
-      const menuRect = menu.getBoundingClientRect();
-      const maxMenuHeight = Math.min(420, window.innerHeight * 0.5);
-      const menuContentHeight = menu.scrollHeight + (menu.offsetHeight - menu.clientHeight);
-      const menuHeight = Math.min(menuContentHeight, maxMenuHeight);
-      const menuWidth = menuRect.width;
-      const spaceBelow = Math.max(0, window.innerHeight - triggerRect.bottom - 8);
-      const spaceAbove = Math.max(0, triggerRect.top - 8);
-      const placement = menuHeight > spaceBelow && spaceAbove > spaceBelow ? 'above' : 'below';
-      const availableSpace = placement === 'above' ? spaceAbove : spaceBelow;
-      const maxHeight = Math.floor(Math.min(maxMenuHeight, availableSpace));
       const maxWidth = Math.min(360, window.innerWidth * 0.7);
       const minWidth = Math.min(triggerRect.width, maxWidth);
+      const gap = 6;
+      const margin = 8;
+
+      // Measured unclamped first, because a height left over from the previous placement is
+      // subtracted from the space being tested here.
+      menu.style.maxHeight = 'none';
+      const contentHeight = Math.ceil(menu.scrollHeight);
+      const menuWidth = Math.ceil(menu.getBoundingClientRect().width);
+      const cap = Math.min(420, window.innerHeight * 0.5);
+      const spaceBelow = Math.max(0, window.innerHeight - triggerRect.bottom - gap - margin);
+      const spaceAbove = Math.max(0, triggerRect.top - gap - margin);
+
+      // Tests the list's own height rather than the capped height: comparing the cap flips a long
+      // list above its trigger even when the space below would show nearly all of it.
+      let placement = 'below';
+      if (spaceBelow < contentHeight) {
+        // Room for several rows is worth more than keeping the list anchored, so flip only when the
+        // space below is actually cramped and the other side is roomier.
+        const usableBelow = spaceBelow >= MIN_USABLE_HEIGHT;
+        if (!usableBelow && (spaceAbove >= contentHeight || spaceAbove > spaceBelow)) {
+          placement = 'above';
+        }
+      }
+
+      const available = placement === 'above' ? spaceAbove : spaceBelow;
+      const height = Math.max(0, Math.floor(Math.min(contentHeight, cap, available)));
       const width = Math.max(minWidth, Math.min(menuWidth, maxWidth));
-      const left = Math.max(8, Math.min(triggerRect.left, window.innerWidth - width - 8));
-      const visibleHeight = Math.min(menuHeight, maxHeight);
-      const top = placement === 'above' ? Math.max(8, triggerRect.top - visibleHeight - 6) : triggerRect.bottom + 6;
+      const left = Math.max(margin, Math.min(triggerRect.left, window.innerWidth - width - margin));
+      const top = placement === 'above' ? Math.max(margin, triggerRect.top - gap - height) : triggerRect.bottom + gap;
+
       // Keep portal positioning synchronous with scroll so it does not trail the moving trigger.
       menu.dataset.placement = placement;
       menu.style.left = `${left}px`;
-      menu.style.maxHeight = `${maxHeight}px`;
+      menu.style.maxHeight = `${height}px`;
       menu.style.minWidth = `${minWidth}px`;
       menu.style.top = `${top}px`;
       menu.dataset.positioned = 'true';
+      // Unhidden only after geometry is applied, since the element starts hidden inline.
+      menu.style.visibility = 'visible';
     }
 
     document.addEventListener('mousedown', closeSeasonMenu);
@@ -354,7 +380,7 @@ function Episodes({ client, list, mediaItem, seasons }) {
 
   let title;
   if (mediaItem.Type === 'Series') {
-    title = (
+    title = seasonPickerEnabled ? (
       <span class="sleekfin-details-season-select" ref={seasonSelect} data-open={seasonMenuOpen ? 'true' : 'false'}>
         <button
           aria-activedescendant={seasonMenuOpen ? `${seasonMenuId}-option-${activeIndex}` : undefined}
@@ -371,6 +397,16 @@ function Episodes({ client, list, mediaItem, seasons }) {
         >
           {selectedSeasonLabel}
         </button>
+      </span>
+    ) : (
+      <span class="sleekfin-details-season-select">
+        <select class="sleekfin-details-season-native" value={selectedSeasonId} onChange={(event) => setSelectedSeasonId(event.currentTarget.value)}>
+          {seasons.map((season) => (
+            <option value={season.Id} key={season.Id}>
+              {seasonLabel(season)}
+            </option>
+          ))}
+        </select>
       </span>
     );
   } else {
@@ -405,7 +441,7 @@ function Episodes({ client, list, mediaItem, seasons }) {
   );
 }
 
-export function createEpisodes(page, mediaItem, seasons) {
+export function createEpisodes(page, mediaItem, seasons, seasonPickerEnabled) {
   const client = window.ApiClient;
   const wrapper = page.querySelector('.detailPageWrapperContainer');
   const secondary = page.querySelector('.detailPageSecondaryContainer');
@@ -415,7 +451,7 @@ export function createEpisodes(page, mediaItem, seasons) {
   const header = section.firstElementChild;
   const list = section.lastElementChild;
   let destroyed = false;
-  render(<Episodes client={client} list={list} mediaItem={mediaItem} seasons={seasons} />, header);
+  render(<Episodes client={client} list={list} mediaItem={mediaItem} seasons={seasons} seasonPickerEnabled={seasonPickerEnabled} />, header);
   wrapper.insertBefore(section, secondary);
 
   return {
