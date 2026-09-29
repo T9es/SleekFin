@@ -28,13 +28,16 @@ const state = {
   mount: null,
   page: null,
   previousPage: null,
+  apiClientTimer: 0,
   reconcileTimer: 0,
   retryTimer: 0,
   seasons: [],
   started: false,
+  stopApiClient: null,
   stopHidden: null,
   stopHistory: null,
   stopUserData: null,
+  userDataClient: null,
   stopWatching: null,
   userDataRetry: false,
   userDataRevision: 0,
@@ -190,11 +193,12 @@ function isItemLoading(id) {
   return Boolean(id) && state.loadingId === id && state.currentId === id;
 }
 
-function onUserDataChanged(message) {
-  const client = window.ApiClient;
+function onUserDataChanged(message, client) {
+  if (!client || client !== window.ApiClient || client !== state.userDataClient) return;
+  if (routeClient(state.currentServerId) !== client) return;
   const item = state.item;
   const data = message?.Data;
-  if (!client || !data || data.UserId != client.getCurrentUserId()) return;
+  if (!data || data.UserId != client.getCurrentUserId()) return;
   const itemId = item?.Id || (isItemLoading(state.currentId) ? state.currentId : '');
   if (!itemId) return;
   // Alternate versions share the same user data key, so a key match would apply another version's
@@ -210,11 +214,67 @@ function onUserDataChanged(message) {
 }
 
 function watchUserData() {
-  const client = window.ApiClient;
-  if (!client || state.stopUserData) return;
+  const client = window.ApiClient || null;
+  if (client === state.userDataClient) return;
+  state.stopUserData?.();
+  state.stopUserData = null;
+  state.userDataClient = client || null;
+  if (!client) return;
   // The SDK's message type enum is not exposed as a global in the deployed web client, and its
   // OutboundWebSocketMessageType.UserDataChanged member is this exact string.
-  state.stopUserData = client.subscribe(['UserDataChanged'], onUserDataChanged);
+  state.stopUserData = client.subscribe(['UserDataChanged'], (message) => onUserDataChanged(message, client));
+}
+
+// Jellyfin 12 assigns this public global when a connection becomes active. Observe the assignment
+// directly so a server switch can rebind the socket listener without waiting for a route or DOM event.
+function watchApiClient() {
+  const original = Object.getOwnPropertyDescriptor(window, 'ApiClient');
+  if (original && !original.configurable) return null;
+  if (original && 'value' in original && !original.writable) return null;
+  if (original && !('value' in original) && (!original.get || !original.set)) return null;
+
+  let currentClient = original && 'value' in original ? original.value : window.ApiClient;
+  let assigned = false;
+  const get = original && !('value' in original)
+    ? () => original.get.call(window)
+    : () => currentClient;
+  const set = (client) => {
+    if (original && !('value' in original)) {
+      original.set.call(window, client);
+    } else {
+      currentClient = client;
+    }
+    assigned = true;
+    if (state.started) watchUserData();
+  };
+
+  Object.defineProperty(window, 'ApiClient', {
+    configurable: true,
+    enumerable: original?.enumerable ?? true,
+    get,
+    set,
+  });
+
+  return () => {
+    const current = Object.getOwnPropertyDescriptor(window, 'ApiClient');
+    if (current?.get !== get || current?.set !== set) return;
+    if (original) {
+      if ('value' in original) {
+        Object.defineProperty(window, 'ApiClient', { ...original, value: currentClient });
+      } else {
+        Object.defineProperty(window, 'ApiClient', original);
+      }
+    } else if (assigned) {
+      Object.defineProperty(window, 'ApiClient', {
+        configurable: true,
+        enumerable: true,
+        value: currentClient,
+        writable: true,
+      });
+    } else {
+      delete window.ApiClient;
+    }
+  };
 }
 
 function load(id, serverId) {
@@ -391,8 +451,8 @@ function leaveDetail() {
 
 function reconcile() {
   if (!state.started) return;
-  // Jellyfin can assign window.ApiClient after start(), so the running loop retries the one-time
-  // subscription until a client exists.
+  // Jellyfin can assign or replace window.ApiClient after start(), so reconciliation keeps the
+  // subscription attached to the current client.
   watchUserData();
   const currentRoute = route();
   const { id, serverId } = currentRoute;
@@ -515,6 +575,10 @@ function start() {
     viewshow: true,
   });
   state.stopHistory = watchHistory();
+  state.stopApiClient = watchApiClient();
+  if (!state.stopApiClient) {
+    state.apiClientTimer = window.setInterval(watchUserData, 500);
+  }
   watchUserData();
   onRouteChange();
 }
@@ -529,8 +593,13 @@ function stop() {
   state.stopWatching = null;
   state.stopHistory?.();
   state.stopHistory = null;
+  state.stopApiClient?.();
+  state.stopApiClient = null;
+  window.clearInterval(state.apiClientTimer);
+  state.apiClientTimer = 0;
   state.stopUserData?.();
   state.stopUserData = null;
+  state.userDataClient = null;
   reset();
 }
 
