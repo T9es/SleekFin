@@ -73,6 +73,7 @@ function createThemeFeature() {
   }
 
   function stop() {
+    started = false;
     WINDOW_EVENTS.forEach((eventName) => window.removeEventListener(eventName, reconcile));
     if (enhancedTimer) window.clearInterval(enhancedTimer);
     enhancedTimer = null;

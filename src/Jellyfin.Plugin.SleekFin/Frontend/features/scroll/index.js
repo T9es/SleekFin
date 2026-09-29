@@ -1,4 +1,4 @@
-const HOLD_FRAMES = 240;
+const HOLD_MS = 4000;
 const TRANSITION_MS = 300;
 const MAX_ENTRIES = 50;
 const HISTORY_METHODS = ['pushState', 'replaceState'];
@@ -33,6 +33,23 @@ function isLibraryRoute() {
   return LIBRARY_ROUTES.has(routePath());
 }
 
+function scrollPosition() {
+  return Math.max(
+    window.scrollY || 0,
+    document.documentElement?.scrollTop || 0,
+    document.body?.scrollTop || 0,
+  );
+}
+
+function maxScrollPosition() {
+  const contentHeight = Math.max(
+    document.documentElement?.scrollHeight || 0,
+    document.body?.scrollHeight || 0,
+  );
+  const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+  return Math.max(0, contentHeight - viewportHeight);
+}
+
 // Jellyfin 12 routes through react-router, which keeps a key that is unique per history entry in
 // window.history.state. The same route can occupy several entries with a different position in each,
 // so a position is filed under that key rather than under the route. The key is only read: react-router
@@ -51,6 +68,7 @@ function entryKey() {
 // back too. The position is therefore recorded per history entry and re-applied here.
 export function createScrollFeature() {
   let current = '';
+  let currentRoute = '';
   let lastScrolled = '';
   let live = 0;
   let native = null;
@@ -93,16 +111,19 @@ export function createScrollFeature() {
     // the page being opened lands inside it - measured at about 170 ms after the click - and those
     // frames report Jellyfin's reset rather than the user. The pause is bounded by time, so a click
     // that navigates nowhere - a dialog, a filter chip - cannot leave the reading stale for the rest of
-    // the entry; a wheel, touch or key gesture clears it sooner. A pointer press does not clear it: it is
-    // the moment the outgoing position is committed, so when that commit records, it arms the pause again.
+    // the entry; a wheel, touch or key gesture clears it sooner. A pointer press cancels an active restore;
+    // subsequent user scrolling is read normally.
     if (restoring || performance.now() < pausedUntil) return;
     // A route outside the library set is never read, so nothing is ever stored for one, and the
     // dashboard, a detail page and a player keep Jellyfin's own scrolling.
     if (!isLibraryRoute()) return;
+    // History changes before Jellyfin reports that the incoming view is ready. Ignore its reset while
+    // the location names that incoming route, so the outgoing entry cannot inherit a zero position.
+    if (routePath() !== currentRoute) return;
     // A reading taken on this entry after the transition replaces what was recorded for it, so a click
     // that navigates nowhere does not freeze the entry at the position it happened to be at.
     recordedKey = '';
-    live = window.scrollY;
+    live = scrollPosition();
     lastScrolled = current;
   }
 
@@ -123,19 +144,22 @@ export function createScrollFeature() {
     remember(current, live);
   }
 
-  // A wheel, touch or key gesture ends a restore, so a position is never held against the user. Any key
-  // ends it, not only the keys that scroll: the hold cannot tell a scroll key from another one, and a TV
-  // remote moves the page with the same key events as a keyboard. Dragging the scrollbar is the one
-  // gesture that does not end it: a drag begins as a plain pointer press, and pointerdown is wired to
-  // record the outgoing position rather than to interrupt the hold.
+  // Pointer, wheel, touch and key gestures end a restore, so a position is never held against the user.
+  // Any key ends it, not only the keys that scroll: the hold cannot tell a scroll key from another one,
+  // and a TV remote moves the page with the same key events as a keyboard.
   function cancelRestore() {
     pausedUntil = 0;
     if (!restoring) return;
     endRestore();
   }
 
+  function onPointerDown() {
+    if (restoring) cancelRestore();
+    commit();
+  }
+
   function watchNavigation() {
-    document.addEventListener('pointerdown', commit, true);
+    document.addEventListener('pointerdown', onPointerDown, true);
     document.addEventListener('keydown', cancelRestore, true);
     document.addEventListener('wheel', cancelRestore, { capture: true, passive: true });
     document.addEventListener('touchstart', cancelRestore, { capture: true, passive: true });
@@ -187,7 +211,7 @@ export function createScrollFeature() {
     });
 
     stopNavigation = () => {
-      document.removeEventListener('pointerdown', commit, true);
+      document.removeEventListener('pointerdown', onPointerDown, true);
       document.removeEventListener('keydown', cancelRestore, true);
       document.removeEventListener('wheel', cancelRestore, true);
       document.removeEventListener('touchstart', cancelRestore, true);
@@ -208,6 +232,7 @@ export function createScrollFeature() {
     lastScrolled = '';
     recordedKey = '';
     current = entryKey();
+    currentRoute = routePath();
   }
 
   // Only a traversal restores: a traversal is what `popstate` reports, so a fresh navigation to a route
@@ -226,7 +251,8 @@ export function createScrollFeature() {
     restoring = true;
     restoreKey = current;
     own(true);
-    window.requestAnimationFrame(() => apply(id, target, HOLD_FRAMES));
+    const deadline = performance.now() + HOLD_MS;
+    window.requestAnimationFrame(() => apply(id, target, deadline));
   }
 
   // Bumping the identifier is what ends a restore: the loop belonging to it stops on its next frame,
@@ -243,15 +269,12 @@ export function createScrollFeature() {
     endRestore();
   }
 
-  // The position is re-applied on every frame until the budget runs out, whenever the document is tall
-  // enough to hold it and the page is not already there, because the arriving document is usually too
-  // short for it and a scroll the document cannot reach is silently ignored: measured here, the home page
-  // grows from one viewport to its full height over the first 800 ms, so a single scroll at traversal time
-  // is simply dropped. The budget is counted in frames, so its length in seconds depends on the refresh
-  // rate; the end is not decided by the page looking calm, because looking calm proves nothing while the
-  // content is still arriving. A wheel, touch or key gesture ends the hold sooner.
-  function apply(id, target, frames) {
+  // Re-apply until the time deadline while the document grows enough to hold the saved position. A scroll
+  // the document cannot reach is silently ignored, so applying it once during navigation can be dropped.
+  // Both body and documentElement can own the document's scrolling depending on the client mode.
+  function apply(id, target, deadline) {
     if (id !== restoreId) return;
+    if (performance.now() >= deadline) return finish(id);
     // The route is read from the location rather than from the cached entry: between a navigation and the
     // view signal that reports it, `current` still names the page being left, and scrolling a route this
     // feature does not manage - the dashboard, a detail page, a player - is what must not happen.
@@ -262,11 +285,10 @@ export function createScrollFeature() {
     // reading the cached entry across that window would leave the re-apply below holding the old position
     // on the page just opened.
     if (restoreKey !== entryKey()) return finish(id);
-    if (document.documentElement.scrollHeight - window.innerHeight >= target && window.scrollY !== target) {
+    if (maxScrollPosition() >= target && scrollPosition() !== target) {
       window.scrollTo(0, target);
     }
-    if (frames <= 0) return finish(id);
-    window.requestAnimationFrame(() => apply(id, target, frames - 1));
+    window.requestAnimationFrame(() => apply(id, target, deadline));
   }
 
   function start() {
@@ -275,6 +297,7 @@ export function createScrollFeature() {
     started = true;
     positions = new Map();
     current = entryKey();
+    currentRoute = routePath();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('popstate', onPop);
     window.addEventListener('hashchange', onRouteChange);
