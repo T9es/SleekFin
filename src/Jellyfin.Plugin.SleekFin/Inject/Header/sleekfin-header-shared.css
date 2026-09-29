@@ -74,6 +74,11 @@ html.sleekfin-header-mounted [data-sleekfin-header="modern"].osdHeader {
     position: absolute !important;
 }
 
+/* Jellyfin's MUI Fade wraps the proxy icons in one opacity layer; keep the visible toolbar crisp and retain its exit fade. */
+html.sleekfin-header-mounted [data-sleekfin-header="modern"].osdHeader[data-sleekfin-header-proxy-active][style*="opacity: 1"] {
+    opacity: 1 !important;
+}
+
 html.sleekfin-header-mounted [data-sleekfin-header="legacy"].osdHeader {
     position: relative !important;
 }
@@ -146,6 +151,17 @@ html.sleekfin-header-mounted [data-sleekfin-header-source-anchor="true"] {
     z-index: -1 !important;
 }
 
+html.sleekfin-header-mounted [data-sleekfin-header-source-hit-target="true"] {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    pointer-events: auto !important;
+    z-index: 4 !important;
+}
+
 html.sleekfin-header-mounted [data-sleekfin-header-proxy] {
     -webkit-backdrop-filter: var(--sleekfin-glass-filter);
     align-items: center;
@@ -165,6 +181,27 @@ html.sleekfin-header-mounted [data-sleekfin-header-proxy] {
     padding: var(--sleekfin-header-bar-padding);
     pointer-events: auto;
     z-index: 3;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header="modern"].osdHeader[data-sleekfin-header-overflow-open="true"] {
+    z-index: 1111 !important;
+}
+
+/* Keep the proxy above the toolbar's z-indexed glass backplate. */
+html.sleekfin-header-mounted [data-sleekfin-header="modern"].osdHeader [data-sleekfin-header-proxy] {
+    z-index: 1 !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-native-targets="true"] [data-sleekfin-header-proxy] {
+    pointer-events: none !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-native-targets="true"] [data-sleekfin-header-proxy-item]:not([data-sleekfin-header-native-hit-target="true"]) {
+    pointer-events: auto !important;
+}
+
+html.sleekfin-header-mounted [data-sleekfin-header-native-targets="true"] [data-sleekfin-header-overflow-toggle] {
+    pointer-events: auto !important;
 }
 
 html.sleekfin-header-mounted [data-sleekfin-header-overflowed="true"],
@@ -246,7 +283,7 @@ html.sleekfin-header-mounted [data-sleekfin-header-overflow-layer] {
     inset: 0;
     pointer-events: none;
     position: fixed;
-    z-index: 1110;
+    z-index: 1112;
 }
 
 html.sleekfin-header-mounted [data-sleekfin-header-overflow-backdrop] {

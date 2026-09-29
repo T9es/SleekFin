@@ -47,6 +47,7 @@ export function HeaderOverflowDrawer({ anchor, onActivate, onClose, records }) {
               type="button"
               data-sleekfin-current={record.current ? 'true' : 'false'}
               data-sleekfin-header-overflow-full={iconOnly ? 'true' : 'false'}
+              data-sleekfin-header-overflow-index={index}
               data-sleekfin-header-overflow-item={record.key}
               disabled={record.disabled}
               key={`${record.key}-${index}`}

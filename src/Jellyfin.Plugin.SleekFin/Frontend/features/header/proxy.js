@@ -98,6 +98,7 @@ function createProxyButton(mount, record) {
   const button = document.createElement('button');
   button.type = 'button';
   button.setAttribute('data-sleekfin-header-proxy-item', record.key);
+  button.setAttribute('data-sleekfin-header-native-hit-target', record.nativeHitTarget ? 'true' : 'false');
   record.button = button;
   renderProxyVisual(record);
   button.addEventListener('click', (event) => {
@@ -125,22 +126,157 @@ function createOverflowToggle() {
   return button;
 }
 
+function nativeTargetAvailable(record) {
+  return (
+    record.nativeHitTarget &&
+    !record.fallback &&
+    dom.isConnected(record.source) &&
+    dom.isConnected(record.button) &&
+    !sourceDisabled(record) &&
+    !record.button.disabled &&
+    record.button.style.display !== 'none'
+  );
+}
+
+function refreshNativeTargetMode(mount) {
+  const enabled = mount.kind === 'modern' && mount.header.classList.contains('osdHeader');
+  mark(mount, mount.header, 'data-sleekfin-header-native-targets', enabled ? 'true' : 'false');
+  if (mount.nativePointerTargets === enabled) return;
+
+  mount.nativePointerTargets = enabled;
+  mount.proxyRecords.forEach((record) => {
+    record.nativeHitTarget = enabled && Boolean(record.source) && !record.fallback;
+    record.button?.setAttribute('data-sleekfin-header-native-hit-target', record.nativeHitTarget ? 'true' : 'false');
+    if (record.nativeHitTarget) {
+      mark(mount, record.source, 'data-sleekfin-header-source-hidden', 'false');
+    } else {
+      mark(mount, record.source, 'data-sleekfin-header-source-hit-target', 'false');
+    }
+  });
+}
+
+function addNativeTargetArea(areas, source, rectangle) {
+  if (rectangle.right <= rectangle.left || rectangle.bottom <= rectangle.top) return;
+  const rectangles = areas.get(source) || [];
+  rectangles.push(rectangle);
+  areas.set(source, rectangles);
+}
+
+function inlineNativeTargetAreas(mount) {
+  const areas = new Map();
+  mount.proxyRecords.filter(nativeTargetAvailable).forEach((record) => {
+    if (record.button.getAttribute('data-sleekfin-header-overflowed') !== 'true') {
+      addNativeTargetArea(areas, record.source, record.button.getBoundingClientRect());
+    }
+  });
+  return areas;
+}
+
+function cssPathNumber(value) {
+  return Number(value.toFixed(3)).toString();
+}
+
+function applyNativeTargetArea(mount, source, rectangles) {
+  if (!rectangles.length) {
+    mark(mount, source, 'data-sleekfin-header-source-hit-target', 'false');
+    return;
+  }
+
+  const left = Math.min(...rectangles.map((rectangle) => rectangle.left));
+  const top = Math.min(...rectangles.map((rectangle) => rectangle.top));
+  const right = Math.max(...rectangles.map((rectangle) => rectangle.right));
+  const bottom = Math.max(...rectangles.map((rectangle) => rectangle.bottom));
+  setStyle(mount, source, 'left', `${left}px`, 'important');
+  setStyle(mount, source, 'top', `${top}px`, 'important');
+  setStyle(mount, source, 'height', `${bottom - top}px`, 'important');
+  setStyle(mount, source, 'width', `${right - left}px`, 'important');
+  const path = rectangles.map((rectangle) => {
+    const x1 = cssPathNumber(rectangle.left - left);
+    const y1 = cssPathNumber(rectangle.top - top);
+    const x2 = cssPathNumber(rectangle.right - left);
+    const y2 = cssPathNumber(rectangle.bottom - top);
+    return `M ${x1} ${y1} H ${x2} V ${y2} H ${x1} Z`;
+  }).join(' ');
+  setStyle(mount, source, 'clip-path', rectangles.length > 1 ? `path("${path}")` : 'none', 'important');
+  mark(mount, source, 'data-sleekfin-header-source-hit-target', 'true');
+}
+
+function applyNativeTargetAreas(mount, areas, preserveSource) {
+  const sources = new Set(mount.proxyRecords.filter((record) => record.nativeHitTarget).map((record) => record.source));
+  sources.forEach((source) => {
+    if (source !== preserveSource) applyNativeTargetArea(mount, source, areas.get(source) || []);
+  });
+}
+
 function createOverflowController(mount, toggle) {
   const root = document.createElement('div');
   let open = false;
   let records = [];
+  let drawerTargetFrame = 0;
   document.body.appendChild(root);
 
-  function close() {
+  function syncDrawerNativeTargets() {
+    if (!mount.nativePointerTargets || !open) return;
+    const drawer = root.querySelector('[data-sleekfin-header-overflow-drawer]');
+    if (!drawer) {
+      applyNativeTargetAreas(mount, inlineNativeTargetAreas(mount));
+      return;
+    }
+
+    const bounds = drawer.getBoundingClientRect();
+    const clip = {
+      bottom: Math.min(window.innerHeight, bounds.top + drawer.clientTop + drawer.clientHeight),
+      left: Math.max(0, bounds.left + drawer.clientLeft),
+      right: Math.min(window.innerWidth, bounds.left + drawer.clientLeft + drawer.clientWidth),
+      top: Math.max(0, bounds.top + drawer.clientTop),
+    };
+    const areas = inlineNativeTargetAreas(mount);
+    const buttons = new Map(Array.from(root.querySelectorAll('[data-sleekfin-header-overflow-item]')).map((button) => [button.getAttribute('data-sleekfin-header-overflow-index'), button]));
+    records.forEach((record, index) => {
+      const button = buttons.get(String(index));
+      if (!nativeTargetAvailable(record) || !button || button.disabled) return;
+
+      const buttonBounds = button.getBoundingClientRect();
+      const left = Math.max(clip.left, buttonBounds.left);
+      const top = Math.max(clip.top, buttonBounds.top);
+      const right = Math.min(clip.right, buttonBounds.right);
+      const bottom = Math.min(clip.bottom, buttonBounds.bottom);
+      addNativeTargetArea(areas, record.source, { bottom, left, right, top });
+    });
+    applyNativeTargetAreas(mount, areas);
+  }
+
+  function scheduleDrawerNativeTargets() {
+    if (!mount.nativePointerTargets || !open || drawerTargetFrame) return;
+    drawerTargetFrame = window.requestAnimationFrame(() => {
+      drawerTargetFrame = 0;
+      syncDrawerNativeTargets();
+    });
+  }
+
+  function close(preserveSource) {
     if (!open) return;
     open = false;
+    if (drawerTargetFrame) {
+      window.cancelAnimationFrame(drawerTargetFrame);
+      drawerTargetFrame = 0;
+    }
     render(null, root);
+    if (mount.nativePointerTargets) {
+      mark(mount, mount.header, 'data-sleekfin-header-overflow-open', 'false');
+      if (preserveSource) {
+        mark(mount, preserveSource, 'data-sleekfin-header-source-hit-target', 'false');
+        applyNativeTargetAreas(mount, inlineNativeTargetAreas(mount), preserveSource);
+      } else {
+        syncPopupAnchors(mount);
+      }
+    }
   }
 
   function activate(record, anchor) {
     if (!record.source || !dom.isConnected(record.source) || sourceDisabled(record)) return;
     syncPopupAnchors(mount, record, anchor);
-    close();
+    close(mount.nativePointerTargets && record.nativeHitTarget && record.popup ? record.source : null);
     activateSource(mount, record);
     window.setTimeout(() => {
       if (mount.active) refreshHeaderProxy(mount);
@@ -154,7 +290,52 @@ function createOverflowController(mount, toggle) {
       return;
     }
     render(h(HeaderOverflowDrawer, { anchor: toggle, onActivate: activate, onClose: close, records }), root);
+    if (mount.nativePointerTargets) {
+      mark(mount, mount.header, 'data-sleekfin-header-overflow-open', 'true');
+      syncDrawerNativeTargets();
+    }
   }
+
+  function nativeOccurrenceAtPoint(source, event) {
+    const containsPoint = (rectangle) => event.clientX >= rectangle.left && event.clientX <= rectangle.right && event.clientY >= rectangle.top && event.clientY <= rectangle.bottom;
+    const inline = mount.proxyRecords
+      .filter((record) => record.source === source && nativeTargetAvailable(record) && record.button.getAttribute('data-sleekfin-header-overflowed') !== 'true')
+      .map((record) => record.button.getBoundingClientRect())
+      .find(containsPoint);
+    if (inline) return inline;
+    if (!open) return null;
+
+    const buttons = new Map(Array.from(root.querySelectorAll('[data-sleekfin-header-overflow-item]')).map((button) => [button.getAttribute('data-sleekfin-header-overflow-index'), button]));
+    const index = records.findIndex((record, row) => {
+      if (record.source !== source || !nativeTargetAvailable(record)) return false;
+      const button = buttons.get(String(row));
+      return Boolean(button && !button.disabled && containsPoint(button.getBoundingClientRect()));
+    });
+    if (index < 0) return null;
+    return buttons.get(String(index))?.getBoundingClientRect() || null;
+  }
+
+  function closeOnNativeTargetClick(event) {
+    if (!mount.nativePointerTargets) return;
+    const record = mount.proxyRecords.find((candidate) => candidate.nativeHitTarget && candidate.source.contains(event.target));
+    if (!record) return;
+    const preserveSource = record.popup && event.detail > 0 ? record.source : null;
+    if (preserveSource) {
+      const rectangle = nativeOccurrenceAtPoint(preserveSource, event);
+      if (rectangle) applyNativeTargetArea(mount, preserveSource, [rectangle]);
+    }
+    if (open) window.queueMicrotask(() => {
+      if (mount.active) close(preserveSource);
+    });
+  }
+
+  function restoreNativeTargetsOnProxyPointerOver(event) {
+    if (mount.nativePointerTargets && event.target?.closest?.('[data-sleekfin-header-proxy-item], [data-sleekfin-header-overflow-item]')) syncPopupAnchors(mount);
+  }
+
+  if (mount.kind === 'modern') document.addEventListener('click', closeOnNativeTargetClick, true);
+  if (mount.kind === 'modern') document.addEventListener('pointerover', restoreNativeTargetsOnProxyPointerOver, true);
+  if (mount.kind === 'modern') root.addEventListener('scroll', scheduleDrawerNativeTargets, true);
 
   function sync(nextRecords) {
     records = nextRecords.map((record) => ({ ...record, current: record.source ? currentSource(record) : false, disabled: record.source ? sourceDisabled(record) : false }));
@@ -173,8 +354,15 @@ function createOverflowController(mount, toggle) {
     destroy() {
       render(null, root);
       root.remove();
+      if (mount.kind === 'modern') {
+        document.removeEventListener('click', closeOnNativeTargetClick, true);
+        document.removeEventListener('pointerover', restoreNativeTargetsOnProxyPointerOver, true);
+        root.removeEventListener('scroll', scheduleDrawerNativeTargets, true);
+      }
+      if (drawerTargetFrame) window.cancelAnimationFrame(drawerTargetFrame);
     },
     sync,
+    syncNativeTargets: syncDrawerNativeTargets,
   };
 }
 
@@ -276,9 +464,10 @@ function hideSources(mount) {
   mount.proxyRecords.forEach((record) => {
     if (record.fallback) return;
     mount.hiddenSources.add(record.source);
-    if (record.popup) {
+    if (record.nativeHitTarget || record.popup) {
       mark(mount, record.source, 'data-sleekfin-header-source-anchor');
       mark(mount, record.source, 'tabindex', '-1');
+      if (record.nativeHitTarget) mark(mount, record.source, 'data-sleekfin-header-source-hit-target', 'false');
     } else {
       mark(mount, record.source, 'data-sleekfin-header-source-hidden');
     }
@@ -294,11 +483,29 @@ function hideSources(mount) {
 }
 
 function syncPopupAnchors(mount, activeRecord, activeAnchor) {
-  (activeRecord ? [activeRecord] : mount.proxyRecords).forEach((record) => {
-    const anchor = activeRecord ? activeAnchor : record.button;
-    if (!record.popup || record.fallback || !dom.isConnected(anchor) || (!activeRecord && record.button.getAttribute('data-sleekfin-header-overflowed') === 'true')) return;
+  if (activeRecord) {
+    if (activeRecord.nativeHitTarget) {
+      if (activeRecord.popup && nativeTargetAvailable(activeRecord) && dom.isConnected(activeAnchor)) {
+        applyNativeTargetArea(mount, activeRecord.source, [activeAnchor.getBoundingClientRect()]);
+      }
+      return;
+    }
+    if (!activeRecord.popup || activeRecord.fallback || !dom.isConnected(activeAnchor)) return;
+    const rectangle = activeAnchor.getBoundingClientRect();
+    setStyle(mount, activeRecord.source, 'left', `${Math.round(rectangle.left)}px`, 'important');
+    setStyle(mount, activeRecord.source, 'top', `${Math.round(rectangle.top)}px`, 'important');
+    setStyle(mount, activeRecord.source, 'height', `${Math.max(1, Math.round(rectangle.height))}px`, 'important');
+    setStyle(mount, activeRecord.source, 'width', `${Math.max(1, Math.round(rectangle.width))}px`, 'important');
+    return;
+  }
 
-    const rectangle = anchor.getBoundingClientRect();
+  if (mount.nativePointerTargets) {
+    applyNativeTargetAreas(mount, inlineNativeTargetAreas(mount));
+    mount.overflow?.syncNativeTargets();
+  }
+  mount.proxyRecords.filter((record) => record.popup && !record.nativeHitTarget && !record.fallback && dom.isConnected(record.button)).forEach((record) => {
+    if (record.button.getAttribute('data-sleekfin-header-overflowed') === 'true') return;
+    const rectangle = record.button.getBoundingClientRect();
     setStyle(mount, record.source, 'left', `${Math.round(rectangle.left)}px`, 'important');
     setStyle(mount, record.source, 'top', `${Math.round(rectangle.top)}px`, 'important');
     setStyle(mount, record.source, 'height', `${Math.max(1, Math.round(rectangle.height))}px`, 'important');
@@ -309,6 +516,11 @@ function syncPopupAnchors(mount, activeRecord, activeAnchor) {
 export function createHeaderProxy(mount, parent, before, settings) {
   const resolved = resolveRecords(mount, settings);
   if (!resolved.customized) return null;
+  mount.nativePointerTargets = mount.kind === 'modern' && mount.header.classList.contains('osdHeader');
+  mark(mount, mount.header, 'data-sleekfin-header-native-targets', mount.nativePointerTargets ? 'true' : 'false');
+  resolved.records.forEach((record) => {
+    record.nativeHitTarget = mount.nativePointerTargets && Boolean(record.source) && !record.fallback;
+  });
 
   const proxy = document.createElement('div');
   proxy.setAttribute('data-sleekfin-header-proxy', mount.kind);
@@ -346,6 +558,7 @@ export function needsProxyReplacement(mount, settings) {
 export function refreshHeaderProxy(mount) {
   if (!mount.proxy) return;
 
+  refreshNativeTargetMode(mount);
   hideSources(mount);
   mount.proxyRecords.forEach((record) => {
     if (refreshRecordVisual(record)) renderProxyVisual(record);
