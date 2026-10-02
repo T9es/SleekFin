@@ -205,22 +205,14 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     if (!wasEnabled || itemChanged) schedule();
   }
 
-  function isTrailerAction(element) {
-    const action = String(element.dataset.action || '').toLowerCase();
-    return element.matches('.btnPlayTrailer') || ['playtrailer', 'play-trailer', 'trailer'].includes(action);
-  }
-
-  function isPlaybackAction(element) {
-    const action = String(element.dataset.action || '').toLowerCase();
-    return element.matches('.btnPlay, .btnReplay, .btnPlayTrailer') || ['play', 'resume', 'playtrailer', 'play-trailer', 'trailer'].includes(action);
-  }
-
   function onActionClick(event) {
     const target = event.target?.nodeType === 1 ? event.target : event.target?.parentElement;
     const actionElement = target?.closest('.btnPlay, .btnReplay, .btnPlayTrailer, [data-action]');
     if (!actionElement || !actions.contains(actionElement)) return;
-    if (isTrailerAction(actionElement)) window.SleekFin?.armTrailers?.(currentItem, page);
-    if (isPlaybackAction(actionElement)) finish(generation);
+    const action = String(actionElement.dataset.action || '').toLowerCase();
+    if (actionElement.matches('.btnPlay, .btnReplay, .btnPlayTrailer') || ['play', 'resume', 'playtrailer', 'play-trailer', 'trailer'].includes(action)) {
+      finish(generation);
+    }
   }
 
   function onVisibilityChange() {
@@ -237,7 +229,6 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
       clearAttempt();
       page.removeEventListener('click', onActionClick, true);
       document.removeEventListener('visibilitychange', onVisibilityChange);
-      window.SleekFin?.clearTrailerArm?.(page);
       currentItem = null;
     },
     update,

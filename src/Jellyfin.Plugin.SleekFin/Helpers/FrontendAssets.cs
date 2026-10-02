@@ -45,10 +45,7 @@ public static class FrontendAssets
         new("sleekfin-details-sections.css", "Details", Feature.Details),
         new("sleekfin-details-similar.css", "Details", Feature.Details),
         new("sleekfin-details-episodes.css", "Details", Feature.Details),
-        new("sleekfin-trailer-player.css", "Trailers", Feature.Details),
         new("sleekfin-details-boot.js", "Details", Feature.Details, IsBlockingScript: true),
-        // Jellyfin resolves the configured player factory before deferred feature bundles run.
-        new("sleekfin-trailer-player.js", "Build", Feature.Details, IsBlockingScript: true),
         new("sleekfin-runtime.js", "Build"),
         new("sleekfin-theme.js", "Build"),
         new("sleekfin-header.js", "Build"),
