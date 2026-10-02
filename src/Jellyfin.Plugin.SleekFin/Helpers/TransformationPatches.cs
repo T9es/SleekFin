@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.SleekFin.Configuration;
 using Jellyfin.Plugin.SleekFin.Model;
@@ -56,6 +58,60 @@ public static class TransformationPatches
         }
 
         return contents;
+    }
+
+    public static string ConfigJson(PatchRequestPayload payload)
+    {
+        string contents = payload.Contents ?? string.Empty;
+        if (string.IsNullOrEmpty(contents))
+        {
+            return contents;
+        }
+
+        JsonNode? document;
+        try
+        {
+            document = JsonNode.Parse(contents);
+        }
+        catch (JsonException)
+        {
+            return contents;
+        }
+
+        if (document is not JsonObject configuration
+            || configuration["plugins"] is not JsonArray plugins
+            || plugins.Any(plugin => plugin is not JsonValue value || !value.TryGetValue<string>(out _)))
+        {
+            return contents;
+        }
+
+        bool enabled = SleekFinPlugin.Instance.Configuration.DetailsEnabled;
+        bool registered = false;
+        bool changed = false;
+        for (int index = 0; index < plugins.Count; index++)
+        {
+            if (!string.Equals(plugins[index]!.GetValue<string>(), "SleekFin", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (enabled && !registered)
+            {
+                registered = true;
+                continue;
+            }
+
+            plugins.RemoveAt(index--);
+            changed = true;
+        }
+
+        if (enabled && !registered)
+        {
+            plugins.Add("SleekFin");
+            changed = true;
+        }
+
+        return changed ? document.ToJsonString() : contents;
     }
 
     private static string CreateBootScript(PluginConfiguration configuration)

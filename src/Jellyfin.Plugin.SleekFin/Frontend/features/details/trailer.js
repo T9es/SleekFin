@@ -2,8 +2,6 @@ import { dom } from '../../shared/runtime.js';
 
 const START_DELAY_MS = 2500;
 const START_TIMEOUT_MS = 7000;
-const YOUTUBE_API_TIMEOUT_MS = 10000;
-const YOUTUBE_API_URL = 'https://www.youtube.com/iframe_api';
 const VIDEO_MIME_TYPES = Object.freeze({
   mp4: 'video/mp4',
   m4v: 'video/mp4',
@@ -11,78 +9,6 @@ const VIDEO_MIME_TYPES = Object.freeze({
   ogv: 'video/ogg',
   webm: 'video/webm',
 });
-const YOUTUBE_VIDEO_ID = /^[a-zA-Z0-9_-]{11}$/;
-let youtubeApiPromise = null;
-
-function isYouTubeApiScript(script) {
-  try {
-    const url = new URL(script.src, document.baseURI);
-    return ['youtube.com', 'www.youtube.com'].includes(url.hostname.toLowerCase()) && url.pathname === '/iframe_api';
-  } catch {
-    return false;
-  }
-}
-
-function loadYouTubeApi() {
-  if (window.YT && typeof window.YT.Player === 'function') return Promise.resolve(window.YT);
-  if (youtubeApiPromise) return youtubeApiPromise;
-
-  youtubeApiPromise = new Promise((resolve, reject) => {
-    let settled = false;
-    let poll = 0;
-    let script = null;
-    const deadline = Date.now() + YOUTUBE_API_TIMEOUT_MS;
-    const finish = (error, api) => {
-      if (settled) return;
-      settled = true;
-      window.clearInterval(poll);
-      if (error && script?.parentNode) script.parentNode.removeChild(script);
-      if (error) reject(error);
-      else resolve(api);
-    };
-
-    if (!Array.from(document.querySelectorAll('script[src]')).some(isYouTubeApiScript)) {
-      script = document.createElement('script');
-      script.src = YOUTUBE_API_URL;
-      script.async = true;
-      script.onerror = () => finish(new Error('YouTube iframe API failed to load'));
-      (document.head || document.documentElement).appendChild(script);
-    }
-
-    poll = window.setInterval(() => {
-      if (window.YT && typeof window.YT.Player === 'function') finish(null, window.YT);
-      else if (Date.now() >= deadline) finish(new Error('YouTube iframe API timed out'));
-    }, 100);
-  }).catch((error) => {
-    youtubeApiPromise = null;
-    throw error;
-  });
-
-  return youtubeApiPromise;
-}
-
-function youtubeVideoId(value) {
-  if (typeof value !== 'string' || !value) return '';
-
-  try {
-    const url = new URL(value);
-    if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443')) return '';
-
-    const hostname = url.hostname.toLowerCase();
-    let id = '';
-    if (hostname === 'youtu.be' || hostname === 'www.youtu.be') {
-      id = url.pathname.split('/').filter(Boolean)[0] || '';
-    } else if (['youtube.com', 'www.youtube.com', 'm.youtube.com', 'music.youtube.com'].includes(hostname)) {
-      if (url.pathname === '/watch') id = url.searchParams.get('v') || '';
-      else id = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1] || '';
-    } else if (['youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(hostname)) {
-      id = url.pathname.match(/^\/embed\/([^/]+)/)?.[1] || '';
-    }
-    return YOUTUBE_VIDEO_ID.test(id) ? id : '';
-  } catch {
-    return '';
-  }
-}
 
 function mediaSourceFor(trailer) {
   const video = document.createElement('video');
@@ -116,8 +42,15 @@ function localTrailerUrl(client, trailer) {
   return client.getUrl(`Videos/${encodeURIComponent(trailer.Id)}/stream.${selected.container}`, options);
 }
 
-function clearChildren(element) {
-  while (element.firstChild) element.removeChild(element.firstChild);
+function stopVideo(video) {
+  if (!video) return;
+  video.pause();
+  video.removeAttribute('src');
+  try {
+    video.load();
+  } catch {
+    // Some engines reject load() while Jellyfin is detaching the page.
+  }
 }
 
 export function createTrailerPreview(page, nativeBackdrop, actions) {
@@ -128,34 +61,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   let startTimer = 0;
   let attemptTimer = 0;
   let layer = null;
-  let player = null;
-  let sourceType = '';
-
-  function sizeYouTubeFrame() {
-    if (!player || !nativeBackdrop) return;
-    const iframe = player.getIframe?.();
-    const bounds = nativeBackdrop.getBoundingClientRect();
-    if (!iframe || !bounds.width || !bounds.height) return;
-    const width = Math.max(bounds.width, bounds.height * 16 / 9);
-    const height = Math.max(bounds.height, bounds.width * 9 / 16);
-    iframe.style.height = `${height}px`;
-    iframe.style.left = '50%';
-    iframe.style.position = 'absolute';
-    iframe.style.top = '50%';
-    iframe.style.transform = 'translate(-50%, -50%)';
-    iframe.style.width = `${width}px`;
-  }
-
-  function stopLocalVideo(video) {
-    if (!video) return;
-    video.pause();
-    video.removeAttribute('src');
-    try {
-      video.load();
-    } catch {
-      // Older browser engines can reject load() while detaching a media element.
-    }
-  }
+  let video = null;
 
   function isCurrent(token) {
     return token === generation && enabled && !terminal;
@@ -168,18 +74,10 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   }
 
   function removeLayer() {
-    const activePlayer = player;
-    player = null;
-    window.removeEventListener('resize', sizeYouTubeFrame);
-    try {
-      activePlayer?.destroy();
-    } catch {
-      // A detached YouTube iframe can throw while Jellyfin is replacing its page.
-    }
+    stopVideo(video);
+    video = null;
     if (layer) {
-      stopLocalVideo(layer.querySelector('video'));
-      clearChildren(layer);
-      if (layer.parentNode) layer.parentNode.removeChild(layer);
+      layer.remove();
       layer = null;
     }
   }
@@ -190,7 +88,6 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     window.clearTimeout(attemptTimer);
     startTimer = 0;
     attemptTimer = 0;
-    sourceType = '';
     removeLayer();
     return generation;
   }
@@ -201,14 +98,6 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     clearAttempt();
   }
 
-  function createLayer() {
-    layer = document.createElement('div');
-    layer.className = 'sleekfin-details-trailer';
-    layer.setAttribute('data-playing', 'false');
-    nativeBackdrop.appendChild(layer);
-    return layer;
-  }
-
   function markPlaying(token) {
     if (!isCurrent(token)) return;
     if (!pageCanPlayPreview()) {
@@ -217,114 +106,40 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     }
     window.clearTimeout(attemptTimer);
     attemptTimer = 0;
-    if (layer) layer.setAttribute('data-playing', 'true');
+    layer?.setAttribute('data-playing', 'true');
   }
 
-  function fallbackFromLocal(item, token) {
-    if (!isCurrent(token) || sourceType !== 'local') return;
-    sourceType = 'youtube';
-    window.clearTimeout(attemptTimer);
-    attemptTimer = 0;
-    removeLayer();
-    const videoId = validRemoteTrailer(item);
-    if (!videoId) {
-      finish(token);
-      return;
-    }
-    attemptTimer = window.setTimeout(() => finish(token), START_TIMEOUT_MS);
-    playYouTube(videoId, token);
-  }
-
-  function playLocal(url, item, token) {
-    sourceType = 'local';
-    const video = document.createElement('video');
-    video.autoplay = true;
-    video.controls = false;
-    video.defaultMuted = true;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = 'metadata';
-    video.setAttribute('muted', '');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.addEventListener('playing', () => markPlaying(token));
-    video.addEventListener('ended', () => finish(token));
-    video.addEventListener('error', () => fallbackFromLocal(item, token));
-    createLayer().appendChild(video);
-    video.src = url;
+  function playLocal(url, token) {
+    const element = document.createElement('video');
+    video = element;
+    element.autoplay = true;
+    element.controls = false;
+    element.defaultMuted = true;
+    element.muted = true;
+    element.playsInline = true;
+    element.preload = 'metadata';
+    element.setAttribute('muted', '');
+    element.setAttribute('playsinline', '');
+    element.setAttribute('webkit-playsinline', '');
+    element.addEventListener('playing', () => markPlaying(token));
+    element.addEventListener('ended', () => finish(token));
+    element.addEventListener('error', () => finish(token));
+    layer = document.createElement('div');
+    layer.className = 'sleekfin-details-trailer';
+    layer.setAttribute('data-playing', 'false');
+    nativeBackdrop.appendChild(layer);
+    layer.appendChild(element);
+    element.src = url;
     try {
-      const result = video.play();
+      const result = element.play();
       if (result && typeof result.catch === 'function') {
         result.catch(() => {
-          if (isCurrent(token) && layer?.getAttribute('data-playing') !== 'true') fallbackFromLocal(item, token);
+          if (isCurrent(token) && layer?.getAttribute('data-playing') !== 'true') finish(token);
         });
       }
     } catch {
-      fallbackFromLocal(item, token);
-    }
-  }
-
-  function playYouTube(videoId, token) {
-    sourceType = 'youtube';
-    loadYouTubeApi().then((api) => {
-      if (!isCurrent(token)) return;
-      const target = document.createElement('div');
-      createLayer().appendChild(target);
-      try {
-        player = new api.Player(target, {
-          videoId,
-          playerVars: {
-            autoplay: 0,
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            iv_load_policy: 3,
-            mute: 1,
-            playsinline: 1,
-            rel: 0,
-          },
-          events: {
-            onReady(event) {
-              if (!isCurrent(token)) return;
-              try {
-                event.target.mute();
-                event.target.setVolume(0);
-                sizeYouTubeFrame();
-                event.target.playVideo();
-              } catch {
-                finish(token);
-              }
-            },
-            onStateChange(event) {
-              if (!isCurrent(token)) return;
-              if (event.data === api.PlayerState.PLAYING) markPlaying(token);
-              else if (event.data === api.PlayerState.ENDED) finish(token);
-            },
-            onError() {
-              finish(token);
-            },
-          },
-        });
-        player.getIframe()?.setAttribute('tabindex', '-1');
-        window.addEventListener('resize', sizeYouTubeFrame);
-      } catch {
-        finish(token);
-      }
-    }).catch(() => finish(token));
-  }
-
-  function validRemoteTrailer(item) {
-    const remote = Array.isArray(item.RemoteTrailers) ? item.RemoteTrailers : [];
-    return remote.map((trailer) => youtubeVideoId(trailer?.Url)).find(Boolean) || '';
-  }
-
-  function playRemote(item, token) {
-    const videoId = validRemoteTrailer(item);
-    if (!videoId || !isCurrent(token)) {
       finish(token);
-      return;
     }
-    playYouTube(videoId, token);
   }
 
   function startAttempt(token) {
@@ -347,25 +162,21 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
       return;
     }
 
-    attemptTimer = window.setTimeout(() => {
-      if (sourceType === 'local') fallbackFromLocal(item, token);
-      else finish(token);
-    }, START_TIMEOUT_MS);
-
-    if (Number(item.LocalTrailerCount) > 0 && typeof client.getLocalTrailers === 'function') {
-      Promise.resolve()
-        .then(() => client.getLocalTrailers(client.getCurrentUserId(), item.Id))
-        .then((trailers) => {
-          if (!isCurrent(token)) return;
-          const url = (Array.isArray(trailers) ? trailers : []).map((trailer) => localTrailerUrl(client, trailer)).find(Boolean);
-          if (url) playLocal(url, item, token);
-          else playRemote(item, token);
-        })
-        .catch(() => playRemote(item, token));
+    attemptTimer = window.setTimeout(() => finish(token), START_TIMEOUT_MS);
+    if (!(Number(item.LocalTrailerCount) > 0) || typeof client.getLocalTrailers !== 'function') {
+      finish(token);
       return;
     }
 
-    playRemote(item, token);
+    Promise.resolve()
+      .then(() => client.getLocalTrailers(client.getCurrentUserId(), item.Id))
+      .then((trailers) => {
+        if (!isCurrent(token)) return;
+        const url = (Array.isArray(trailers) ? trailers : []).map((trailer) => localTrailerUrl(client, trailer)).find(Boolean);
+        if (url) playLocal(url, token);
+        else finish(token);
+      })
+      .catch(() => finish(token));
   }
 
   function schedule() {
@@ -394,14 +205,22 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     if (!wasEnabled || itemChanged) schedule();
   }
 
+  function isTrailerAction(element) {
+    const action = String(element.dataset.action || '').toLowerCase();
+    return element.matches('.btnPlayTrailer') || ['playtrailer', 'play-trailer', 'trailer'].includes(action);
+  }
+
+  function isPlaybackAction(element) {
+    const action = String(element.dataset.action || '').toLowerCase();
+    return element.matches('.btnPlay, .btnReplay, .btnPlayTrailer') || ['play', 'resume', 'playtrailer', 'play-trailer', 'trailer'].includes(action);
+  }
+
   function onActionClick(event) {
     const target = event.target?.nodeType === 1 ? event.target : event.target?.parentElement;
     const actionElement = target?.closest('.btnPlay, .btnReplay, .btnPlayTrailer, [data-action]');
     if (!actionElement || !actions.contains(actionElement)) return;
-    const action = String(actionElement.dataset.action || '').toLowerCase();
-    if (actionElement.matches('.btnPlay, .btnReplay, .btnPlayTrailer') || ['play', 'resume', 'playtrailer', 'play-trailer', 'trailer'].includes(action)) {
-      finish(generation);
-    }
+    if (isTrailerAction(actionElement)) window.SleekFin?.armTrailers?.(currentItem, page);
+    if (isPlaybackAction(actionElement)) finish(generation);
   }
 
   function onVisibilityChange() {
@@ -418,6 +237,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
       clearAttempt();
       page.removeEventListener('click', onActionClick, true);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.SleekFin?.clearTrailerArm?.(page);
       currentItem = null;
     },
     update,

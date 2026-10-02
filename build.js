@@ -27,6 +27,7 @@ const result = await build({
     'sleekfin-hero': path.join(frontendRoot, 'features/hero/index.jsx'),
     'sleekfin-media': path.join(frontendRoot, 'features/media/index.js'),
     'sleekfin-details': path.join(frontendRoot, 'features/details/index.js'),
+    'sleekfin-trailer-player': path.join(frontendRoot, 'features/trailers/player.js'),
   },
   format: 'iife',
   jsxFactory: 'h',

@@ -1,0 +1,50 @@
+.sleekfin-trailer-player {
+    background: #000;
+    display: grid;
+    grid-template-rows: 56px minmax(200px, 1fr);
+    inset: 0;
+    overflow: hidden;
+    position: fixed;
+    z-index: 99999;
+}
+
+.sleekfin-trailer-player__toolbar {
+    align-items: center;
+    display: flex;
+    min-height: 56px;
+    padding: 0 16px;
+}
+
+.sleekfin-trailer-player__stage {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 200px;
+    min-width: 200px;
+}
+
+.sleekfin-trailer-player__frame {
+    aspect-ratio: 16 / 9;
+    height: min(calc(100vh - 56px), 56.25vw);
+    max-height: 100%;
+    max-width: 100%;
+    min-height: 200px;
+    min-width: 200px;
+    position: relative;
+    width: min(100vw, calc((100vh - 56px) * 16 / 9));
+}
+
+.sleekfin-trailer-player__target {
+    height: 100%;
+    width: 100%;
+}
+
+.sleekfin-trailer-player__frame > iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.sleekfin-trailer-player__back {
+    color: #fff;
+}

@@ -10,6 +10,7 @@ namespace Jellyfin.Plugin.SleekFin.Services;
 public sealed class StartupService : IScheduledTask
 {
     private static readonly Guid IndexHtmlTransformationId = Guid.Parse("56ac767e-ef47-4716-a585-9737a1813269");
+    private static readonly Guid ConfigJsonTransformationId = Guid.Parse("49a6641b-3799-4c20-b6dd-67a057c3c0e9");
     private readonly ILogger<StartupService> _logger;
 
     public StartupService(ILogger<StartupService> logger)
@@ -55,17 +56,27 @@ public sealed class StartupService : IScheduledTask
                 return Task.CompletedTask;
             }
 
-            var registration = new JObject
-            {
-                ["id"] = IndexHtmlTransformationId,
-                ["fileNamePattern"] = "index.html",
-                ["callbackAssembly"] = GetType().Assembly.FullName,
-                ["callbackClass"] = typeof(TransformationPatches).FullName,
-                ["callbackMethod"] = nameof(TransformationPatches.IndexHtml)
-            };
+            (Guid Id, string FileName, string CallbackMethod)[] transformations =
+            [
+                (IndexHtmlTransformationId, "index.html", nameof(TransformationPatches.IndexHtml)),
+                (ConfigJsonTransformationId, "config.json", nameof(TransformationPatches.ConfigJson))
+            ];
 
-            registerTransformation.Invoke(null, [registration]);
-            _logger.LogInformation("SleekFin registered its Jellyfin Web transformation.");
+            foreach (var transformation in transformations)
+            {
+                var registration = new JObject
+                {
+                    ["id"] = transformation.Id,
+                    ["fileNamePattern"] = transformation.FileName,
+                    ["callbackAssembly"] = GetType().Assembly.FullName,
+                    ["callbackClass"] = typeof(TransformationPatches).FullName,
+                    ["callbackMethod"] = transformation.CallbackMethod
+                };
+
+                registerTransformation.Invoke(null, [registration]);
+            }
+
+            _logger.LogInformation("SleekFin registered its Jellyfin Web transformations.");
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
