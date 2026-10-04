@@ -23,8 +23,8 @@ export function createTrackPickers(page, slot, onSourceChange) {
     const select = form.querySelector(`.${className}`);
     const container = select?.closest('.selectContainer');
     if (!container) return null;
-    const root = dom.element('<div class="sleekfin-details-track"><button type="button" class="sleekfin-details-track-trigger"><span class="sleekfin-details-track-label"></span><span class="sleekfin-details-track-value"></span><span class="sleekfin-details-track-chevron"></span></button></div>');
-    const trigger = root.firstElementChild;
+    const root = dom.element('<div class="sleekfin-details-track"><span class="sleekfin-details-track-label"></span><button type="button" class="sleekfin-details-track-trigger"><span class="sleekfin-details-track-value"></span><span class="sleekfin-details-track-chevron"></span></button></div>');
+    const trigger = root.querySelector('.sleekfin-details-track-trigger');
     const label = root.querySelector('.sleekfin-details-track-label');
     const value = root.querySelector('.sleekfin-details-track-value');
     const dropdown = createDropdown({ root, trigger, onSelect(option) {

@@ -128,13 +128,12 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .sleekfin-d
     flex-direction: column;
     gap: 0;
     margin: 0;
-    padding: 6px 0;
 }
 
 /* The control itself is SleekFin's own listbox, built by the details bundle and styled in
    sleekfin-details-track-picker.css. Jellyfin's select stays in the row because it still carries the
    stream index, but it is taken out of the layout there, so only the pieces around it are styled
-   here: the arrow Jellyfin adds is unused, and its label is moved onto the trigger. */
+   here: the arrow Jellyfin adds is unused, and its label is shown above the trigger. */
 html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectArrowContainer {
     display: none;
 }
@@ -150,7 +149,7 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelec
     display: flex;
     margin: 0 !important;
     min-height: 48px;
-    padding: 0 12px;
+    padding: 0 6px;
     position: relative;
 }
 
