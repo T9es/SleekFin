@@ -168,14 +168,7 @@ function Episodes({ client, list, mediaItem, seasons, seasonPickerEnabled }) {
   if (mediaItem.Type === 'Series') {
     title = seasonPickerEnabled ? (
       <span class="sleekfin-details-season-select" ref={seasonSelect}>
-        <button
-          aria-haspopup="listbox"
-          aria-label="Select season"
-          class="sleekfin-details-season-trigger"
-          disabled={!seasons.length}
-          role="combobox"
-          type="button"
-        >
+        <button aria-label="Select season" class="sleekfin-details-season-trigger" disabled={!seasons.length} type="button">
           {selectedSeasonLabel}
         </button>
       </span>

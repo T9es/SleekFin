@@ -3,213 +3,90 @@ import { createDropdown } from './dropdown.js';
 
 const FIELDS = ['selectSource', 'selectVideo', 'selectAudio', 'selectSubtitles'];
 
-function optionsFor(select) {
-  return Array.from(select.options, (option) => ({ value: option.value, label: option.text }));
-}
-
-function containsTrackContext(node) {
-  return node.nodeType === Node.ELEMENT_NODE
-    && (node.matches('.detailPagePrimaryContainer, form.trackSelections') || node.querySelector('.detailPagePrimaryContainer, form.trackSelections'));
-}
-
-export function createTrackPickers(page, slot) {
-  const pickers = new Map();
-  let form = null;
-  let originalParent = null;
-  let originalNextSibling = null;
+export function createTrackPickers(page, slot, onSourceChange) {
+  if (slot) slot.hidden = true;
+  const form = page.querySelector('form.trackSelections');
+  if (!form || !slot) return { reconcile() {}, destroy() {} };
+  const originalParent = form.parentNode;
+  const originalNextSibling = form.nextSibling;
+  let sourceId = '';
   let destroyed = false;
-  let observer = null;
-  let observedForm = null;
-  let observedPrimary = null;
-  let observedPrimaryParent = null;
   let timer = 0;
 
-  if (slot) slot.hidden = true;
-
-  function restoreForm(replacement = null) {
-    if (form?.parentNode === slot && replacement && replacement !== form) {
-      form.remove();
-      return;
+  function restoreForm() {
+    if (form.parentNode === slot && dom.isConnected(originalParent)) {
+      originalParent.insertBefore(form, originalNextSibling?.parentNode === originalParent ? originalNextSibling : null);
     }
-    if (!form || form.parentNode !== slot || !dom.isConnected(originalParent)) return;
-    originalParent.insertBefore(form, originalNextSibling?.parentNode === originalParent ? originalNextSibling : null);
   }
 
-  function dispose(className) {
-    const picker = pickers.get(className);
-    if (!picker) return;
-    picker.dropdown.destroy();
-    picker.select.removeEventListener('change', picker.onNativeChange);
-    picker.root.remove();
-    picker.select.classList.remove('sleekfin-details-track-native');
-    pickers.delete(className);
-  }
-
-  function createPicker(className, select, container) {
-    const root = document.createElement('div');
-    root.className = 'sleekfin-details-track';
-
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.className = 'sleekfin-details-track-trigger';
-
-    const label = document.createElement('span');
-    label.className = 'sleekfin-details-track-label';
-    label.textContent = container?.querySelector('.selectLabel')?.textContent?.trim()
-      || select.getAttribute('aria-label')
-      || select.name;
-
-    const value = document.createElement('span');
-    value.className = 'sleekfin-details-track-value';
-    const chevron = document.createElement('span');
-    chevron.className = 'sleekfin-details-track-chevron';
-    trigger.append(label, value, chevron);
-    root.appendChild(trigger);
-
+  const pickers = FIELDS.map((className) => {
+    const select = form.querySelector(`.${className}`);
+    const container = select?.closest('.selectContainer');
+    if (!container) return null;
+    const root = dom.element('<div class="sleekfin-details-track"><button type="button" class="sleekfin-details-track-trigger"><span class="sleekfin-details-track-label"></span><span class="sleekfin-details-track-value"></span><span class="sleekfin-details-track-chevron"></span></button></div>');
+    const trigger = root.firstElementChild;
+    const label = root.querySelector('.sleekfin-details-track-label');
+    const value = root.querySelector('.sleekfin-details-track-value');
+    const dropdown = createDropdown({ root, trigger, onSelect(option) {
+      if (select.value === option.value) return;
+      select.value = option.value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    } });
     select.classList.add('sleekfin-details-track-native');
-    const picker = { container, dropdown: null, onNativeChange: null, root, select, trigger, value };
-    picker.dropdown = createDropdown({
-      root,
-      trigger,
-      maxWidth: 520,
-      options: optionsFor(select),
-      value: select.value,
-      onSelect(option) {
-        if (select.value === option.value) return;
-        select.value = option.value;
-        value.textContent = option.label;
-        select.dispatchEvent(new Event('change', { bubbles: true }));
-      },
-    });
-    picker.onNativeChange = () => {
-      value.textContent = select.options[select.selectedIndex]?.text || '';
-      picker.dropdown.update(optionsFor(select), select.value);
-    };
-    select.addEventListener('change', picker.onNativeChange);
-    container?.appendChild(root);
-    pickers.set(className, picker);
-    return picker;
-  }
-
-  function placeForm() {
-    if (!slot) return;
-    if (!form) {
-      slot.hidden = true;
-      slot.parentElement?.classList.remove('sleekfin-details-has-tracks');
-      return;
-    }
-    const hasVisibleField = !form.classList.contains('hide') && FIELDS.some((className) => {
-      const select = form.querySelector(`.${className}`);
-      const container = select?.closest('.selectContainer');
-      return container && !container.classList.contains('hide');
-    });
-    slot.hidden = !hasVisibleField;
-    slot.parentElement?.classList.toggle('sleekfin-details-has-tracks', hasVisibleField);
-    if (hasVisibleField && form.parentNode !== slot) {
-      if (!originalParent) {
-        originalParent = form.parentNode;
-        originalNextSibling = form.nextSibling;
-      }
-      slot.appendChild(form);
-    } else if (!hasVisibleField) {
-      restoreForm();
-    }
-  }
+    select.addEventListener('change', sync);
+    container.appendChild(root);
+    return { container, dropdown, label, root, select, trigger, value };
+  }).filter(Boolean);
 
   function sync() {
     if (destroyed || !dom.isConnected(page)) return;
-    const currentForm = page.querySelector('.detailPagePrimaryContainer form.trackSelections')
-      || (form && dom.isConnected(form) ? form : page.querySelector('form.trackSelections'));
-    if (currentForm !== form) {
-      Array.from(pickers.keys()).forEach(dispose);
-      restoreForm(currentForm);
-      form = currentForm;
-      originalParent = form?.parentNode || null;
-      originalNextSibling = form?.nextSibling || null;
-    }
-    watch();
-    if (!form) {
-      placeForm();
-      return;
-    }
-
-    FIELDS.forEach((className) => {
-      const select = form.querySelector(`.${className}`);
-      let picker = pickers.get(className);
-      if (!select) {
-        dispose(className);
-        return;
-      }
-      const container = select.closest('.selectContainer');
-      if (picker && (picker.select !== select || picker.container !== container)) {
-        dispose(className);
-        picker = null;
-      }
-      if (!picker) picker = createPicker(className, select, container);
-
-      const hidden = !container || container.classList.contains('hide');
-      picker.root.hidden = hidden;
-      picker.trigger.disabled = select.disabled;
-      picker.value.textContent = select.options[select.selectedIndex]?.text || '';
-      picker.dropdown.update(optionsFor(select), select.value);
+    const formHidden = form.classList.contains('hide');
+    pickers.forEach((picker) => {
+      const { container, dropdown, label, root, select, trigger, value } = picker;
+      root.hidden = formHidden || container.classList.contains('hide');
+      trigger.disabled = select.disabled;
+      const labelText = container.querySelector('.selectLabel')?.textContent.trim() || '';
+      const valueText = select.options[select.selectedIndex]?.text || '';
+      if (label.textContent !== labelText) label.textContent = labelText;
+      if (value.textContent !== valueText) value.textContent = valueText;
+      dropdown.update(Array.from(select.options, (option) => ({ value: option.value, label: option.text })), select.value);
     });
+    const visible = pickers.some((picker) => !picker.root.hidden);
+    slot.hidden = !visible;
+    slot.parentElement.classList.toggle('sleekfin-details-has-tracks', visible);
+    if (visible && form.parentNode !== slot) slot.appendChild(form);
+    else if (!visible) restoreForm();
 
-    placeForm();
+    const selectedSource = form.querySelector('.selectSource')?.value || '';
+    if (selectedSource !== sourceId) {
+      sourceId = selectedSource;
+      if (sourceId) onSourceChange?.(sourceId);
+    }
   }
 
-  function schedule() {
+  // Jellyfin 12 updates this form in place; only native mutations need another sync.
+  const observer = new MutationObserver((records) => {
+    if (!records.some((record) => !record.target.closest('.sleekfin-details-track'))) return;
     window.clearTimeout(timer);
     timer = window.setTimeout(sync, 60);
-  }
-
-  function watch() {
-    if (destroyed) return;
-    const primary = page.querySelector('.detailPagePrimaryContainer');
-    const primaryParent = primary?.parentElement || null;
-    if (observer && observedForm === form && observedPrimary === primary && observedPrimaryParent === primaryParent) return;
-    observer?.disconnect();
-    observer ||= new MutationObserver((records) => {
-      if (records.some((record) => {
-        if (record.type === 'attributes') {
-          return record.attributeName === 'disabled' || record.target === form || record.target.matches('.selectContainer')
-            || (record.oldValue || '').split(/\s+/).includes('selectContainer');
-        }
-        if (form && form.contains(record.target)) {
-          return [...record.addedNodes, ...record.removedNodes]
-            .some((node) => node.nodeType !== Node.ELEMENT_NODE || !node.classList.contains('sleekfin-details-track'));
-        }
-        return [...record.addedNodes, ...record.removedNodes].some(containsTrackContext);
-      })) schedule();
-    });
-    observer.observe(page, { childList: true });
-    if (!primary) observer.observe(page, { childList: true, subtree: true });
-    else {
-      observer.observe(primary, { childList: true, subtree: true });
-      if (primaryParent && primaryParent !== page) observer.observe(primaryParent, { childList: true });
-    }
-    if (form) observer.observe(form, { attributes: true, attributeFilter: ['class', 'disabled'], attributeOldValue: true, childList: true, subtree: true });
-    observedForm = form;
-    observedPrimary = primary;
-    observedPrimaryParent = primaryParent;
-  }
-
-  watch();
+  });
+  observer.observe(form, { attributes: true, attributeFilter: ['class', 'disabled'], childList: true, subtree: true });
   sync();
 
   return {
+    reconcile: sync,
     destroy() {
       if (destroyed) return;
       destroyed = true;
-      observer?.disconnect();
-      observer = null;
+      observer.disconnect();
       window.clearTimeout(timer);
-      Array.from(pickers.keys()).forEach(dispose);
-      restoreForm(page.querySelector('.detailPagePrimaryContainer form.trackSelections'));
-    },
-    reconcile() {
-      if (destroyed) return;
-      watch();
-      sync();
+      pickers.forEach(({ dropdown, root, select }) => {
+        dropdown.destroy();
+        select.removeEventListener('change', sync);
+        root.remove();
+        select.classList.remove('sleekfin-details-track-native');
+      });
+      restoreForm();
     },
   };
 }

@@ -4,9 +4,9 @@ const MIN_USABLE_HEIGHT = 240;
 let nextDropdownId = 0;
 
 function keyFor(event) {
-  if (event.key) return event.key === 'Spacebar' ? ' ' : event.key;
   const keyCode = event.keyCode || event.which;
   const specialKeys = {
+    8: 'Backspace',
     9: 'Tab',
     13: 'Enter',
     27: 'Escape',
@@ -15,24 +15,26 @@ function keyFor(event) {
     36: 'Home',
     38: 'ArrowUp',
     40: 'ArrowDown',
+    138: 'ArrowUp',
+    139: 'ArrowDown',
+    195: 'Enter',
+    196: 'Escape',
+    203: 'ArrowUp',
+    204: 'ArrowDown',
+    211: 'ArrowUp',
+    212: 'ArrowDown',
+    461: 'Escape',
+    10009: 'Escape',
   };
   if (specialKeys[keyCode]) return specialKeys[keyCode];
+  if (event.key && event.key !== 'Unidentified') return event.key === 'Spacebar' ? ' ' : event.key;
   const characterCode = keyCode >= 96 && keyCode <= 105 ? keyCode - 48 : keyCode;
-  return (characterCode >= 48 && characterCode <= 90) ? String.fromCharCode(characterCode).toLocaleLowerCase() : '';
-}
-
-function setAttribute(element, name, value) {
-  if (value === null) element.removeAttribute(name);
-  else element.setAttribute(name, value);
+  return ((characterCode >= 48 && characterCode <= 57) || (characterCode >= 65 && characterCode <= 90)) ? String.fromCharCode(characterCode).toLocaleLowerCase() : '';
 }
 
 export function createDropdown({ root, trigger, options = [], value = '', onSelect = () => {}, maxWidth = 520 }) {
   if (!root || !trigger) return { update() {}, destroy() {} };
 
-  const managedAttributes = ['id', 'role', 'aria-haspopup', 'aria-controls', 'aria-expanded', 'aria-activedescendant'];
-  const originalAttributes = new Map(managedAttributes.map((name) => [name, trigger.hasAttribute(name) ? trigger.getAttribute(name) : null]));
-  const originalTitle = trigger.hasAttribute('title') ? trigger.getAttribute('title') : null;
-  const originalRootOpen = root.hasAttribute('data-open') ? root.getAttribute('data-open') : null;
   let id = trigger.id;
   while (!id || (document.getElementById(id) && document.getElementById(id) !== trigger) || document.getElementById(`${id}-menu`)) {
     nextDropdownId += 1;
@@ -46,7 +48,6 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
   menu.id = `${id}-menu`;
   menu.setAttribute('role', 'listbox');
   menu.setAttribute('aria-labelledby', id);
-  menu.dataset.positioned = 'false';
   menu.style.visibility = 'hidden';
   menu.addEventListener('mousedown', (event) => event.preventDefault());
   layer.appendChild(menu);
@@ -105,14 +106,17 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
   }
 
   function position() {
-    if (!open || !dom.isConnected(trigger) || !dom.isConnected(menu)) return;
+    if (!open) return;
+    if (!dom.isVisible(trigger)) {
+      close();
+      return;
+    }
     const triggerRect = trigger.getBoundingClientRect();
     const margin = 8;
     const gap = 6;
     const widthLimit = Math.max(0, Math.min(maxWidth, window.innerWidth * 0.7));
     const minWidth = Math.min(triggerRect.width, widthLimit);
     menu.style.maxWidth = `${widthLimit}px`;
-    menu.style.maxHeight = 'none';
     menu.style.minWidth = `${minWidth}px`;
     const contentHeight = Math.ceil(menu.scrollHeight);
     const menuWidth = Math.ceil(menu.getBoundingClientRect().width);
@@ -130,19 +134,17 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
     const left = Math.max(margin, Math.min(triggerRect.left, window.innerWidth - width - margin));
     const top = placement === 'above' ? Math.max(margin, triggerRect.top - gap - height) : triggerRect.bottom + gap;
 
-    menu.dataset.placement = placement;
     menu.style.left = `${left}px`;
     menu.style.maxHeight = `${height}px`;
-    menu.style.minWidth = `${minWidth}px`;
-    menu.style.width = `${width}px`;
     menu.style.top = `${top}px`;
-    menu.dataset.positioned = 'true';
     menu.style.visibility = 'visible';
   }
 
   function setActive(index) {
     if (!currentOptions.length) return;
-    activeIndex = Math.max(0, Math.min(currentOptions.length - 1, index));
+    const nextIndex = Math.max(0, Math.min(currentOptions.length - 1, index));
+    if (activeIndex === nextIndex) return;
+    activeIndex = nextIndex;
     syncAria();
     if (open) optionNodes[activeIndex]?.scrollIntoView({ block: 'nearest' });
   }
@@ -154,14 +156,13 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
     window.removeEventListener('scroll', position, true);
   }
 
-  function close(resetActive = true) {
+  function close() {
     if (!open) return;
     open = false;
     root.dataset.open = 'false';
     trigger.setAttribute('aria-expanded', 'false');
-    menu.dataset.positioned = 'false';
     menu.style.visibility = 'hidden';
-    if (resetActive) activeIndex = Math.max(0, selectedIndex());
+    activeIndex = Math.max(0, selectedIndex());
     syncAria();
     stopWatching();
     window.clearTimeout(typeaheadTimer);
@@ -173,7 +174,7 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
   }
 
   function openMenu(index = selectedIndex(), preserveTypeahead = false) {
-    if (destroyed || open || trigger.disabled || !currentOptions.length || !dom.isConnected(trigger)) return;
+    if (destroyed || open || trigger.disabled || !currentOptions.length || !dom.isVisible(trigger)) return;
     if (!preserveTypeahead) {
       window.clearTimeout(typeaheadTimer);
       typeahead = '';
@@ -188,14 +189,14 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
     window.addEventListener('resize', position);
     window.addEventListener('scroll', position, true);
     position();
+    optionNodes[activeIndex]?.scrollIntoView({ block: 'nearest' });
   }
 
   function choose(index) {
     const option = currentOptions[index];
     if (!option) return;
     selectedValue = option.value;
-    close(false);
-    syncAria();
+    close();
     onSelect(option);
   }
 
@@ -233,7 +234,6 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
     const key = keyFor(event);
     if (key === 'Tab') {
       if (open) choose(activeIndex);
-      else close();
       return;
     }
     if (key === 'Backspace' && typeahead) {
@@ -325,9 +325,6 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
     trigger.removeEventListener('focusout', onFocusOut);
     trigger.removeEventListener('click', onTriggerClick);
     layer.remove();
-    managedAttributes.forEach((name) => setAttribute(trigger, name, originalAttributes.get(name)));
-    setAttribute(trigger, 'title', originalTitle);
-    setAttribute(root, 'data-open', originalRootOpen);
     window.clearTimeout(typeaheadTimer);
   }
 

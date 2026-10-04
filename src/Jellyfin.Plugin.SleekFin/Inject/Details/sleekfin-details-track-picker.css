@@ -1,15 +1,10 @@
-.sleekfin-details-track-native {
-    height: 1px;
-    left: -9999px;
-    position: absolute;
-    visibility: hidden;
-    width: 1px;
+select.sleekfin-details-track-native {
+    display: none;
 }
 
 .sleekfin-details-track {
-    grid-column: 1;
-    grid-row: 1;
     min-width: 0;
+    width: 100%;
 }
 
 .sleekfin-details-track[hidden] {

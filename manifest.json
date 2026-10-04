@@ -10,6 +10,51 @@
     "repositoryUrl": "https://github.com/varunaditya-plus/SleekFin",
     "versions": [
       {
+        "version": "1.4.2.5",
+        "changelog": "Simplified per-history-entry scroll restoration and reused Jellyfin’s native Play/Resume updates while keeping episode action suppression",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.4.2.5/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "0759BF25FAB8BCD70D2D124F080937A0",
+        "timestamp": "2026-10-04T09:50:23.0000000Z",
+        "dependencies": []
+      },
+      {
+        "version": "1.4.2.4",
+        "changelog": "Corrected the Resume label on item detail pages for items with no playback position. Changes by @T9es",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.4.2.4/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "EBFF2587A5C5FBDF22A93EBBFD146C79",
+        "timestamp": "2026-10-03T21:38:37.0000000Z",
+        "dependencies": []
+      },
+      {
+        "version": "1.4.2.3",
+        "changelog": "Restored scroll position when navigating to previous pages per history entry (going back/forwards). Changes by @T9es",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.4.2.3/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "DFCFD1DBF40BF4751A23E945371CD6F0",
+        "timestamp": "2026-10-03T21:33:44.0000000Z",
+        "dependencies": []
+      },
+      {
+        "version": "1.4.2.2",
+        "changelog": "Fixed SleekFin styling on SeerrFin tabs in Modern layout",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.4.2.2/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "1519D84CE4EFEEFC0659D363ED6BC9FB",
+        "timestamp": "2026-10-03T10:43:43.0000000Z",
+        "dependencies": []
+      },
+      {
+        "version": "1.4.2.1",
+        "changelog": "On dashboard and video playback pages, don't show custom header",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/varunaditya-plus/SleekFin/releases/download/1.4.2.1/Jellyfin.Plugin.SleekFin_12.0.0.zip",
+        "checksum": "13B02D10F4FE06E843A6A6897CDCAACB",
+        "timestamp": "2026-10-03T10:05:01.0000000Z",
+        "dependencies": []
+      },
+      {
         "version": "1.4.2.0",
         "changelog": "Added optional styled season picker. Changes by @T9es",
         "targetAbi": "12.0.0.0",

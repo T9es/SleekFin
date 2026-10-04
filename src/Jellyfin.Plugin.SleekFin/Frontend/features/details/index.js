@@ -27,6 +27,7 @@ const state = {
   generation: 0,
   item: null,
   loadingId: '',
+  loadRequestId: 0,
   mount: null,
   page: null,
   previousPage: null,
@@ -210,7 +211,10 @@ function mount() {
   const actions = createActions(hero.actions, state.item.Type === 'Episode');
   const sections = createSections(state.page);
   const similar = createSimilar(state.page);
-  const trackPickers = createTrackPickers(state.page, hero.trackSlot);
+  const trackPickers = createTrackPickers(state.page, hero.trackSlot, (id) => {
+    if (!state.item?.MediaSources?.some((source) => source.Id === id)) return;
+    if ((id !== state.item?.Id || state.loadingId) && id !== state.loadingId) load(id, state.currentServerId, state.page.querySelector('.selectSource'));
+  });
   const episodes = ['Series', 'Season', 'Episode'].includes(state.item.Type) && state.seasons.length ? createEpisodes(state.page, state.item, state.seasons, state.seasonPickerEnabled) : null;
 
   state.mount = {
@@ -231,7 +235,7 @@ function mount() {
   concealUntilAlone(state.page);
 }
 
-function load(id, serverId) {
+function load(id, serverId, sourceSelect = null) {
   const client = routeClient(serverId);
   if (!client) {
     if (!window.ApiClient) {
@@ -247,17 +251,22 @@ function load(id, serverId) {
   }
 
   const generation = state.generation;
+  const requestId = ++state.loadRequestId;
+  const routeId = state.currentId;
   const userId = client.getCurrentUserId();
-  const isCurrent = () => generation === state.generation && id === state.currentId;
+  const isCurrent = () => requestId === state.loadRequestId && generation === state.generation && routeId === state.currentId && (!sourceSelect || sourceSelect.value === id);
   state.loadingId = id;
-
   // The settings request is started lazily by loadSeasons for a Series only, so it can never hold up
   // the item request or a non-Series page.
   client.getItem(userId, id)
     .then((mediaItem) => {
       if (!isCurrent()) return;
+      if (sourceSelect) {
+        conceal(true);
+        destroyMount();
+        state.seasons = [];
+      }
       state.item = mediaItem;
-      state.loadingId = '';
       scheduleReconcile();
       if (!SUPPORTED_TYPES.includes(mediaItem.Type)) return;
 
@@ -265,7 +274,7 @@ function load(id, serverId) {
       // not be handled like a failed item request.
       loadSeasons(client, userId, mediaItem)
         .then((result) => {
-          if (!isCurrent()) return;
+          if (!isCurrent() || state.item !== mediaItem) return;
           state.seasons = result.Items || [];
           if (state.mount) {
             state.mount.hero.render(state.item, state.seasons);
@@ -279,10 +288,16 @@ function load(id, serverId) {
     })
     .catch(() => {
       if (!isCurrent()) return;
-      state.loadingId = '';
+      if (sourceSelect) {
+        console.warn('[SleekFin] Could not refresh the selected media version.');
+        return;
+      }
       // Only an item that cannot be resolved falls back to Jellyfin's own page, otherwise the
       // concealment would leave the route dark until the boot failsafe expires.
       revealNativePage();
+    })
+    .finally(() => {
+      if (requestId === state.loadRequestId) state.loadingId = '';
     });
 }
 

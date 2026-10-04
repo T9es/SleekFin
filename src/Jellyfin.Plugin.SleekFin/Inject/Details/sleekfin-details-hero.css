@@ -67,6 +67,7 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] > #itemBack
     max-width: 560px;
     min-width: 0;
     pointer-events: auto;
+    width: 100%;
 }
 
 .sleekfin-details-track-slot {

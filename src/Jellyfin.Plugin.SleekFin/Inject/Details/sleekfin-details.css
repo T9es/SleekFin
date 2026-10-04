@@ -119,7 +119,6 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .detailPage
     padding-top: 0;
 }
 
-/* The track form moves into this slot, where its panel can sit beside the hero stack. */
 html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .sleekfin-details-track-slot .trackSelections:not(.hide) {
     background: var(--sleekfin-surface);
     border: 1px solid var(--sleekfin-border);
@@ -144,17 +143,11 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelec
     display: none;
 }
 
-/* Each picker carries the label and value from Jellyfin's native field. */
 html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer {
     align-items: center;
     align-self: stretch;
-    background: none !important;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
     box-sizing: border-box;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    display: flex;
     margin: 0 !important;
     min-height: 48px;
     padding: 0 12px;

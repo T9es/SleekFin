@@ -5,15 +5,15 @@ export function createActions(container, isEpisode) {
 
   function reconcile() {
     const buttons = container.querySelectorAll('.btnPlay, .btnReplay, .btnDownload, .btnUserRating');
-    const hasEpisodeResume = isEpisode && Array.from(buttons).some((element) => element.dataset.action === 'resume' && !element.classList.contains('hide'));
 
     buttons.forEach((element) => {
       const isFavorite = element.classList.contains('btnUserRating');
       const isDownload = element.classList.contains('btnDownload');
+      const isReplay = element.dataset.action === 'play';
       const icon = isFavorite ? (element.dataset.isfavorite === 'true' ? 'bookmarkCheck' : 'bookmark') : isDownload ? 'download' : 'play';
-      const label = isFavorite ? (element.dataset.isfavorite === 'true' ? 'In watchlist' : 'Add to watchlist') : isDownload ? 'Download' : element.dataset.action === 'resume' ? 'Resume' : 'Play';
+      const label = isFavorite ? (element.dataset.isfavorite === 'true' ? 'In watchlist' : 'Add to watchlist') : isDownload ? 'Download' : element.title || 'Play';
 
-      element.classList.toggle('sleekfin-details-suppressed-action', hasEpisodeResume && element.dataset.action === 'play');
+      element.classList.toggle('sleekfin-details-suppressed-action', isEpisode && isReplay);
       decorateNativeButton(element, {
         content: element.querySelector('.detailButton-content') || element,
         icon,
@@ -28,7 +28,7 @@ export function createActions(container, isEpisode) {
   observer.observe(container, {
     attributes: true,
     subtree: true,
-    attributeFilter: ['data-isfavorite'],
+    attributeFilter: ['data-isfavorite', 'title'],
   });
 
   return {
