@@ -36,6 +36,16 @@
     height: auto;
 }
 
-.sleekfin-details-stack > .mainDetailButtons .material-icons {
+.sleekfin-details-stack > .mainDetailButtons .detailButton-content .material-icons {
     display: none !important;
+}
+
+.sleekfin-details-stack > .mainDetailButtons > .sleekfin-details-track-settings:not([hidden]) {
+    border-radius: 50%;
+    display: inline-flex !important;
+    flex: 0 0 auto;
+    height: 40px;
+    margin-left: auto;
+    order: 4;
+    width: 40px;
 }

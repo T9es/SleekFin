@@ -110,58 +110,13 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] > .detailPa
     z-index: 1;
 }
 
-/* The native detail block stays hidden after its track form is moved into the hero layout. */
+/* Native controls stay in this block so Jellyfin's playback handlers can still query them. */
 html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .detailPagePrimaryContainer {
     display: none !important;
 }
 
 html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .detailPageSecondaryContainer {
     padding-top: 0;
-}
-
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .sleekfin-details-track-slot .trackSelections:not(.hide) {
-    background: var(--sleekfin-surface);
-    border: 1px solid var(--sleekfin-border);
-    border-radius: 12px;
-    box-sizing: border-box;
-    display: flex !important;
-    flex-direction: column;
-    gap: 0;
-    margin: 0;
-}
-
-/* The control itself is SleekFin's own listbox, built by the details bundle and styled in
-   sleekfin-details-track-picker.css. Jellyfin's select stays in the row because it still carries the
-   stream index, but it is taken out of the layout there, so only the pieces around it are styled
-   here: the arrow Jellyfin adds is unused, and its label is shown above the trigger. */
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectArrowContainer {
-    display: none;
-}
-
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer > .selectLabel {
-    display: none;
-}
-
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer {
-    align-items: center;
-    align-self: stretch;
-    box-sizing: border-box;
-    display: flex;
-    margin: 0 !important;
-    min-height: 48px;
-    padding: 0 6px;
-    position: relative;
-}
-
-/* Separators are drawn between rows that are actually shown. A hidden row is still a sibling, so
-   without excluding it the first visible row would carry a separator with nothing above it, drawn
-   just inside the panel's top edge. */
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer:not(.hide) ~ .selectContainer:not(.hide) {
-    border-top: 1px solid var(--sleekfin-border);
-}
-
-html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer.hide {
-    display: none !important;
 }
 
 html.sleekfin-details-mounted :is(#castCollapsible, #similarCollapsible) .cardScalable {
@@ -175,9 +130,5 @@ html.sleekfin-details-mounted :is(#castCollapsible, #similarCollapsible) .cardSc
 @media (max-width: 767px) {
     html.sleekfin-details-mounted {
         --sleekfin-details-hero-height: max(620px, 85vh);
-    }
-
-    html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] .trackSelections .selectContainer {
-        min-height: 52px;
     }
 }

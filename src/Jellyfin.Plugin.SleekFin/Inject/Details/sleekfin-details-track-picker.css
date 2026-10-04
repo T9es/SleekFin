@@ -2,15 +2,24 @@ select.sleekfin-details-track-native {
     display: none;
 }
 
+.sleekfin-details-track-dialog .dialogContentInner {
+    padding-bottom: 1em;
+}
+
+.sleekfin-details-custom-track.selectContainer {
+    margin: 0;
+    padding: 6px;
+}
+
+.sleekfin-details-custom-track .selectArrowContainer {
+    display: none;
+}
+
 .sleekfin-details-track {
     display: flex;
     flex-direction: column;
     min-width: 0;
     width: 100%;
-}
-
-.sleekfin-details-track[hidden] {
-    display: none;
 }
 
 .sleekfin-details-track-trigger {
@@ -29,7 +38,7 @@ select.sleekfin-details-track-native {
     height: 34px;
     margin: 0;
     min-width: 0;
-    padding: 0 12px;
+    padding: 6px 12px;
     text-align: left;
     transition: background 160ms ease;
     width: 100%;
@@ -58,7 +67,7 @@ select.sleekfin-details-track-native {
     color: var(--sleekfin-muted);
     font-size: 10px;
     font-weight: 600;
-    line-height: 18px;
+    padding-left: 12px;
 }
 
 .sleekfin-details-track-value {

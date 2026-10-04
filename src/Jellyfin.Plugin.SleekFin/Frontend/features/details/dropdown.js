@@ -32,7 +32,7 @@ function keyFor(event) {
   return ((characterCode >= 48 && characterCode <= 57) || (characterCode >= 65 && characterCode <= 90)) ? String.fromCharCode(characterCode).toLocaleLowerCase() : '';
 }
 
-export function createDropdown({ root, trigger, options = [], value = '', onSelect = () => {}, maxWidth = 520 }) {
+export function createDropdown({ root, trigger, options = [], value = '', onSelect = () => {}, maxWidth = 520, portal = document.body }) {
   if (!root || !trigger) return { update() {}, destroy() {} };
 
   let id = trigger.id;
@@ -51,7 +51,7 @@ export function createDropdown({ root, trigger, options = [], value = '', onSele
   menu.style.visibility = 'hidden';
   menu.addEventListener('mousedown', (event) => event.preventDefault());
   layer.appendChild(menu);
-  document.body.appendChild(layer);
+  portal.appendChild(layer);
 
   trigger.id = id;
   trigger.setAttribute('role', 'combobox');
