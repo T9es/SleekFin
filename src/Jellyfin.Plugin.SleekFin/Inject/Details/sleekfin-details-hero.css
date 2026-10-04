@@ -60,7 +60,6 @@ html.sleekfin-details-mounted #itemDetailPage[data-sleekfin-details] > #itemBack
 }
 
 .sleekfin-details-stack {
-    max-width: 560px;
     min-width: 0;
     pointer-events: auto;
     width: 100%;

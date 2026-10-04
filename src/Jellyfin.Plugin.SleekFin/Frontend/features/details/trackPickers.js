@@ -6,7 +6,9 @@ const FIELDS = ['selectSource', 'selectVideo', 'selectAudio', 'selectSubtitles']
 export function createTrackPickers(page, actions, loadDropdownSetting, onSourceChange) {
   const form = page.querySelector('form.trackSelections');
   if (!form) return { reconcile() {}, destroy() {} };
+  const spacer = dom.element('<div class="sleekfin-details-action-spacer"></div>');
   const button = dom.element('<button type="button" class="sleekfin-icon-button sleekfin-control-3d sleekfin-details-track-settings" title="Media settings"><span class="material-icons more_vert"></span></button>');
+  actions.appendChild(spacer);
   actions.appendChild(button);
   let dialog = null;
   let fields = [];
@@ -27,19 +29,20 @@ export function createTrackPickers(page, actions, loadDropdownSetting, onSourceC
     button.disabled = false;
     if (destroyed || !dom.isVisible(button)) return;
     // No modal history entry: navigation already destroys this page's settings dialog.
-    const dlg = helper.createDialog({ removeOnClose: true, scrollY: false, enableHistory: false, size: 'small' });
+    const dlg = helper.createDialog({ removeOnClose: true, scrollY: false, enableHistory: false });
     dialog = dlg;
     dlg.id = `sleekfin-details-tracks-${Date.now()}`;
-    dlg.classList.add('formDialog', 'sleekfin-details-track-dialog');
-    dlg.innerHTML = '<div class="formDialogHeader"><button is="paper-icon-button-light" type="button" class="btnCancel autoSize" title="Close"><span class="material-icons close"></span></button><h3 class="formDialogHeaderTitle">Media settings</h3></div><div class="formDialogContent smoothScrollY"><div class="dialogContentInner"></div></div>';
-    dlg.querySelector('.btnCancel').addEventListener('click', () => helper.close(dlg));
+    dlg.classList.add('sleekfin-details-track-dialog', 'sleekfin-control-3d');
+    dlg.innerHTML = '<div class="sleekfin-details-track-header"><h3>Media settings</h3><button type="button" class="sleekfin-details-track-close sleekfin-icon-button" title="Close"><span class="material-icons close"></span></button></div><div class="sleekfin-details-track-content smoothScrollY"></div>';
+    dlg.querySelector('.sleekfin-details-track-close').addEventListener('click', () => helper.close(dlg));
     dlg.addEventListener('closing', () => fields.forEach(({ dropdown }) => dropdown?.close()));
     dlg.addEventListener('close', () => {
       destroyFields();
       if (dialog === dlg) dialog = null;
     });
     helper.open(dlg);
-    const content = dlg.querySelector('.dialogContentInner');
+    dlg.backdrop.classList.add('sleekfin-details-track-backdrop');
+    const content = dlg.querySelector('.sleekfin-details-track-content');
     fields = FIELDS.map((className) => {
       const select = form.querySelector(`.${className}`);
       const container = select?.closest('.selectContainer');
@@ -87,15 +90,16 @@ export function createTrackPickers(page, actions, loadDropdownSetting, onSourceC
       const container = form.querySelector(`.${className}`)?.closest('.selectContainer');
       return container && !container.classList.contains('hide');
     });
+    spacer.hidden = button.hidden;
     fields.forEach(({ container, control, dropdown, field, label, nativeLabel, select, trigger, value }) => {
       field.classList.toggle('hide', hidden || container.classList.contains('hide'));
-      control.disabled = select.disabled;
       if (control.innerHTML !== select.innerHTML) control.replaceChildren(...Array.from(select.options, (option) => option.cloneNode(true)));
+      control.disabled = select.disabled || select.options.length <= 1;
       control.value = select.value;
       const labelText = container.querySelector('.selectLabel')?.textContent.trim() || '';
       if (nativeLabel.textContent !== labelText) nativeLabel.textContent = labelText;
       if (!dropdown) return;
-      trigger.disabled = select.disabled;
+      trigger.disabled = control.disabled;
       if (label.textContent !== labelText) label.textContent = labelText;
       const valueText = select.options[select.selectedIndex]?.text || '';
       if (value.textContent !== valueText) value.textContent = valueText;
@@ -127,6 +131,7 @@ export function createTrackPickers(page, actions, loadDropdownSetting, onSourceC
       window.clearTimeout(timer);
       form.removeEventListener('change', sync);
       button.removeEventListener('click', open);
+      spacer.remove();
       button.remove();
       destroyFields();
       if (dialog) window.Dashboard.dialogHelper.close(dialog);
