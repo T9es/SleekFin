@@ -25,12 +25,12 @@ The ultimate customisation plugin for Jellyfin, which fully reskins Jellyfin to 
 
 ## Features
 
-- **Complete reskin:** Applies a fully black interface with dark surfaces, red accents, and uses Inter across the main UI, dialogs, lists, and cards.
+- **Complete reskin:** Applies a fully black interface with dark surfaces, red accents (configurable), and uses Inter across the main UI, dialogs, lists, and cards.
 - **Jellyfin Enhanced integration:** Reskins [Jellyfin Enhanced](https://github.com/n00bcodr/Jellyfin-Enhanced) panels and controls to match SleekFin when the plugin is installed.
 - **Floating header:** Turns Jellyfin's modern and legacy desktop/mobile headers into a custom compact navigation bar which can be customized in the plugin's UI Builder.
 - **Configurable home hero:** Adds a full-width hero section above rows on the home page to display your library's content more nicely.
 - **Redesigned home and library pages:** Restyles the carousels and library pages to show content more clearly with consistent spacing and concise info under posters.
-- **Updated detail pages:** Redesigns Jellyfin's Movie, Series, Season, and Episode pages with full-page backdrop heroes, title art, and richer metadata. Disable the replacement in plugin settings to keep Jellyfin's native detail pages. An optional custom season picker can replace the native season dropdown. Optional browser-compatible local trailers can play muted behind the detail-page artwork; static artwork remains visible when no supported local trailer is available. Background playback is off by default.
+- **Updated detail pages:** Redesigns Jellyfin's Movie, Series, Season, and Episode pages with full-page backdrop heroes, title art, and richer metadata. Media settings open from the three-dot action button. Disable the replacement in plugin settings to keep Jellyfin's native detail pages. Optional custom SleekFin dropdowns can replace the native season and media settings selectors. Optional browser-compatible local trailers can play muted behind the detail-page artwork; static artwork remains visible when no supported local trailer is available. Background playback is off by default.
 - **Upgraded cast and recommendations:** Restyles cast into a clean horizontal row and turns similar titles into a dedicated **You may like** section with backdrop/poster imagery, ratings, years, and media types.
 - **Responsive layouts:** Adapts the header, hero, media rows, detail pages, controls, typography, and spacing across mobile, tablet, desktop, and ultrawide browser sizes.
 
@@ -50,7 +50,7 @@ https://raw.githubusercontent.com/varunaditya-plus/SleekFin/main/manifest.json
 4. Now you have to restart your Jellyfin instance. Go to **Dashboard** and click the **Restart** button. You're done!
 
 ### Configuration
-After installation, go to **Dashboard → SleekFin**. The **Overview** tab contains the plugin's main settings, letting you decide which features you want to enable or disable. Our **UI Builder** gives you live editors for the elements we reskin, letting you tweak them to your liking.
+After installation, go to **Dashboard → SleekFin**. The **Overview** tab groups feature toggles and the SleekFin accent colour picker under **General options**. Save and refresh Jellyfin to apply an accent colour change. Our **UI Builder** gives you live editors for the elements we reskin, letting you tweak them to your liking.
 
 ## Screenshots
 <table>

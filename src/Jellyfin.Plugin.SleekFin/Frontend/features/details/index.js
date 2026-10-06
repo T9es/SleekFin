@@ -5,6 +5,7 @@ import { createHero } from './hero.jsx';
 import { createSections } from './sections.jsx';
 import { loadSettings } from './settings.js';
 import { createSimilar } from './similar.jsx';
+import { createTrackPickers } from './trackPickers.js';
 
 const CONCEALED_CLASS = 'sleekfin-details-concealed';
 const CONCEAL_EVENT = 'sleekfin:details-conceal';
@@ -13,7 +14,7 @@ const DETAIL_PATH = /(^|\/)details\/?$/;
 const HISTORY_METHODS = ['pushState', 'replaceState'];
 const SUPPORTED_TYPES = ['Movie', 'Series', 'Season', 'Episode'];
 const SETTINGS_TIMEOUT_MS = 4000;
-const SETTINGS_DISABLED = Object.freeze({ seasonPickerEnabled: false, trailerBackgroundEnabled: false });
+const SETTINGS_DISABLED = Object.freeze({ customDropdownEnabled: false, trailerBackgroundEnabled: false });
 // Jellyfin activates a page through viewManager.onViewChange, which dispatches these on the page
 // element it just made current, so event.target identifies the page Jellyfin is showing.
 const VIEW_EVENTS = ['viewinit', 'viewbeforeshow', 'viewshow'];
@@ -29,6 +30,7 @@ const state = {
   generation: 0,
   item: null,
   loadingId: '',
+  loadRequestId: 0,
   mount: null,
   page: null,
   previousPage: null,
@@ -192,9 +194,15 @@ function loadDetailsSettings(client, scope) {
   return record.promise;
 }
 
+function loadDropdownSetting(client) {
+  if (!client) return Promise.resolve(false);
+  const scope = settingsScope(client, state.currentServerId);
+  return loadDetailsSettings(client, scope).then((settings) => settings.customDropdownEnabled === true);
+}
+
 function applyDetailsSettings(settings, scope, revision) {
   if (!state.currentId || state.settingsScope !== scope || revision !== detailsSettingsRevision) return;
-  state.seasonPickerEnabled = settings.seasonPickerEnabled === true;
+  state.seasonPickerEnabled = settings.customDropdownEnabled === true;
   state.trailerBackgroundEnabled = settings.trailerBackgroundEnabled === true;
   state.mount?.hero.setTrailerBackgroundEnabled(state.trailerBackgroundEnabled);
 }
@@ -215,6 +223,7 @@ function loadSeasons(client, userId, mediaItem, scope, applySettings) {
 function destroyMount() {
   stopHiddenWatch();
   if (!state.mount) return;
+  state.mount.trackPickers.destroy();
   state.mount.episodes?.destroy();
   state.mount.similar.destroy();
   state.mount.sections.destroy();
@@ -235,9 +244,13 @@ function mount() {
     revealNativePage();
     return;
   }
-  const actions = createActions(hero.actions, state.item.Type === 'Episode');
+  const actions = createActions(hero.actions);
   const sections = createSections(state.page);
   const similar = createSimilar(state.page);
+  const trackPickers = createTrackPickers(state.page, hero.actions, () => loadDropdownSetting(routeClient(state.currentServerId)), (id) => {
+    if (!state.item?.MediaSources?.some((source) => source.Id === id)) return;
+    if ((id !== state.item?.Id || state.loadingId) && id !== state.loadingId) load(id, state.currentServerId, state.page.querySelector('.selectSource'));
+  });
   const episodes = ['Series', 'Season', 'Episode'].includes(state.item.Type) && state.seasons.length ? createEpisodes(state.page, state.item, state.seasons, state.seasonPickerEnabled) : null;
 
   state.mount = {
@@ -247,6 +260,7 @@ function mount() {
     page: state.page,
     sections,
     similar,
+    trackPickers,
   };
   state.page.dataset.sleekfinDetails = 'true';
   document.documentElement.classList.add('sleekfin-details-mounted');
@@ -258,7 +272,7 @@ function mount() {
   concealUntilAlone(state.page);
 }
 
-function load(id, serverId) {
+function load(id, serverId, sourceSelect = null) {
   const client = routeClient(serverId);
   if (!client) {
     if (!window.ApiClient) {
@@ -274,10 +288,12 @@ function load(id, serverId) {
   }
 
   const generation = state.generation;
+  const requestId = ++state.loadRequestId;
+  const routeId = state.currentId;
   const settingsRevision = detailsSettingsRevision;
   const scope = settingsScope(client, serverId);
   const userId = client.getCurrentUserId();
-  const isCurrent = () => generation === state.generation && id === state.currentId;
+  const isCurrent = () => requestId === state.loadRequestId && generation === state.generation && routeId === state.currentId && (!sourceSelect || sourceSelect.value === id);
   const applySettings = (settings) => {
     if (isCurrent()) applyDetailsSettings(settings, scope, settingsRevision);
   };
@@ -290,8 +306,12 @@ function load(id, serverId) {
   client.getItem(userId, id)
     .then((mediaItem) => {
       if (!isCurrent()) return;
+      if (sourceSelect) {
+        conceal(true);
+        destroyMount();
+        state.seasons = [];
+      }
       state.item = mediaItem;
-      state.loadingId = '';
       scheduleReconcile();
       if (!SUPPORTED_TYPES.includes(mediaItem.Type)) return;
 
@@ -299,7 +319,7 @@ function load(id, serverId) {
       // not be handled like a failed item request.
       loadSeasons(client, userId, mediaItem, scope, applySettings)
         .then((result) => {
-          if (!isCurrent()) return;
+          if (!isCurrent() || state.item !== mediaItem) return;
           state.seasons = result.Items || [];
           if (state.mount) {
             state.mount.hero.render(state.item, state.seasons);
@@ -313,10 +333,16 @@ function load(id, serverId) {
     })
     .catch(() => {
       if (!isCurrent()) return;
-      state.loadingId = '';
+      if (sourceSelect) {
+        console.warn('[SleekFin] Could not refresh the selected media version.');
+        return;
+      }
       // Only an item that cannot be resolved falls back to Jellyfin's own page, otherwise the
       // concealment would leave the route dark until the boot failsafe expires.
       revealNativePage();
+    })
+    .finally(() => {
+      if (requestId === state.loadRequestId) state.loadingId = '';
     });
 }
 
@@ -509,6 +535,7 @@ function reconcile() {
   state.mount.actions.reconcile();
   state.mount.sections.reconcile();
   state.mount.similar.render();
+  state.mount.trackPickers.reconcile();
 }
 
 function scheduleReconcile() {
