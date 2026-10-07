@@ -167,9 +167,9 @@ function reloadSettings() {
   settingsRevision += 1;
 }
 
-function loadSeasons(client, userId, mediaItem) {
+function loadSeasons(client, userId, mediaItem, settingsPromise) {
   if (mediaItem.Type === 'Series') {
-    return Promise.all([client.getSeasons(mediaItem.Id, { userId }), loadDetailsSettings(client)]).then(([seasons, settings]) => ({ ...seasons, settings }));
+    return Promise.all([client.getSeasons(mediaItem.Id, { userId }), settingsPromise]).then(([seasons]) => seasons);
   }
   if (mediaItem.Type === 'Season') return Promise.resolve({ Items: [mediaItem] });
   if (mediaItem.Type === 'Episode' && mediaItem.SeasonId) return client.getItem(userId, mediaItem.SeasonId).then((season) => ({ Items: [season] }));
@@ -253,7 +253,7 @@ function load(id, serverId, sourceSelect = null) {
   const userId = client.getCurrentUserId();
   const isCurrent = () => requestId === state.loadRequestId && generation === state.generation && routeId === state.currentId && (!sourceSelect || sourceSelect.value === id);
   state.loadingId = id;
-  loadDetailsSettings(client).then((settings) => {
+  const settingsPromise = loadDetailsSettings(client).then((settings) => {
     if (!isCurrent() || revision !== settingsRevision) return;
     state.settings = settings;
     if (state.mount) {
@@ -277,10 +277,9 @@ function load(id, serverId, sourceSelect = null) {
 
       // Seasons only extend the view that is already on screen, so a failed season request must
       // not be handled like a failed item request.
-      loadSeasons(client, userId, mediaItem)
+      loadSeasons(client, userId, mediaItem, settingsPromise)
         .then((result) => {
           if (!isCurrent() || state.item !== mediaItem) return;
-          if (revision === settingsRevision) state.settings = result.settings || state.settings;
           state.seasons = result.Items || [];
           if (state.mount) {
             const seasonPosters = state.item.Type === 'Series' && state.settings.seasonPostersEnabled;

@@ -68,13 +68,12 @@ function loadYoutubeApi() {
   return promise;
 }
 
-export function createYoutubePreview(iframe, videoId, { onPlaying, onEnded, onError }) {
+export function createYoutubePreview(iframe, { onPlaying, onEnded, onError }) {
   let cancelled = false;
   let player = null;
   loadYoutubeApi().then((api) => {
     if (cancelled || !iframe.isConnected) return;
     player = new api.Player(iframe, {
-      videoId,
       events: {
         onReady(event) {
           if (cancelled) return;

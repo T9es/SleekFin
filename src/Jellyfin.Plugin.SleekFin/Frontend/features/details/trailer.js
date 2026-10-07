@@ -55,7 +55,6 @@ function remoteUrl(value) {
 export function createTrailerPreview(page, nativeBackdrop, actions) {
   let currentItem = null;
   let enabled = false;
-  let terminal = false;
   let generation = 0;
   let startTimer = 0;
   let attemptTimer = 0;
@@ -65,7 +64,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   let destroyYoutube = null;
 
   function isCurrent(token) {
-    return token === generation && enabled && !terminal;
+    return token === generation && enabled;
   }
 
   function pageCanPlayPreview() {
@@ -106,7 +105,6 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
 
   function finish(token) {
     if (token !== generation) return;
-    terminal = true;
     candidates = [];
     clearAttempt();
   }
@@ -130,9 +128,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     element.defaultMuted = true;
     element.muted = true;
     element.volume = 0;
-    element.playsInline = true;
     element.preload = 'metadata';
-    element.setAttribute('muted', '');
     element.setAttribute('playsinline', '');
     element.addEventListener('playing', () => markPlaying(token));
     element.addEventListener('ended', () => finish(token));
@@ -161,7 +157,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     nativeBackdrop.appendChild(iframe);
     sizeYoutube();
     window.addEventListener('resize', sizeYoutube);
-    destroyYoutube = createYoutubePreview(iframe, id, { onPlaying: () => markPlaying(token), onEnded: () => finish(token), onError: () => nextCandidate(token) });
+    destroyYoutube = createYoutubePreview(iframe, { onPlaying: () => markPlaying(token), onEnded: () => finish(token), onError: () => nextCandidate(token) });
   }
 
   function sizeYoutube() {
@@ -230,7 +226,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   }
 
   function schedule() {
-    if (terminal || !enabled || !currentItem) return;
+    if (!enabled || !currentItem) return;
     const token = clearAttempt();
     candidates = (currentItem.RemoteTrailers || []).map((trailer) => ({ url: remoteUrl(trailer.Url) })).filter((candidate) => candidate.url);
     if (!(Number(currentItem.LocalTrailerCount) > 0) && !candidates.length) return;
@@ -243,14 +239,12 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
     const wasEnabled = enabled;
     if (itemChanged) {
       clearAttempt();
-      terminal = false;
       currentItem = item;
     }
 
     enabled = nextEnabled === true;
     if (!enabled) {
       if (wasEnabled || startTimer || attemptTimer || video) clearAttempt();
-      terminal = false;
       return;
     }
 
@@ -267,7 +261,7 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   }
 
   function onVisibilityChange() {
-    if (document.visibilityState === 'hidden' && enabled && !terminal) finish(generation);
+    if (document.visibilityState === 'hidden' && enabled) finish(generation);
   }
 
   page.addEventListener('click', onActionClick, true);
@@ -277,7 +271,6 @@ export function createTrailerPreview(page, nativeBackdrop, actions) {
   return {
     destroy() {
       enabled = false;
-      terminal = true;
       clearAttempt();
       page.removeEventListener('click', onActionClick, true);
       document.removeEventListener('visibilitychange', onVisibilityChange);

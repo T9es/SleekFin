@@ -1666,7 +1666,7 @@
                             </div>
 
                             <div class="sleekfin-hero-builder-content">
-                                <details class="sleekfin-hero-accordion" open>
+                                <details class="sleekfin-hero-accordion">
                                     <summary>Content rules</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-row">
@@ -1695,7 +1695,7 @@
                                     </div>
                                 </details>
 
-                                <details class="sleekfin-hero-accordion" open>
+                                <details class="sleekfin-hero-accordion">
                                     <summary>Layout</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-row">
@@ -1737,8 +1737,8 @@
                                     </div>
                                 </details>
 
-                                <details class="sleekfin-hero-accordion" open>
-                                    <summary>Artwork</summary>
+                                <details class="sleekfin-hero-accordion">
+                                    <summary>Artwork + Trailer</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-row">
                                             <div class="sleekfin-toggle-copy">
@@ -1790,7 +1790,7 @@
                                     </div>
                                 </details>
 
-                                <details class="sleekfin-hero-accordion" open>
+                                <details class="sleekfin-hero-accordion">
                                     <summary>Type &amp; metadata</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--4">
@@ -1861,7 +1861,7 @@
                                     </div>
                                 </details>
 
-                                <details class="sleekfin-hero-accordion" open>
+                                <details class="sleekfin-hero-accordion">
                                     <summary>Actions</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
@@ -1915,7 +1915,7 @@
                                     </div>
                                 </details>
 
-                                <details class="sleekfin-hero-accordion" open>
+                                <details class="sleekfin-hero-accordion">
                                     <summary>Motion &amp; blending</summary>
                                     <div class="sleekfin-hero-settings">
                                         <div class="sleekfin-hero-setting-grid sleekfin-hero-setting-grid--3">
@@ -3844,6 +3844,9 @@
                         element.classList.toggle('is-active', element.dataset.sleekfinPanel === panel);
                     });
                     if (panel === 'ui-builder') {
+                        Array.prototype.forEach.call(page.querySelectorAll('.sleekfin-hero-accordion[open]'), function (section) {
+                            section.open = false;
+                        });
                         updatePreviewMeasurements();
                         updateHeroPreview();
                     }
